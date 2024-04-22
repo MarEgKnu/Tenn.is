@@ -1,7 +1,22 @@
+using Microsoft.Extensions.Hosting;
+using Tennis.Interfaces;
+using Tennis.Services;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddRazorPages();
+
+builder.Services.AddTransient<IUserService, UserService>();
+builder.Services.AddTransient<ITrainingTeamService, TrainingTeamService>();
+builder.Services.AddTransient<ITennisLobbyService, TennisLobbyService>();
+builder.Services.AddTransient<ILaneService, LaneService>();
+builder.Services.AddTransient<ILaneBookingService, LaneBookingService>();
+builder.Services.AddTransient<IEventService, EventService>();
+builder.Services.AddTransient<IEventBookingService, EventBookingService>();
+builder.Services.AddTransient<IArticleService, ArticleService>();
+builder.Services.AddSession();
+builder.Services.AddHttpContextAccessor();
 
 var app = builder.Build();
 
