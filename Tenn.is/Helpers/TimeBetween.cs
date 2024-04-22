@@ -5,7 +5,7 @@
 
         public TimeBetween(DateTime startTime, DateTime endTime)
         {
-            if (EndTime <= startTime)
+            if (endTime <= startTime)
             {
                 throw new ArgumentException("Start Time is larger than End Time");
             }

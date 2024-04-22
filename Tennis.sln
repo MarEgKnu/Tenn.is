@@ -3,9 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.8.34330.188
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Tenn.is", "Tenn.is\Tenn.is.csproj", "{6B442E13-C05B-49AA-AA78-9A38C2A89AAC}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Tennis", "Tenn.is\Tennis.csproj", "{6B442E13-C05B-49AA-AA78-9A38C2A89AAC}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TennisTest", "TennisTest\TennisTest.csproj", "{5D5EBF2A-A8F8-47AC-A565-28933D45F7D3}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TennisTest", "TennisTest\TennisTest.csproj", "{5D5EBF2A-A8F8-47AC-A565-28933D45F7D3}"
 	ProjectSection(ProjectDependencies) = postProject
 		{6B442E13-C05B-49AA-AA78-9A38C2A89AAC} = {6B442E13-C05B-49AA-AA78-9A38C2A89AAC}
 	EndProjectSection

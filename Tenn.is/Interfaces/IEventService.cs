@@ -4,11 +4,11 @@ namespace Tennis.Interfaces
 {
     public interface IEventService
     {
-        bool CreateEvent(Event event);
+        bool CreateEvent(Event evt);
 
         bool DeleteEvent(int id);
 
-        bool EditEvent(Event event, int id);
+        bool EditEvent(Event evt, int id);
 
         List<Event> GetAllEvents();
 
