@@ -11,7 +11,7 @@
         public DayOfWeek StartDay { get; set; }
 
         public bool OverMidnight { get {
-                if (StartTime > EndTime)
+                if (StartTime >= EndTime)
                 {
                     return true;
                 }
