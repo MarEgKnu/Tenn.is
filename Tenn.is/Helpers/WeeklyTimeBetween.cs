@@ -2,10 +2,40 @@
 {
     public class WeeklyTimeBetween
     {
-        DayOfWeek DayOfWeek { get; set; }
+        public WeeklyTimeBetween(TimeOnly startTime, TimeOnly endTime, DayOfWeek dayOfWeek)
+        {
+            StartTime = startTime;
+            EndTime = endTime;
+            StartDay = dayOfWeek;
+        }
+        public DayOfWeek StartDay { get; set; }
 
-        TimeOnly StartTime { get; set; }
+        public bool OverMidnight { get {
+                if (StartTime >= EndTime)
+                {
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+     
+            } }
 
-        TimeOnly EndTime { get; set; }  
+        public TimeOnly StartTime { get; set; }
+
+        public TimeOnly EndTime { get; set; } 
+        
+        public TimeSpan TimeSpan { get {
+            if (StartTime == EndTime)
+                {
+                    return new TimeSpan(24, 0, 0);
+                }
+            else
+                {
+                    return EndTime - StartTime;
+                }
+                    
+            } }
     }
 }
