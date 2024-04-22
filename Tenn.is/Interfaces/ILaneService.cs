@@ -1,4 +1,6 @@
-﻿namespace Tennis.Interfaces
+﻿using Tennis.Models;
+
+namespace Tennis.Interfaces
 {
     public interface ILaneService
     {
