@@ -9,10 +9,10 @@ namespace Tennis.Services
     {
 
         private string getAllSQL = "SELECT * FROM Users";
-        private string getByIdSQL = "SELECT * FROM Users WHERE UserID = '@UID'";
-        private string insertSQL = "INSERT INTO Users VALUES ('@UID', @UNAME, @FNAME, @LNAME, @PWORD, @EMAIL, @PHONE, '@ADMIN'";
-        private string deleteSQL = "DELETE FROM Users WHERE UserID = '@UID'";
-        private string editSQL = "UPDATE Users SET UserName = @UNAME, FirstName = @FNAME, LastName = @LNAME, Password = @PWORD, Phone = @PHONE, Administrator = '@ADMIN'";
+        private string getByIdSQL = "SELECT * FROM Users WHERE UserID = @UID";
+        private string insertSQL = "INSERT INTO Users VALUES (@UID, @UNAME, @FNAME, @LNAME, @PWORD, @EMAIL, @PHONE, @ADMIN)";
+        private string deleteSQL = "DELETE FROM Users WHERE UserID = @UID";
+        private string editSQL = "UPDATE Users SET UserName = @UNAME, FirstName = @FNAME, LastName = @LNAME, Password = @PWORD, Phone = @PHONE, Email = @EMAIL, Administrator = @ADMIN WHERE UserID = @UID";
         public UserService()
         {
             connectionString = Secret.ConnectionString;
@@ -30,17 +30,113 @@ namespace Tennis.Services
         }
         public bool CreateUser(User user)
         {
-            throw new NotImplementedException();
+            if (user.UserId < 1)
+            {
+                return false;
+            }
+            else
+            {
+                using (SqlConnection conn = new SqlConnection(connectionString))
+                {
+                    try
+                    {
+                        SqlCommand command = new SqlCommand(insertSQL, conn);
+                        command.Parameters.AddWithValue("@UID", user.UserId);
+                        command.Parameters.AddWithValue("@UNAME", user.Username);
+                        command.Parameters.AddWithValue("@FNAME", user.FirstName);
+                        command.Parameters.AddWithValue("@LNAME", user.LastName);
+                        command.Parameters.AddWithValue("@PWORD", user.Password);
+                        command.Parameters.AddWithValue("@EMAIL", user.Email);
+                        command.Parameters.AddWithValue("@PHONE", user.Phone);
+                        command.Parameters.AddWithValue("@ADMIN", user.Administrator);
+                        command.Connection.Open();
+                        int noOfRows = command.ExecuteNonQuery();
+                        return noOfRows == 1;
+                    }
+                    catch (SqlException sqlExp)
+                    {
+                        Console.WriteLine("Database error" + sqlExp.Message);
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine("General error" + ex.Message);
+                    }
+                }
+                return false;
+            }
         }
 
         public bool DeleteUser(int id)
         {
-            throw new NotImplementedException();
+            User user = null;
+            using (SqlConnection conn = new SqlConnection(connectionString))
+            {
+                try
+                {
+                    SqlCommand command = new SqlCommand(deleteSQL, conn);
+                    command.Parameters.AddWithValue("@UID", id);
+                    user = GetUserById(id);
+                    if (user != null)
+                    {
+                        if (user.UserId != 0)
+                        {
+                            command.Connection.Open();
+                            command.ExecuteNonQuery();
+                        } else
+                        {
+                            user = null;
+                        }
+                    }
+                }
+                catch (SqlException sqlExp)
+                {
+                    Console.WriteLine("Database error" + sqlExp.Message);
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine("General error" + ex.Message);
+                }
+
+            }
+            return user != null;
         }
 
-        public bool EditUser(User user, int id)
-        {
-            throw new NotImplementedException();
+            public bool EditUser(User user, int id)
+            {
+            if (user.UserId < 1 || id < 1)
+            {
+                return false;
+            }
+            else
+            {
+                using (SqlConnection conn = new SqlConnection(connectionString))
+                {
+                    try
+                    {
+                        SqlCommand command = new SqlCommand(editSQL, conn);
+                        command.Parameters.AddWithValue("@UID", id);
+                        command.Parameters.AddWithValue("@UNAME", user.Username);
+                        command.Parameters.AddWithValue("@FNAME", user.FirstName);
+                        command.Parameters.AddWithValue("@LNAME", user.LastName);
+                        command.Parameters.AddWithValue("@PWORD", user.Password);
+                        command.Parameters.AddWithValue("@EMAIL", user.Email);
+                        command.Parameters.AddWithValue("@PHONE", user.Phone);
+                        command.Parameters.AddWithValue("@ADMIN", user.Administrator);
+                        command.Connection.Open();
+                        int noOfRows = command.ExecuteNonQuery();
+                        return noOfRows == 1;
+                    }
+                    catch (SqlException sqlExp)
+                    {
+                        Console.WriteLine("Database error" + sqlExp.Message);
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine("General error" + ex.Message);
+                    }
+                }
+                return false;
+            }
         }
 
         public List<User> GetAllUsers()
@@ -79,7 +175,38 @@ namespace Tennis.Services
 
         public User GetUserById(int id)
         {
-            throw new NotImplementedException();
+            User user = null;
+            using (SqlConnection conn = new SqlConnection(connectionString))
+            {
+                try
+                {
+                    SqlCommand command = new SqlCommand(getByIdSQL, conn);
+                    command.Parameters.AddWithValue("@UID", id);
+                    command.Connection.Open();
+                    SqlDataReader reader = command.ExecuteReader();
+                    while (reader.Read())
+                    {
+                        string username = reader.GetString("UserName");
+                        string firstname = reader.GetString("FirstName");
+                        string lastname = reader.GetString("LastName");
+                        string password = reader.GetString("Password");
+                        string email = reader.GetString("Email");
+                        string phone = reader.GetString("Phone");
+                        bool admin = reader.GetBoolean("Administrator");
+                        user = new(id, username, firstname, lastname, email, password, phone, admin);
+                    }
+                    reader.Close();
+                }
+                catch (SqlException sqlExp)
+                {
+                    Console.WriteLine("Database error" + sqlExp.Message);
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine("General error" + ex.Message);
+                }
+            }
+            return user;
         }
 
         public bool LogIn(string UserName, string Password)
@@ -88,6 +215,11 @@ namespace Tennis.Services
         }
 
         public void LogOut(HttpContext context)
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool AdminVerify(int id, string password)
         {
             throw new NotImplementedException();
         }

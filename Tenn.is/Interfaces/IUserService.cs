@@ -17,5 +17,7 @@ namespace Tennis.Interfaces
         bool LogIn(string UserName, string Password);
 
         void LogOut(HttpContext context);
+
+        bool AdminVerify(int id, string password);
     }
 }
