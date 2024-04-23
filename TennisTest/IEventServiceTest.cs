@@ -1,6 +1,6 @@
-﻿using System;
+﻿using Microsoft.Data.SqlClient;
+using System;
 using System.Collections.Generic;
-using System.Data.SqlClient;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -22,6 +22,7 @@ namespace TennisTest
             eventService = new EventService(true);
             using (SqlConnection conn = new SqlConnection(Secret.ConnectionStringTest))
             {
+                conn.Open();
                 SqlCommand cmd = new SqlCommand("DELETE FROM Events", conn);
 
                 cmd.ExecuteNonQuery();
@@ -176,6 +177,18 @@ namespace TennisTest
             TestSetUp();
             Event newEvent = new Event(1, "epic event", 0, "big event", new TimeBetween(new DateTime(2030, 12, 6), new DateTime(2030, 12, 7)));
             Event editedEvent = new Event(2, "epic event", 0, "big event", new TimeBetween(new DateTime(2022, 12, 6), new DateTime(2022, 12, 7)));
+            eventService.CreateEvent(newEvent);
+            List<Event> events = eventService.GetAllEvents();
+            bool sucess = eventService.EditEvent(editedEvent, events[0].EventID);
+        }
+
+        [ExpectedException(typeof(ArgumentException))]
+        [TestMethod]
+        public void EditEventTest_Fail_StartDateBiggerThanEndDate()
+        {
+            TestSetUp();
+            Event newEvent = new Event(1, "epic event", 0, "big event", new TimeBetween(new DateTime(2030, 12, 6), new DateTime(2030, 12, 7)));
+            Event editedEvent = new Event(2, "epic event", 0, "big event", new TimeBetween(new DateTime(2022, 12, 7), new DateTime(2022, 12, 6)));
             eventService.CreateEvent(newEvent);
             List<Event> events = eventService.GetAllEvents();
             bool sucess = eventService.EditEvent(editedEvent, events[0].EventID);

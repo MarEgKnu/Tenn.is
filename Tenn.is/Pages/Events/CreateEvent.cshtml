@@ -1,0 +1,40 @@
+﻿@page
+@model Tennis.Pages.Events.CreateEventModel
+@{
+    ViewData["Title"] = "Opret Event";
+}
+
+<h1>Opret Event</h1>
+<p>@ViewData["ErrorMessage"]</p>
+
+<form method="post">
+    <div class="form-group">
+        <label asp-for="@Model.Event.Title" class="control-label">Titel</label>
+        <input asp-for="@Model.Event.Title" class="form-control" />
+        <span asp-validation-for="@Model.Event.Title" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="@Model.Event.Description" class="control-label">Beskrivelse</label>
+        <textarea asp-for="@Model.Event.Description" class="form-control"></textarea>
+        <span asp-validation-for="@Model.Event.Description" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="@Model.Event.CancellationThresholdMinutes" class="control-label">Hvor langt tid i forvejen kan man ikke afmælde, i minutter</label>
+        <input asp-for="@Model.Event.CancellationThresholdMinutes" class="form-control" />
+        <span asp-validation-for="@Model.Event.CancellationThresholdMinutes" class=" text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="@Model.Event.EventTime.StartTime" class="control-label">Starttid</label>
+        <input asp-for="@Model.Event.EventTime.StartTime" class="form-control" asp-format="{0:yyyy-MM-ddTHH:mm}" />
+        <span asp-validation-for="@Model.Event.EventTime.StartTime" class=" text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="@Model.Event.EventTime.EndTime" class="control-label">Sluttid</label>
+        <input asp-for="@Model.Event.EventTime.EndTime" class="form-control" asp-format="{0:yyyy-MM-ddTHH:mm}" />
+        <span asp-validation-for="@Model.Event.EventTime.EndTime" class=" text-danger"></span>
+    </div>
+    <div class="form-group">
+        <input type="submit" value="Opret event" class="btn btn-primary" />
+    </div>
+</form>
+

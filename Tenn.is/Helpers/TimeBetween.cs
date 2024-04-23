@@ -1,49 +1,109 @@
-﻿namespace Tennis.Helpers
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace Tennis.Helpers
 {
     public class TimeBetween
     {
 
-        public TimeBetween(DateTime startTime, DateTime endTime)
+        public TimeBetween(DateTime? startTime, DateTime? endTime)
         {
-            if (endTime <= startTime)
+            if (startTime == null || endTime == null)
+            {
+                _startTime = startTime;
+                _endTime = endTime;
+            }
+            else if (endTime <= startTime)
             {
                 throw new ArgumentException("Start Time is larger than End Time");
             }
-            StartTime = startTime;
-            EndTime = endTime;
+            else
+            {
+                _startTime = startTime;
+                _endTime = endTime;
+            }
+            
         }
 
-        private DateTime _startTime;
+        private DateTime? _startTime;
 
-        private DateTime _endTime;
-
-        public DateTime StartTime
+        private DateTime? _endTime;
+        [Required]
+        public DateTime? StartTime
         {
             get { return _startTime; }
             set
             {
-                if (value > EndTime)
+                if (value == null)
+                {
+                    _startTime = value;
+                }
+                else if (value >= EndTime)
                 {
                     throw new ArgumentException("Start Time is larger than End Time");
                 }
-                _startTime = value;
+                else
+                {
+                    _startTime = value;
+                }
+                
             }
         }
-
-        public DateTime EndTime
+        [Required]
+        public DateTime? EndTime
         {
             get { return _endTime; }
             set { 
-                if (value < StartTime)
+                if (value == null)
+                {
+                    _endTime = value;
+                }
+                else if (value <= StartTime)
                 {
                     throw new ArgumentException("Start Time is larger than End Time");
                 }
-                _endTime = value; }
+                else
+                {
+                    _endTime = value;
+                }
+                 }
         }
 
-        public TimeSpan TimeSpan { get {
+        public TimeSpan? TimeSpan { get {
                 return EndTime - StartTime;
             } }
+
+        public void SetNewTime(DateTime? startTime, DateTime? endTime)
+        {
+            if (startTime == null || endTime == null)
+            {
+                _startTime = startTime;
+                _endTime = endTime;
+            }
+            else if (endTime <= startTime)
+            {
+                throw new ArgumentException("Start Time is larger than End Time");
+            }
+            else
+            {
+                _startTime = startTime;
+                _endTime = endTime;
+            }
+        }
+
+        public bool IsInPast
+        {
+            get
+            {
+                return EndTime < DateTime.Now;
+            }
+        }
+        public bool Ongoing
+        {   
+            get
+            {
+                return EndTime >= DateTime.Now && StartTime <= DateTime.Now;
+            }
+        }
 
     }
 }

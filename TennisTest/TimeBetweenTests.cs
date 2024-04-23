@@ -48,6 +48,37 @@ namespace TennisTest
             TimeBetween time = new TimeBetween(new DateTime(2013, 6, 1, 6, 0, 0), new DateTime(2013, 6, 1, 10, 30, 0));
             Assert.AreEqual(4.5, time.TimeSpan.TotalHours);
         }
+        [ExpectedException(typeof(ArgumentException))]
+        [TestMethod]
+        public void ChangeStartTimeToBeLaterThanEndTime_Fail()
+        {
+            TimeBetween time = new TimeBetween(new DateTime(2013, 6, 1, 6, 0, 0), new DateTime(2013, 6, 1, 10, 30, 0));
+            time.SetNewTime(new DateTime(2013, 6, 2, 6, 0, 0), new DateTime(2013, 6, 1, 6, 0, 0));
+        }
+        [ExpectedException(typeof(ArgumentException))]
+        [TestMethod]
+        public void ChangeEndTimeToBeLaterThanStartTime_Fail()
+        {
+            TimeBetween time = new TimeBetween(new DateTime(2013, 6, 1, 6, 0, 0), new DateTime(2013, 6, 1, 10, 30, 0));
+            time.SetNewTime(new DateTime(2013, 6, 1, 6, 0, 0), new DateTime(2013, 5, 2, 6, 0, 0));
+        }
+        [TestMethod]
+        public void ChangeTime_Sucess()
+        {
+            TimeBetween time = new TimeBetween(new DateTime(2013, 6, 1, 6, 0, 0), new DateTime(2013, 6, 1, 10, 30, 0));
+            time.SetNewTime(new DateTime(2013, 6, 1, 6, 0, 0), new DateTime(2013, 6, 10, 6, 0, 0)); 
+            Assert.IsTrue(true);
+        }
+        [TestMethod]
+        public void ChangeTime_DateTimeMethods_Fail()
+        {
+            TimeBetween time = new TimeBetween(new DateTime(2013, 6, 1, 6, 0, 0), new DateTime(2013, 6, 1, 10, 30, 0));
+            TimeBetween timeNew = new TimeBetween(new DateTime(2013, 6, 1, 6, 0, 0), new DateTime(2013, 6, 1, 10, 30, 0));
+            time.EndTime.AddMinutes(100);
+            time.EndTime.AddHours(100);
+            time.EndTime.AddDays(100);
+            Assert.AreEqual(timeNew.EndTime, time.EndTime);
+        }
 
 
     }
