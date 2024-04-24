@@ -31,6 +31,7 @@ namespace Tennis.Pages.Users
             } else
             {
                 DatabaseString = "Bruger findes allerede i systemet";
+                return Page();
             }
         }
     }
