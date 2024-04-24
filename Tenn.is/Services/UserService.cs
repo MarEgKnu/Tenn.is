@@ -223,5 +223,17 @@ namespace Tennis.Services
         {
             throw new NotImplementedException();
         }
+
+        public string RandomPassword()
+        {
+            string password = "";
+            var random = new Random();
+            string validChars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+            for (int i = 0; i < 9; i++)
+            {
+                password += validChars[random.Next(0, validChars.Length)];
+            }
+            return password;
+        }
     }
 }

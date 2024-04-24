@@ -5,6 +5,9 @@ namespace Tennis.Models
     public class User
     {
         public int UserId { get; set; }
+        [Display(Name = "Password")]
+        [Required(ErrorMessage = "Dit password kan ikke være tomt")]
+        public string Password { get; set; }
         [Display(Name = "Brugernavn")]
         [Required(ErrorMessage = "Udfyld brugernavn")]
         public string Username { get; set; }
@@ -15,9 +18,7 @@ namespace Tennis.Models
         [Required(ErrorMessage = "Udfyld efternavn")]
         public string LastName { get; set; }
         public string Email { get; set; }
-        [Display(Name = "Password")]
-        [Required(ErrorMessage = "Udfyld password")]
-        public string Password { get; set; }
+
         public string Phone { get; set; }
         public bool Administrator { get; set; }
 
@@ -33,9 +34,14 @@ namespace Tennis.Models
             Administrator = admin;
         }
 
+        public User(string password)
+        {
+            Password = password;
+        }
+
         public User()
         {
-            
+
         }
     }
 }

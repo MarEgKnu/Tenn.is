@@ -19,18 +19,20 @@ namespace Tennis.Pages.Users
             _userService = userservice;
         }
 
-        public void OnGet()
+        public IActionResult OnGet()
         {
-
+            NewUser = new User(_userService.RandomPassword());
+            return Page();
         }
         public IActionResult OnPost() 
         {
+            NewUser.UserId = _userService.GetAllUsers().Count();
             if (!ModelState.IsValid)
             {
                 return Page();
             }
             NewUser.Administrator = false;
-            NewUser.UserId = _userService.GetAllUsers().Count();
+
             if (_userService.CreateUser(NewUser))
             {
                 return RedirectToPage("Overview");

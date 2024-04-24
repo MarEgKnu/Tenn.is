@@ -199,7 +199,29 @@ namespace Tennis.Services.Tests
             userService.DeleteUser(user.UserId);
         }
 
+        [TestMethod()]
+        public void RandomPasswordTest_Valid_IsNotNull()
+        {
+            //Setup
+            UserService userService = new UserService(true);
+            //Execution
+            string password = userService.RandomPassword();
 
+            //Assert
+            Assert.IsNotNull(password);
+        }
+
+        [TestMethod()]
+        public void RandomPasswordTest_Valid_CorrectLength()
+        {
+            //Setup
+            UserService userService = new UserService(true);
+            //Execution
+            string password = userService.RandomPassword();
+
+            //Assert
+            Assert.AreEqual(9, password.Length);
+        }
 
 
         //[TestMethod()]
