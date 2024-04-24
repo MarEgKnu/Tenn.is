@@ -226,5 +226,28 @@ namespace Tennis.Services
             }
             return null;
         }
+
+        public List<Event> GetEventsOnConditions(List<Predicate<Event>> conditions)
+        {
+            List<Event> events = GetAllEvents();
+            if (conditions == null || conditions.Count == 0)
+            {
+                return events;
+            }
+            
+            foreach (Predicate<Event> condition in conditions)
+            {
+                if (condition == null)
+                {
+                    continue;
+                }
+                events = events.FindAll(condition);
+                if (events.Count == 0)
+                {
+                    return events;
+                }
+            }
+            return events;
+        }
     }
 }

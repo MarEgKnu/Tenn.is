@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Microsoft.AspNetCore.Mvc;
+using System.ComponentModel.DataAnnotations;
 
 namespace Tennis.Helpers
 {
@@ -27,7 +28,7 @@ namespace Tennis.Helpers
         private DateTime? _startTime;
 
         private DateTime? _endTime;
-        [Required]
+        [Required, DisplayFormat(DataFormatString = "{0:yyyy-MM-ddTHH:mm}", ApplyFormatInEditMode = true)]
         public DateTime? StartTime
         {
             get { return _startTime; }
@@ -48,7 +49,7 @@ namespace Tennis.Helpers
                 
             }
         }
-        [Required]
+        [Required, DisplayFormat(DataFormatString = "{0:yyyy-MM-ddTHH:mm}", ApplyFormatInEditMode = true)]
         public DateTime? EndTime
         {
             get { return _endTime; }
@@ -103,6 +104,10 @@ namespace Tennis.Helpers
             {
                 return EndTime >= DateTime.Now && StartTime <= DateTime.Now;
             }
+        }
+        public bool OngoingAt(DateTime date)
+        {
+            return EndTime >= date && StartTime <= date;
         }
 
     }

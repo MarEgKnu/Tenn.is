@@ -13,5 +13,7 @@ namespace Tennis.Interfaces
         List<Event> GetAllEvents();
 
         Event GetEventByNumber(int id);
+
+        List<Event> GetEventsOnConditions(List<Predicate<Event>> conditions);
     }
 }

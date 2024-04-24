@@ -24,6 +24,7 @@ namespace Tennis.Pages.Events
         {
             if (Event.IsInPast)
             {
+                //TODO: better error messages for if starttime is bigger than endtime
                 ModelState.AddModelError(nameof(Event.EventTime.EndTime), "Kan ikke oprette events i fortid");
             }
             if (!ModelState.IsValid)
@@ -49,7 +50,7 @@ namespace Tennis.Pages.Events
                 ViewData["ErrorMessage"] = "Generel fejl. Fejlbesked:\n " + ex.Message;
                 return Page();
             }
-            return RedirectToPage("Index");
+            return RedirectToPage("IndexAdmin");
         }
     }
 }

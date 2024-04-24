@@ -195,6 +195,109 @@ namespace TennisTest
         }
 
 
+        [TestMethod]
+        public void GetEventsByConditions_Fail_ConditionNull()
+        {
+            TestSetUp();
+
+            List<Predicate<Event>> conditions = new List<Predicate<Event>>();
+            conditions.Add(null);
+
+            Event newEvent = new Event(1, "epic event", 0, "big event", new TimeBetween(new DateTime(2030, 12, 6), new DateTime(2030, 12, 7)));
+            Event newEvent2 = new Event(2, "epic event", 0, "big eveneet", new TimeBetween(new DateTime(2030, 12, 6), new DateTime(2030, 12, 7)));
+            Event newEvent3 = new Event(2, "not epic event", 0, "big eveneet", new TimeBetween(new DateTime(2030, 12, 6), new DateTime(2030, 12, 7)));
+            eventService.CreateEvent(newEvent);
+            eventService.CreateEvent(newEvent2);
+            eventService.CreateEvent(newEvent3);
+            List<Event> events = eventService.GetEventsOnConditions(conditions);
+
+            Assert.AreEqual(3, events.Count);
+        }
+
+
+        [TestMethod]
+        public void GetEventsByConditions_Failure_ListNull()
+        {
+            TestSetUp();
+
+            List<Predicate<Event>> conditions = null;
+
+            Event newEvent = new Event(1, "epic event", 0, "big event", new TimeBetween(new DateTime(2030, 12, 6), new DateTime(2030, 12, 7)));
+            Event newEvent2 = new Event(2, "epic event", 0, "big eveneet", new TimeBetween(new DateTime(2030, 12, 6), new DateTime(2030, 12, 7)));
+            Event newEvent3 = new Event(2, "not epic event", 0, "big eveneet", new TimeBetween(new DateTime(2030, 12, 6), new DateTime(2030, 12, 7)));
+            eventService.CreateEvent(newEvent);
+            eventService.CreateEvent(newEvent2);
+            eventService.CreateEvent(newEvent3);
+            List<Event> events = eventService.GetEventsOnConditions(conditions);
+
+            Assert.AreEqual(3, events.Count);
+        }
+
+
+        [TestMethod]
+        public void GetEventsByConditions_Success_SearchTitle()
+        {
+            TestSetUp();
+
+            List<Predicate<Event>> conditions = new List<Predicate<Event>>();
+            
+            conditions.Add(new Predicate<Event>(e => e.Title == "epic event"));
+
+            Event newEvent = new Event(1, "epic event", 0, "big event", new TimeBetween(new DateTime(2030, 12, 6), new DateTime(2030, 12, 7)));
+            Event newEvent2 = new Event(2, "epic event", 0, "big eveneet", new TimeBetween(new DateTime(2030, 12, 6), new DateTime(2030, 12, 7)));
+            Event newEvent3 = new Event(2, "not epic event", 0, "big eveneet", new TimeBetween(new DateTime(2030, 12, 6), new DateTime(2030, 12, 7)));
+            eventService.CreateEvent(newEvent);
+            eventService.CreateEvent(newEvent2);
+            eventService.CreateEvent(newEvent3);
+            List<Event> events = eventService.GetEventsOnConditions(conditions);
+
+            Assert.AreEqual(2, events.Count);
+            Assert.AreEqual(events[0].Title, "epic event");
+            Assert.AreEqual(events[1].Title, "epic event");
+        }
+
+
+        [TestMethod]
+        public void GetEventsByConditions_Success_SearchTitleANDDescription()
+        {
+            TestSetUp();
+
+            List<Predicate<Event>> conditions = new List<Predicate<Event>>();
+            conditions.Add(new Predicate<Event>(e => e.Title == "epic event"));
+            conditions.Add(new Predicate<Event>(e => e.Description == "big event"));
+            Event newEvent = new Event(1, "epic event", 0, "big event", new TimeBetween(new DateTime(2030, 12, 6), new DateTime(2030, 12, 7)));
+            Event newEvent2 = new Event(2, "epic event", 0, "big eveneet", new TimeBetween(new DateTime(2030, 12, 6), new DateTime(2030, 12, 7)));
+            Event newEvent3 = new Event(2, "not epic event", 0, "big eveneet", new TimeBetween(new DateTime(2030, 12, 6), new DateTime(2030, 12, 7)));
+            eventService.CreateEvent(newEvent);
+            eventService.CreateEvent(newEvent2);
+            eventService.CreateEvent(newEvent3);
+            List<Event> events = eventService.GetEventsOnConditions(conditions);
+
+            Assert.AreEqual(1, events.Count);
+            Assert.AreEqual(events[0].Title, "epic event");
+            Assert.AreEqual(events[0].Description, "big event");
+        }
+        [TestMethod]
+        public void GetEventsByConditions_Success_EmptyList()
+        {
+            TestSetUp();
+
+            List<Predicate<Event>> conditions = new List<Predicate<Event>>();
+            
+            Event newEvent = new Event(1, "epic event", 0, "big event", new TimeBetween(new DateTime(2030, 12, 6), new DateTime(2030, 12, 7)));
+            Event newEvent2 = new Event(2, "epic event", 0, "big eveneet", new TimeBetween(new DateTime(2030, 12, 6), new DateTime(2030, 12, 7)));
+            Event newEvent3 = new Event(2, "not epic event", 0, "big eveneet", new TimeBetween(new DateTime(2030, 12, 6), new DateTime(2030, 12, 7)));
+            eventService.CreateEvent(newEvent);
+            eventService.CreateEvent(newEvent2);
+            eventService.CreateEvent(newEvent3);
+            List<Event> events = eventService.GetEventsOnConditions(conditions);
+
+            Assert.AreEqual(3, events.Count);
+        }
+
+
+
+
 
 
 

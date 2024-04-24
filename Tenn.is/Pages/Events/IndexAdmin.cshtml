@@ -1,0 +1,116 @@
+﻿@page
+@using Tennis.Helpers;
+@model Tennis.Pages.Events.IndexAdminModel
+@{
+    ViewData["Title"] = "Events kontrolpanel";
+}
+
+<form method="get">
+
+    <input asp-for="AdvancedSearch" onclick="this.form.submit()" />
+    <label for="AdvancedSearch">Advanceret søgning</label><br>
+
+    @if (!Model.AdvancedSearch)
+    {
+        <p>
+            Søg Events: <input type="text" asp-for="@Model.GenericFilter" onchange="this.form.submit()" />
+        </p>
+    }
+    else
+    {
+        <p>
+            Søg EventID: <input type="text" asp-for="@Model.EventIDFilter" onchange="this.form.submit()" />
+            Søg Titel:<input type="text" asp-for="@Model.TitleFilter" onchange="this.form.submit()" />
+            Søg Beskrivelse: <input asp-for="@Model.DescriptionFilter" onchange="this.form.submit()" />
+            Aflyst:
+            <select asp-for="@Model.CancelledFilter" asp-items="@Model.CancelelledFilterOptions" onchange="this.form.submit()">
+                    <option value="">Alle</option>
+                    </select><br />
+            Søg Dato: <input asp-for="@Model.DateFilter" onchange="this.form.submit()" />
+            Søg Afmældningsgrænse: <input asp-for="@Model.CancellationThresholdFilter" onchange="this.form.submit()" />
+           
+        </p>
+    }
+
+
+
+    <input type="hidden" asp-for="@Model.Descending" value="@Model.Descending" />
+    <input type="hidden" asp-for="@Model.PrevSortBy" value="@Model.PrevSortBy" />
+    <p>
+        <a asp-page="/Events/CreateEvent">Opret Ny Event</a>
+
+    </p>
+
+    <h4 style="color:aquamarine"> Liste af events</h4>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>
+                    EventID<br />
+                    <input type="radio" asp-for="@Model.SortBy" value="EventID" onclick="this.form.submit()"/>
+                <th>
+                   Titel<br />
+                    <input type="radio" asp-for="@Model.SortBy" value="Title" onclick="this.form.submit()" />
+                </th>
+                <th>
+                    Beskrivelse<br />
+                    <input type="radio" asp-for="@Model.SortBy" value="Description" onclick="this.form.submit()" />
+                </th>
+                <th>
+                    Aflyst<br />
+                    <input type="radio" asp-for="@Model.SortBy" value="Cancelled" onclick="this.form.submit()" />
+                </th>
+                <th>
+                    Starttid<br />
+                    <input type="radio" asp-for="@Model.SortBy" value="StartTime" onclick="this.form.submit()" />
+                </th>
+                <th>
+                    Sluttid<br />
+                    <input type="radio" asp-for="@Model.SortBy" value="EndTime" onclick="this.form.submit()" />
+                </th>
+                <th>
+                    Afmældningsgrænse<br />
+                    <input type="radio" asp-for="@Model.SortBy" value="CancellationThreshold" onclick="this.form.submit()" />
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (Model.Events.Count() != 0)
+            {
+                @foreach (var item in Model.Events)
+                {
+                    <tr>
+                        <td>
+                            @item.EventID
+                        </td>
+                        <td>
+                            @item.Title
+                        </td>
+                        <td>
+                            @item.Description
+                        </td>
+                        <td>
+                            @BoolHelpers.ToJaNejValue(item.Cancelled)
+                        </td>
+                        <td>
+                            @item.EventTime.StartTime.Value
+                        </td>
+                        <td>
+                            @item.EventTime.EndTime.Value
+                        </td>
+                        <td>
+                            @item.CancellationThresholdMinutes
+                        </td>
+                        <td>
+                            <p>
+                                
+                            </p>
+                        </td>
+                    </tr>
+                }
+            }
+        </tbody>
+    </table>
+</form>
+

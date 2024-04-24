@@ -44,12 +44,24 @@ namespace Tennis.Models
                 return EventTime.IsInPast;
             }
         }
+        /// <summary>
+        /// Checks if the event is ongoing at current time
+        /// </summary>
         public bool Ongoing
         {
             get
             {
                 return EventTime.Ongoing;
             }
+        }
+        /// <summary>
+        /// Checks if the event would be ongoing at the specified DateTime
+        /// </summary>
+        /// <param name="date"></param>
+        /// <returns></returns>
+        public bool OngoingAt(DateTime date)
+        {
+            return EventTime.OngoingAt(date);
         }
     }
 }
