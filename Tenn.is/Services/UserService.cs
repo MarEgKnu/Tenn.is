@@ -15,7 +15,7 @@ namespace Tennis.Services
         private string editSQL = "UPDATE Users SET UserName = @UNAME, FirstName = @FNAME, LastName = @LNAME, Password = @PWORD, Phone = @PHONE, Email = @EMAIL, Administrator = @ADMIN WHERE UserID = @UID";
         public UserService()
         {
-            connectionString = Secret.ConnectionString;
+            connectionString = Secret.ConnectionStringTest;
         }
         public UserService(bool test)
         {

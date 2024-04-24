@@ -1,0 +1,59 @@
+﻿@page
+@model Tennis.Pages.Users.OverviewModel
+@{
+    ViewData["Title"] = "Brugeroversigt";
+}
+
+<a asp-page="CreateUser" class="btn btn-outline-primary">Opret ny bruger</a>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                Bruger ID + navn
+            </th>
+            <th>
+                Fuldt navn
+            </th>
+            <th>
+                Kontaktoplysninger
+            </th>
+            <th>
+                Administrator
+            </th>
+            <th>
+                Funktioner
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (Model.Users.Count() != 0)
+        {
+            @foreach (var item in Model.Users)
+            {
+                <tr>
+                    <td>
+                        @item.UserId<span>: </span>@item.Username
+                    </td>
+                    <td>
+                        @item.FirstName<br />@item.LastName
+                    </td>
+                    <td>
+                        <span>Tlf: </span>@item.Phone<br /><span>Email: </span>@item.Email
+                    </td>
+                    @if (item.Administrator)
+                    {
+                        <td>Admin</td>
+                    }
+                    else
+                    {
+                        <td></td>
+                    }
+                    <td>
+                        <a asp-page="UpdateUser" asp-route-userid="@item.UserId" class="btn btn-secondary w-100">Opdater</a><br /><a asp-page="DeleteUser" asp-route-userid="@item.UserId" class="btn btn-secondary w-100" style="margin-top: 10px">Fjern</a>
+                    </td>
+                </tr>
+            }
+        }
+    </tbody>
+
+</table>
