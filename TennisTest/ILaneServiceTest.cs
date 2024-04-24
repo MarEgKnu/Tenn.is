@@ -1,72 +1,60 @@
-﻿using Microsoft.AspNetCore.Http;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.Data.SqlClient;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Tennis.Interfaces;
 using Tennis.Models;
+using Tennis.Services;
 
 namespace TennisTest
 {
     [TestClass]
     public class ILaneServiceTest
     {
-        ILaneService service;
-        public ILaneServiceTest( ILaneService Service)
+        //private ILaneService service;
+
+        public LaneService service { get; set; }
+
+        public void TestSetUp()
         {
-            service = Service;
-        }
-
-        string SelectAllSQL = "SELECT * FROM LANES";
-        string SelectLaneByIdSQL = "SELECT * FROM LANES WHERE LANENUMBER = @ID";
-        string InsertLaneSQL = "INSERT INTO LANE VALUES(@ID,@OUTDOOR, @PADELTENNIS)";
-        string UpdateLaneSQL = "UPDATE LANE SET OUTDOORS = @OUTDOOR, PADELTENNIS = PADELTENNIS WHERE LANENUMBER = @ID";
-        string DeleteLane = "DELETE FROM LANE WHERE LANENUMBER = @ID";
-
-
-        void TestSetUp()
-        {
-
+            service = new LaneService(true);
         }
 
         [TestMethod]
         public void GetAllLanes()
         {
-            List<Lane> Lanelist = new List<Lane>();
-            using (SqlConnection connection = new SqlConnection(ConnectionStringTest))
-                try
-                {
-                    SqlCommand command = new SqlCommand(SelectAllSQL, connection);
-                    command.Connection.Open();
-                    SqlDataReader reader = command.ExecuteReader();
-                    while (reader.Read())
-                    {
-                        Lanelist.Add(new Lane(reader.GetInt32(LANENUMBER), reader.GetBoolean(OUTDOOR), reader.GetBoolean(PADELTENNIS)));
-                    }
+            TestSetUp();
+            service.DeleteLane(250);
+            int numberbefore = service.GetAllLanes().Count;
+            service.CreateLane(new Lane(250, true, true));
 
-                }
-                catch (Exception ex)
-                {
-                    Console.WriteLine(ex.Message);
-                }
-
-            Assert.AreEqual(service.GetAllLanes().Count, Lanelist.Count);
+            Assert.AreEqual(service.GetAllLanes().Count, numberbefore +1);
         }
 
         [TestMethod]
-        public void GetLaneByNumber()
+        public void GetLaneByNumberExist()
         {
-
+            TestSetUp();
+            service.CreateLane(new Lane(250, true, true));
+            Assert.AreNotEqual(service.GetLaneByNumber(250), null);
         }
 
+
+
+
+        [TestMethod]
+        public void GetLaneByNumberInexistant()
+        {
+            TestSetUp();
+            service.DeleteLane(300);
+            Assert.AreEqual(service.GetLaneByNumber(300), null);
+        }
 
 
         [TestMethod]
         public void CreateLaneTestAcceptableValues()
         {
-
+            TestSetUp();
+            service.DeleteLane(250);
+            Assert.AreEqual(service.CreateLane(new Lane(250, true, true)), true);
         }
 
 
@@ -74,15 +62,68 @@ namespace TennisTest
         [TestMethod]
         public void CreateLaneTestUnacceptableValues()
         {
+            TestSetUp();
+            service.DeleteLane(250);
+            bool created = service.CreateLane(new Lane(299, true, true));
 
+            Assert.AreEqual( created,false);
+        }
+
+        [TestMethod]
+        public void CreateLaneTest2TimesTheSame()
+        {
+            TestSetUp();
+            service.DeleteLane(250);
+            int numberbefore = service.GetAllLanes().Count;
+            service.CreateLane(new Lane(250, true, true));
+            service.CreateLane(new Lane(250, true, true));
+            Assert.AreEqual(service.GetAllLanes().Count, numberbefore + 1);
         }
 
 
         [TestMethod]
-        public void TestMethod3()
+        public void DeleteLaneTestExisting()
+        {
+            TestSetUp();
+            service.CreateLane(new Lane(250, true, true));
+            
+            Assert.AreEqual(true, service.DeleteLane(250));
+        }
+
+
+
+        [TestMethod]
+        public void DeleteLaneTestInexisting()
+        {
+            TestSetUp();
+            service.DeleteLane(150);
+            Assert.AreEqual(false, service.DeleteLane(150));
+        }
+
+
+        [TestMethod]
+        public void EditLaneTestAcceptable()
+        {
+            TestSetUp();
+            service.CreateLane(new Lane(250, true, true));
+            Assert.AreEqual(service.EditLane(new Lane(250, true, true), 250), true);
+        }
+
+
+        [TestMethod]
+        public void EditLaneTestUnAcceptableNotExistingID()
+        {
+            TestSetUp();
+            service.DeleteLane(250);
+            Assert.AreEqual(service.EditLane(new Lane(250, true, true), 250), false);
+        }
+
+
+
+        [TestMethod]
+        public void TestMethod1()
         {
 
         }
-
     }
 }
