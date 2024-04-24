@@ -3,3 +3,38 @@
 @{
     ViewData["Title"] = "Opret ny bruger";
 }
+<p class="text-danger">@Model.DatabaseString</p>
+<form method="post">
+    <div class="form-group">
+        <label asp-for="@Model.NewUser.Username" class="control-label"></label>
+        <input asp-for="@Model.NewUser.Username" class="form-control" />
+        <span asp-validation-for="NewUser.Username" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="@Model.NewUser.Password" class="control-label"></label>
+        <input asp-for="@Model.NewUser.Password" class="form-control" />
+        <span asp-validation-for="NewUser.Password" class="text-danger"></span>
+        <span class="text-info">HUSK: Brugeren skal ændre deres eget password</span>
+    </div>
+    <div class="form-group">
+        <label asp-for="@Model.NewUser.FirstName" class="control-label"></label>
+        <input asp-for="@Model.NewUser.FirstName" class="form-control" />
+        <span asp-validation-for="NewUser.FirstName" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="@Model.NewUser.LastName" class="control-label"></label>
+        <input asp-for="@Model.NewUser.LastName" class="form-control" />
+        <span asp-validation-for="NewUser.LastName" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="@Model.NewUser.Email" class="control-label"></label>
+        <input asp-for="@Model.NewUser.Email" class="form-control" />
+    </div>
+    <div class="form-group">
+        <label asp-for="@Model.NewUser.Phone" class="control-label"></label>
+        <input asp-for="@Model.NewUser.Phone" class="form-control" />
+    </div>
+    <div class="form-group">
+        <input type="submit" value="Tilføj bruger" class="btn btn-primary" />
+        </div>
+</form>

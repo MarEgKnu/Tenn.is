@@ -4,7 +4,6 @@ namespace Tennis.Models
 {
     public class User
     {
-
         public int UserId { get; set; }
         [Display(Name = "Brugernavn")]
         [Required(ErrorMessage = "Udfyld brugernavn")]
@@ -32,6 +31,11 @@ namespace Tennis.Models
             Password = password;
             Phone = phone;
             Administrator = admin;
+        }
+
+        public User()
+        {
+            
         }
     }
 }

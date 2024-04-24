@@ -19,16 +19,23 @@ namespace Tennis.Pages.Users
             _userService = userservice;
         }
 
-        public IActionResult OnGet()
+        public void OnGet()
+        {
+
+        }
+        public IActionResult OnPost() 
         {
             if (!ModelState.IsValid)
             {
                 return Page();
             }
+            NewUser.Administrator = false;
+            NewUser.UserId = _userService.GetAllUsers().Count();
             if (_userService.CreateUser(NewUser))
             {
                 return RedirectToPage("Overview");
-            } else
+            }
+            else
             {
                 DatabaseString = "Bruger findes allerede i systemet";
                 return Page();
