@@ -301,5 +301,121 @@ namespace TennisTest
 
 
 
+
+
+
+
+
+
+
+
+
+        public void GetEventsByConditionsOtherCTOR_Fail_ConditionNull()
+        {
+            TestSetUp();
+            List<Event> events = new List<Event>();
+            List<Predicate<Event>> conditions = new List<Predicate<Event>>();
+            conditions.Add(null);
+
+            Event newEvent = new Event(1, "epic event", 0, "big event", new TimeBetween(new DateTime(2030, 12, 6), new DateTime(2030, 12, 7)));
+            Event newEvent2 = new Event(2, "epic event", 0, "big eveneet", new TimeBetween(new DateTime(2030, 12, 6), new DateTime(2030, 12, 7)));
+            Event newEvent3 = new Event(2, "not epic event", 0, "big eveneet", new TimeBetween(new DateTime(2030, 12, 6), new DateTime(2030, 12, 7)));
+            events.Add(newEvent);
+            events.Add(newEvent2);
+            events.Add(newEvent3);
+            events = eventService.GetEventsOnConditions(conditions, events);
+
+            Assert.AreEqual(3, events.Count);
+        }
+
+
+        [TestMethod]
+        public void GetEventsByConditionsOtherCTOR_Failure_ListNull()
+        {
+            TestSetUp();
+
+            List<Predicate<Event>> conditions = null;
+            List<Event> events = new List<Event>();
+            Event newEvent = new Event(1, "epic event", 0, "big event", new TimeBetween(new DateTime(2030, 12, 6), new DateTime(2030, 12, 7)));
+            Event newEvent2 = new Event(2, "epic event", 0, "big eveneet", new TimeBetween(new DateTime(2030, 12, 6), new DateTime(2030, 12, 7)));
+            Event newEvent3 = new Event(2, "not epic event", 0, "big eveneet", new TimeBetween(new DateTime(2030, 12, 6), new DateTime(2030, 12, 7)));
+            events.Add(newEvent);
+            events.Add(newEvent2);
+            events.Add(newEvent3);
+            events = eventService.GetEventsOnConditions(conditions, events);
+
+            Assert.AreEqual(3, events.Count);
+        }
+
+
+        [TestMethod]
+        public void GetEventsByConditionsOtherCTOR_Success_SearchTitle()
+        {
+            TestSetUp();
+            List<Event> events = new List<Event>();
+            List<Predicate<Event>> conditions = new List<Predicate<Event>>();
+
+            conditions.Add(new Predicate<Event>(e => e.Title == "epic event"));
+
+            Event newEvent = new Event(1, "epic event", 0, "big event", new TimeBetween(new DateTime(2030, 12, 6), new DateTime(2030, 12, 7)));
+            Event newEvent2 = new Event(2, "epic event", 0, "big eveneet", new TimeBetween(new DateTime(2030, 12, 6), new DateTime(2030, 12, 7)));
+            Event newEvent3 = new Event(2, "not epic event", 0, "big eveneet", new TimeBetween(new DateTime(2030, 12, 6), new DateTime(2030, 12, 7)));
+            events.Add(newEvent);
+            events.Add(newEvent2);
+            events.Add(newEvent3);
+            events = eventService.GetEventsOnConditions(conditions, events);
+
+            Assert.AreEqual(2, events.Count);
+            Assert.AreEqual(events[0].Title, "epic event");
+            Assert.AreEqual(events[1].Title, "epic event");
+        }
+
+
+        [TestMethod]
+        public void GetEventsByConditionsOtherCTOR_Success_SearchTitleANDDescription()
+        {
+            TestSetUp();
+            List<Event> events = new List<Event>();
+            List<Predicate<Event>> conditions = new List<Predicate<Event>>();
+            conditions.Add(new Predicate<Event>(e => e.Title == "epic event"));
+            conditions.Add(new Predicate<Event>(e => e.Description == "big event"));
+            Event newEvent = new Event(1, "epic event", 0, "big event", new TimeBetween(new DateTime(2030, 12, 6), new DateTime(2030, 12, 7)));
+            Event newEvent2 = new Event(2, "epic event", 0, "big eveneet", new TimeBetween(new DateTime(2030, 12, 6), new DateTime(2030, 12, 7)));
+            Event newEvent3 = new Event(2, "not epic event", 0, "big eveneet", new TimeBetween(new DateTime(2030, 12, 6), new DateTime(2030, 12, 7)));
+            events.Add(newEvent);
+            events.Add(newEvent2);
+            events.Add(newEvent3);
+            events = eventService.GetEventsOnConditions(conditions, events);
+
+            Assert.AreEqual(1, events.Count);
+            Assert.AreEqual(events[0].Title, "epic event");
+            Assert.AreEqual(events[0].Description, "big event");
+        }
+        [TestMethod]
+        public void GetEventsByConditionsOtherCTOR_Success_EmptyList()
+        {
+            TestSetUp();
+            List<Event> events = new List<Event>();
+            List<Predicate<Event>> conditions = new List<Predicate<Event>>();
+
+            Event newEvent = new Event(1, "epic event", 0, "big event", new TimeBetween(new DateTime(2030, 12, 6), new DateTime(2030, 12, 7)));
+            Event newEvent2 = new Event(2, "epic event", 0, "big eveneet", new TimeBetween(new DateTime(2030, 12, 6), new DateTime(2030, 12, 7)));
+            Event newEvent3 = new Event(2, "not epic event", 0, "big eveneet", new TimeBetween(new DateTime(2030, 12, 6), new DateTime(2030, 12, 7)));
+            events.Add(newEvent);
+            events.Add(newEvent2);
+            events.Add(newEvent3);
+            events = eventService.GetEventsOnConditions(conditions, events);
+
+            Assert.AreEqual(3, events.Count);
+        }
+
+
+
+
+
+
+
+
+
     }
 }

@@ -69,7 +69,6 @@ namespace Tennis.Pages.Events
                 if (AdvancedSearch)
                 {
                     FilterEventsAdvanced();
-                    //HttpContext.Session.Set<string[]>("RecentHotelSearch", new string[] { NameFilter, AddressFilter, IDFilter });
                 }
                 else
                 {
@@ -189,7 +188,7 @@ namespace Tennis.Pages.Events
             {
                 conditions.Add(e => e.CancellationThresholdMinutes == CancellationThresholdFilter);
             }
-            Events = _eventService.GetEventsOnConditions(conditions);
+            Events = _eventService.GetEventsOnConditions(conditions, Events);
         }
     }
 }

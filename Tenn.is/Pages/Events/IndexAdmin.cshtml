@@ -4,7 +4,7 @@
 @{
     ViewData["Title"] = "Events kontrolpanel";
 }
-
+<p style="color:red">@ViewData["ErrorMessage"]</p>
 <form method="get">
 
     <input asp-for="AdvancedSearch" onclick="this.form.submit()" />
