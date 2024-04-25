@@ -15,7 +15,7 @@ namespace Tennis.Helpers
             }
             else if (endTime <= startTime)
             {
-                throw new ArgumentException("Start Time is larger than End Time");
+                throw new ArgumentException("Starttid kan ikke være senere end sluttid");
             }
             else
             {
@@ -28,7 +28,7 @@ namespace Tennis.Helpers
         private DateTime? _startTime;
 
         private DateTime? _endTime;
-        [Required, DisplayFormat(DataFormatString = "{0:yyyy-MM-ddTHH:mm}", ApplyFormatInEditMode = true)]
+        [Required(ErrorMessage = "Startid er krævet"), DisplayFormat(DataFormatString = "{0:yyyy-MM-ddTHH:mm}", ApplyFormatInEditMode = true)]
         public DateTime? StartTime
         {
             get { return _startTime; }
@@ -40,7 +40,7 @@ namespace Tennis.Helpers
                 }
                 else if (value >= EndTime)
                 {
-                    throw new ArgumentException("Start Time is larger than End Time");
+                    throw new ArgumentException("Starttid kan ikke være senere end sluttid");
                 }
                 else
                 {
@@ -49,7 +49,7 @@ namespace Tennis.Helpers
                 
             }
         }
-        [Required, DisplayFormat(DataFormatString = "{0:yyyy-MM-ddTHH:mm}", ApplyFormatInEditMode = true)]
+        [Required(ErrorMessage = "Sluttid er krævet"), DisplayFormat(DataFormatString = "{0:yyyy-MM-ddTHH:mm}", ApplyFormatInEditMode = true)]
         public DateTime? EndTime
         {
             get { return _endTime; }
@@ -60,7 +60,7 @@ namespace Tennis.Helpers
                 }
                 else if (value <= StartTime)
                 {
-                    throw new ArgumentException("Start Time is larger than End Time");
+                    throw new ArgumentException("Starttid kan ikke være senere end sluttid");
                 }
                 else
                 {
@@ -82,7 +82,7 @@ namespace Tennis.Helpers
             }
             else if (endTime <= startTime)
             {
-                throw new ArgumentException("Start Time is larger than End Time");
+                throw new ArgumentException("Starttid kan ikke være senere end sluttid");
             }
             else
             {
@@ -91,23 +91,39 @@ namespace Tennis.Helpers
             }
         }
 
-        public bool IsInPast
+        public RelativeTime TimeState
         {
             get
             {
-                return EndTime < DateTime.Now;
+                if (EndTime < DateTime.Now)
+                {
+                    return RelativeTime.Past;
+                }
+                else if (StartTime > DateTime.Now)
+                {
+                    return RelativeTime.Future;
+                }
+                else
+                {
+                    return RelativeTime.Ongoing;
+                }
+                
             }
         }
-        public bool Ongoing
-        {   
-            get
-            {
-                return EndTime >= DateTime.Now && StartTime <= DateTime.Now;
-            }
-        }
-        public bool OngoingAt(DateTime date)
+        public RelativeTime TimeStateAt(DateTime date)
         {
-            return EndTime >= date && StartTime <= date;
+            if (EndTime < date)
+            {
+                return RelativeTime.Past;
+            }
+            else if (StartTime > date)
+            {
+                return RelativeTime.Future;
+            }
+            else
+            {
+                return RelativeTime.Ongoing;
+            }   
         }
 
     }

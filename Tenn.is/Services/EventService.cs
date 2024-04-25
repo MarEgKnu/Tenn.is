@@ -46,7 +46,7 @@ namespace Tennis.Services
             {
                 return false;
             }
-            else if (evt.IsInPast)
+            else if (evt.EventState == RelativeTime.Past)
             {
                 throw new InvalidTimeException("Event cannot be created in the past");
             }
@@ -118,7 +118,7 @@ namespace Tennis.Services
             {
                 return false;
             }
-            else if (evt.IsInPast)
+            else if (evt.EventState == RelativeTime.Past)
             {
                 throw new InvalidTimeException("Event cannot be edited to be in the past");
             }

@@ -48,30 +48,33 @@
             <tr>
                 <th>
                     EventID<br />
-                    <input type="radio" asp-for="@Model.SortBy" value="EventID" onclick="this.form.submit()"/>
+                    Sorter: <input type="radio" asp-for="@Model.SortBy" value="EventID" onclick="this.form.submit()"/>
                 <th>
                    Titel<br />
-                    <input type="radio" asp-for="@Model.SortBy" value="Title" onclick="this.form.submit()" />
+                    Sorter: <input type="radio" asp-for="@Model.SortBy" value="Title" onclick="this.form.submit()" />
                 </th>
                 <th>
                     Beskrivelse<br />
-                    <input type="radio" asp-for="@Model.SortBy" value="Description" onclick="this.form.submit()" />
+                    Sorter: <input type="radio" asp-for="@Model.SortBy" value="Description" onclick="this.form.submit()" />
                 </th>
                 <th>
                     Aflyst<br />
-                    <input type="radio" asp-for="@Model.SortBy" value="Cancelled" onclick="this.form.submit()" />
+                    Sorter: <input type="radio" asp-for="@Model.SortBy" value="Cancelled" onclick="this.form.submit()" />
                 </th>
                 <th>
                     Starttid<br />
-                    <input type="radio" asp-for="@Model.SortBy" value="StartTime" onclick="this.form.submit()" />
+                    Sorter: <input type="radio" asp-for="@Model.SortBy" value="StartTime" onclick="this.form.submit()" />
                 </th>
                 <th>
                     Sluttid<br />
-                    <input type="radio" asp-for="@Model.SortBy" value="EndTime" onclick="this.form.submit()" />
+                    Sorter: <input type="radio" asp-for="@Model.SortBy" value="EndTime" onclick="this.form.submit()" />
                 </th>
                 <th>
                     Afmældningsgrænse<br />
-                    <input type="radio" asp-for="@Model.SortBy" value="CancellationThreshold" onclick="this.form.submit()" />
+                    Sorter: <input type="radio" asp-for="@Model.SortBy" value="CancellationThreshold" onclick="this.form.submit()" />
+                </th>
+                <th>
+                    Funktioner
                 </th>
             </tr>
         </thead>
@@ -88,23 +91,24 @@
                             @item.Title
                         </td>
                         <td>
-                            @item.Description
+                            <p style="max-width:fit-content; white-space:pre-wrap">@item.Description</p>
                         </td>
                         <td>
                             @BoolHelpers.ToJaNejValue(item.Cancelled)
                         </td>
                         <td>
-                            @item.EventTime.StartTime.Value
+                            @item.EventTime.StartTime.Value.ToString("dd/MM/yyyy HH:mm")
                         </td>
                         <td>
-                            @item.EventTime.EndTime.Value
+                            @item.EventTime.EndTime.Value.ToString("dd/MM/yyyy HH:mm")
                         </td>
                         <td>
                             @item.CancellationThresholdMinutes
                         </td>
                         <td>
                             <p>
-                                
+                                <a class="button" asp-page="/Events/DeleteEvent" asp-route-eventID="@item.EventID">Slet Event</a>
+                                <a class="button" asp-page="/Events/EditEvent" asp-route-eventID="@item.EventID">Rediger Event</a>
                             </p>
                         </td>
                     </tr>

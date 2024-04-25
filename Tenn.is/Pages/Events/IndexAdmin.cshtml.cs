@@ -53,7 +53,7 @@ namespace Tennis.Pages.Events
         }
         public void OnGet()
         {
-            // check if admin!
+            //TODO: check if admin!
             if (SortBy == PrevSortBy)
             {
                 Descending = !Descending;
@@ -182,7 +182,7 @@ namespace Tennis.Pages.Events
             }
             if (DateFilter != null)
             {
-                conditions.Add(e => e.OngoingAt(DateFilter.Value));
+                conditions.Add(e => e.EventStateAt(DateFilter.Value) == RelativeTime.Ongoing);
             }
             if (CancellationThresholdFilter != null)
             {

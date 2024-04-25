@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Data.SqlClient;
+using Tennis.Helpers;
 using Tennis.Interfaces;
 using Tennis.Models;
 
@@ -22,11 +23,13 @@ namespace Tennis.Pages.Events
         }
         public IActionResult OnPost()
         {
-            if (Event.IsInPast)
+            //TODO: check if admin
+            if (Event.EventState == RelativeTime.Past)
             {
                 //TODO: better error messages for if starttime is bigger than endtime
-                ModelState.AddModelError(nameof(Event.EventTime.EndTime), "Kan ikke oprette events i fortid");
+                ModelState.AddModelError("Event.EventTime.EndTime", "Kan ikke oprette events i fortid");
             }
+            ModelState.ExceptionToErrorMessage();
             if (!ModelState.IsValid)
             {
                 return Page();

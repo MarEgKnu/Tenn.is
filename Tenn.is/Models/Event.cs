@@ -24,44 +24,35 @@ namespace Tennis.Models
             Cancelled = false;
         }
         public int EventID { get; set; }
-        [Required]
+        [Required(ErrorMessage = "Titel er krævet")]
         [StringLength(60)]
         public string Title { get; set; }
 
         public bool Cancelled { get; set; }
-        [Required]
+        [Required(ErrorMessage = "Afmældningsgrænse er krævet")]
         public int CancellationThresholdMinutes { get; set; }
-        [Required]
+        [Required(ErrorMessage = "Beskrivelse er krævet")]
         [StringLength(2000)]
         public string Description { get; set; }
 
         public TimeBetween EventTime {  get; set; }
-
-        public bool IsInPast
+        /// <summary>
+        /// Returns a RelativeTime enum, representing if the event is currently ongoing, in the past, or in the future
+        /// </summary>
+        public RelativeTime EventState
         {
             get
             {
-                return EventTime.IsInPast;
+                return EventTime.TimeState;
             }
         }
         /// <summary>
-        /// Checks if the event is ongoing at current time
+        /// Returns a RelativeTime enum, representing if the event is ongoing, in the past, or in the future at the specified time
         /// </summary>
-        public bool Ongoing
+        public RelativeTime EventStateAt(DateTime date)
         {
-            get
-            {
-                return EventTime.Ongoing;
-            }
-        }
-        /// <summary>
-        /// Checks if the event would be ongoing at the specified DateTime
-        /// </summary>
-        /// <param name="date"></param>
-        /// <returns></returns>
-        public bool OngoingAt(DateTime date)
-        {
-            return EventTime.OngoingAt(date);
+            return EventTime.TimeStateAt(date);
+            
         }
     }
 }
