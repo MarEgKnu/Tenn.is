@@ -1,0 +1,30 @@
+﻿@page
+@model Tennis.Pages.Lanes.LaneUpdateModel
+@{
+    ViewData["Title"] = "LaneUpdate";
+}
+
+<h1>Update Lane</h1>
+<div class="row">
+    <div class="col-md-4">
+        <form method="post">
+            <div class="form-group">
+                <label asp-for="@Model.LaneToUpdate.Id" class="control-label"></label>
+                <input asp-for="@Model.LaneToUpdate.Id" class="form-control" />
+            </div>
+            <div class="form-group">
+                <label asp-for="@Model.LaneToUpdate.Outdoor" class="control-label"></label>
+                <input asp-for="@Model.LaneToUpdate.Outdoor" class="form-control" />
+            </div>
+            <div class="form-group">
+                <label asp-for="@Model.LaneToUpdate.PadelTennis" class="control-label"></label>
+                <input asp-for="@Model.LaneToUpdate.PadelTennis" class="form-control" />
+            </div>
+
+            <div class="form-group">
+                <input type="submit" value="Update" class="btn btn-primary" />
+                <input type="submit" value="Cancel" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>

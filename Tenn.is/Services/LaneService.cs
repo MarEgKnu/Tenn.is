@@ -38,7 +38,7 @@ namespace Tennis.Services
             using (SqlConnection connection = new SqlConnection(connectionString))
                 try
                 {
-                    SqlCommand command = new SqlCommand("SELECT * FROM Lanes", connection);
+                    SqlCommand command = new SqlCommand(SelectAllSQL, connection);
                     command.Connection.Open();
                     SqlDataReader reader = command.ExecuteReader();
                     while (reader.Read())
@@ -63,8 +63,8 @@ namespace Tennis.Services
             using (SqlConnection connection = new SqlConnection(connectionString))
                 try
                 {
-                    SqlCommand command = new SqlCommand("SELECT * FROM DBO.Users", connection);
-                    //command.Parameters.AddWithValue("@ID", id);
+                    SqlCommand command = new SqlCommand(SelectLaneByIdSQL, connection);
+                    command.Parameters.AddWithValue("@ID", id);
                     command.Connection.Open();
                     SqlDataReader reader = command.ExecuteReader();
                     while (reader.Read())
