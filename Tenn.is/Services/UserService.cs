@@ -10,9 +10,9 @@ namespace Tennis.Services
 
         private string getAllSQL = "SELECT * FROM Users";
         private string getByIdSQL = "SELECT * FROM Users WHERE UserID = @UID";
-        private string insertSQL = "INSERT INTO Users VALUES (@UID, @UNAME, @FNAME, @LNAME, @PWORD, @EMAIL, @PHONE, @ADMIN)";
+        private string insertSQL = "INSERT INTO Users VALUES (@UID, @UNAME, @FNAME, @LNAME, @PWORD, @EMAIL, @PHONE, @ADMIN, @RWORD)";
         private string deleteSQL = "DELETE FROM Users WHERE UserID = @UID";
-        private string editSQL = "UPDATE Users SET UserName = @UNAME, FirstName = @FNAME, LastName = @LNAME, Password = @PWORD, Phone = @PHONE, Email = @EMAIL, Administrator = @ADMIN WHERE UserID = @UID";
+        private string editSQL = "UPDATE Users SET UserName = @UNAME, FirstName = @FNAME, LastName = @LNAME, Password = @PWORD, Phone = @PHONE, Email = @EMAIL, Administrator = @ADMIN, RandomPassword = @RWORD WHERE UserID = @UID";
         public UserService()
         {
             connectionString = Secret.ConnectionStringTest;
@@ -49,6 +49,7 @@ namespace Tennis.Services
                         command.Parameters.AddWithValue("@EMAIL", user.Email);
                         command.Parameters.AddWithValue("@PHONE", user.Phone);
                         command.Parameters.AddWithValue("@ADMIN", user.Administrator);
+                        command.Parameters.AddWithValue("@RWORD", user.RandomPassword);
                         command.Connection.Open();
                         int noOfRows = command.ExecuteNonQuery();
                         return noOfRows == 1;
@@ -56,10 +57,12 @@ namespace Tennis.Services
                     catch (SqlException sqlExp)
                     {
                         Console.WriteLine("Database error" + sqlExp.Message);
+                        throw sqlExp;
                     }
                     catch (Exception ex)
                     {
                         Console.WriteLine("General error" + ex.Message);
+                        throw ex;
                     }
                 }
                 return false;
@@ -91,10 +94,12 @@ namespace Tennis.Services
                 catch (SqlException sqlExp)
                 {
                     Console.WriteLine("Database error" + sqlExp.Message);
+                    throw sqlExp;
                 }
                 catch (Exception ex)
                 {
                     Console.WriteLine("General error" + ex.Message);
+                    throw ex;
                 }
 
             }
@@ -122,6 +127,7 @@ namespace Tennis.Services
                         command.Parameters.AddWithValue("@EMAIL", user.Email);
                         command.Parameters.AddWithValue("@PHONE", user.Phone);
                         command.Parameters.AddWithValue("@ADMIN", user.Administrator);
+                        command.Parameters.AddWithValue("@RWORD", user.RandomPassword);
                         command.Connection.Open();
                         int noOfRows = command.ExecuteNonQuery();
                         return noOfRows == 1;
@@ -129,10 +135,12 @@ namespace Tennis.Services
                     catch (SqlException sqlExp)
                     {
                         Console.WriteLine("Database error" + sqlExp.Message);
+                        throw sqlExp;
                     }
                     catch (Exception ex)
                     {
                         Console.WriteLine("General error" + ex.Message);
+                        throw ex;
                     }
                 }
                 return false;
@@ -159,15 +167,18 @@ namespace Tennis.Services
                         string email = reader.GetString("Email");
                         string phone = reader.GetString("Phone");
                         bool admin = reader.GetBoolean("Administrator");
-                        users.Add(new User(userID, username, firstname, lastname, email, password, phone, admin));
+                        bool randompassword = reader.GetBoolean("RandomPassword");
+                        users.Add(new User(userID, username, firstname, lastname, email, password, phone, admin, randompassword));
                     }
                     reader.Close();
                 } catch (SqlException sqlExp) { 
                 Console.WriteLine("Database error" + sqlExp.Message);
+                    throw sqlExp;
                 }
                 catch (Exception ex)
                 {
                     Console.WriteLine("General error" +  ex.Message);
+                    throw ex;
                 }
             }
             return users;
@@ -193,17 +204,20 @@ namespace Tennis.Services
                         string email = reader.GetString("Email");
                         string phone = reader.GetString("Phone");
                         bool admin = reader.GetBoolean("Administrator");
-                        user = new(id, username, firstname, lastname, email, password, phone, admin);
+                        bool randompassword = reader.GetBoolean("RandomPassword");
+                        user = new(id, username, firstname, lastname, email, password, phone, admin, randompassword);
                     }
                     reader.Close();
                 }
                 catch (SqlException sqlExp)
                 {
                     Console.WriteLine("Database error" + sqlExp.Message);
+                    throw sqlExp;
                 }
                 catch (Exception ex)
                 {
                     Console.WriteLine("General error" + ex.Message);
+                    throw ex;
                 }
             }
             return user;
@@ -229,7 +243,7 @@ namespace Tennis.Services
             string password = "";
             var random = new Random();
             string validChars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-            for (int i = 0; i < 9; i++)
+            for (int i = 0; i < 8; i++)
             {
                 password += validChars[random.Next(0, validChars.Length)];
             }

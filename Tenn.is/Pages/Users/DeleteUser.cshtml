@@ -1,0 +1,35 @@
+﻿@page
+@model Tennis.Pages.Users.DeleteUserModel
+@{
+    ViewData["Title"] = "Fjern bruger";
+}
+
+<h1 class="display-4">Fjern bruger</h1>
+
+<p class="text-danger">@Model.DbMessage</p>
+
+<p><b>Du er ved at slette følgende bruger:</b></p>
+<form method="post">
+    <div class="form-group">
+        <label>Brugernavn:</label> @Model.UserToDelete.Username <br />
+        <label>Navn:</label> @Model.UserToDelete.FirstName @Model.UserToDelete.LastName <br />
+        <label>Brugertype:</label> @if (Model.UserToDelete.UserId == 0)
+        {
+            <span class="text-danger">System admin. Kan ikke slettes</span>
+        } else if (Model.UserToDelete.UserId < 0)
+        {
+            <span class="text-info">Utility</span>
+        } else if (Model.UserToDelete.Administrator)
+        {
+            <span class="text-secondary">Administrator. Kan kun slettes af system admin</span>
+        } else
+        {
+            <span>Standard bruger</span>
+        }
+        <br />
+
+        <input type="submit" asp-page-handler="Delete" asp-route-userid="@Model.UserToDelete.UserId" class="btn btn-danger" value="Fjern bruger" />
+
+        <input type="submit" asp-page-handler="Cancel" class="btn btn-outline-secondary" value="Fortryd" />
+    </div>
+</form>

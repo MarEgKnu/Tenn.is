@@ -8,6 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Data.SqlClient;
 using Tennis.Interfaces;
+using Microsoft.Data.SqlClient;
 
 namespace Tennis.Services.Tests
 {
@@ -29,7 +30,7 @@ namespace Tennis.Services.Tests
         public void CreateUserTest_Valid()
         {
             //Setup
-            User user = new User(101, "test", "Test", "Testson", "test", "testestest", "1234", false);
+            User user = new User(101, "test", "Test", "Testson", "test", "testestest", "1234", false, false);
             int before = 0;
             int after = 0;
             //Execution + cleanup
@@ -43,10 +44,11 @@ namespace Tennis.Services.Tests
         }
 
         [TestMethod()]
+        [ExpectedException(typeof(SqlException))]
         public void CreateUserTest_Invalid_AlreadyExists()
         {
             //Setup
-            User user = new User(201, "test", "Test", "Testson", "test", "testestest", "1234", false);
+            User user = new User(201, "test", "Test", "Testson", "test", "testestest", "1234", false, false);
 
             int before = 0;
             int after = 0;
@@ -64,7 +66,7 @@ namespace Tennis.Services.Tests
         public void CreateUserTest_Invalid_BadID()
         {
             //Setup
-            User user = new User(0, "test", "Test", "Testson", "test", "testestest", "1234", false);
+            User user = new User(0, "test", "Test", "Testson", "test", "testestest", "1234", false, false);
 
             int before = 0;
             int after = 0;
@@ -81,7 +83,7 @@ namespace Tennis.Services.Tests
         public void GetUserByIdTest_Valid()
         {
             //Setup
-            User originaluser = new User(102, "test", "Test", "Testson", "test", "testestest", "1234", false);
+            User originaluser = new User(102, "test", "Test", "Testson", "test", "testestest", "1234", false, false);
             UserService service = new UserService(true);
             service.CreateUser(originaluser);
 
@@ -96,7 +98,7 @@ namespace Tennis.Services.Tests
         public void GetUserByIdTest_Invalid_NoUserfound()
         {
             //Setup
-            User originaluser = new User(202, "test", "Test", "Testson", "test", "testestest", "1234", false);
+            User originaluser = new User(202, "test", "Test", "Testson", "test", "testestest", "1234", false, false);
             UserService service = new UserService(true);
             service.CreateUser(originaluser);
 
@@ -112,7 +114,7 @@ namespace Tennis.Services.Tests
         public void DeleteUserTest_Valid()
         {
             //Setup
-            User user = new User(103, "test", "Test", "Testson", "test", "testestest", "1234", false);
+            User user = new User(103, "test", "Test", "Testson", "test", "testestest", "1234", false, false);
 
             int before = 0;
             int after = 0;
@@ -164,14 +166,14 @@ namespace Tennis.Services.Tests
         public void EditUserTest_Valid()
         {
             //Setup
-            User user = new User(104, "test", "Test", "Testson", "test", "testestest", "1234", false);
+            User user = new User(104, "test", "Test", "Testson", "test", "testestest", "1234", false, false);
 
 
             UserService userService = new UserService(true);
             userService.CreateUser(user);
 
             //Execution + cleanup
-            User newuser = new User(104, "test", "Test", "Testson", "newmail", "testestest", "1234", false);
+            User newuser = new User(104, "test", "Test", "Testson", "newmail", "testestest", "1234", false, false);
 
             userService.EditUser(newuser, user.UserId);
 
@@ -184,13 +186,13 @@ namespace Tennis.Services.Tests
         public void EditUserTest_Invalid_IDNotFound()
         {
             //Setup
-            User user = new User(204, "test", "Test", "Testson", "test", "testestest", "1234", false);
+            User user = new User(204, "test", "Test", "Testson", "test", "testestest", "1234", false, false);
 
             UserService userService = new UserService(true);
             userService.CreateUser(user);
 
             //Execution + cleanup
-            User newuser = new User(210, "test", "Test", "Testson", "newmail", "testestest", "1234", false);
+            User newuser = new User(210, "test", "Test", "Testson", "newmail", "testestest", "1234", false, false);
 
             userService.EditUser(newuser, newuser.UserId);
 
@@ -220,7 +222,7 @@ namespace Tennis.Services.Tests
             string password = userService.RandomPassword();
 
             //Assert
-            Assert.AreEqual(9, password.Length);
+            Assert.AreEqual(8, password.Length);
         }
 
 

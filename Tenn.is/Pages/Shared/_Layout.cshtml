@@ -9,6 +9,14 @@
     <link rel="stylesheet" href="~/Tenn.is.styles.css" asp-append-version="true" />
 </head>
 <body>
+    @if (ViewData["ErrorMessage"] != null)
+    {
+        <script type="text/javascript">
+            window.onload = function () {
+                alert("Der skete en fejl ved forbindelse til databasen. Kontakt venligst IT-administrator med denne info: @ViewData["ErrorMessage"]");
+            }
+        </script>
+    }
     <header>
         <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
             <div class="container">

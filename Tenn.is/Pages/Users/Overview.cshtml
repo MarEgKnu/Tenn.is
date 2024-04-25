@@ -12,6 +12,9 @@
                 Bruger ID + navn
             </th>
             <th>
+                Genereret password
+            </th>
+            <th>
                 Fuldt navn
             </th>
             <th>
@@ -35,6 +38,12 @@
                         @item.UserId<span>: </span>@item.Username
                     </td>
                     <td>
+                        @if (item.RandomPassword)
+                        {
+                            @item.Password;
+                        }
+                    </td>
+                    <td>
                         @item.FirstName<br />@item.LastName
                     </td>
                     <td>
@@ -49,7 +58,17 @@
                         <td></td>
                     }
                     <td>
-                        <a asp-page="UpdateUser" asp-route-userid="@item.UserId" class="btn btn-secondary w-100">Opdater</a><br /><a asp-page="DeleteUser" asp-route-userid="@item.UserId" class="btn btn-secondary w-100" style="margin-top: 10px">Fjern</a>
+                        @if(item.UserId == 0)
+                        {
+                            <button class="btn btn-outline-secondary disabled w-100">Opdater</button>
+
+                            <br />
+
+                            <button class="btn btn-outline-secondary disabled w-100" style="margin-top: 10px">
+                                Fjern</button>
+                        } else {
+                        <a asp-page="UpdateUser" asp-route-userid="@item.UserId" class="btn btn-outline-success w-100">Opdater</a><br /><a asp-page="DeleteUser" asp-route-userid="@item.UserId" class="btn btn-outline-warning w-100" style="margin-top: 10px">Fjern</a>
+                        }
                     </td>
                 </tr>
             }

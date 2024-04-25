@@ -1,0 +1,51 @@
+﻿@page
+@model Tennis.Pages.Users.UpdateUserModel
+@{
+    ViewData["Title"] = "Opdater bruger";
+}
+<p class="text-danger">@Model.Message</p>
+<form method="post">
+     <input type="hidden" asp-for="@Model.UserToUpdate.UserId" />
+    <div class="form-group">
+        <label asp-for="@Model.UserToUpdate.Username" class="control-label"></label>
+        <input asp-for="@Model.UserToUpdate.Username" class="form-control" />
+        <span asp-validation-for="UserToUpdate.Username" class="text-danger"></span>
+    </div>
+        <div class="form-group">
+
+    <label asp-for="@Model.UserToUpdate.Password" class="control-label"></label>
+    <input asp-for="@Model.UserToUpdate.Password" class="form-control" />
+    <span asp-validation-for="UserToUpdate.Password" class="text-danger"></span>
+        @if (Model.UserToUpdate.RandomPassword)
+        {
+            <span class="text-success">Vi anbefaler at du ændrer dit password til noget, du selv kan huske. Nyt password skal være mindst 9 karakterer langt.</span>
+        }
+
+    </div>
+    <div class="form-group">
+        <label asp-for="@Model.UserToUpdate.FirstName" class="control-label"></label>
+        <input asp-for="@Model.UserToUpdate.FirstName" class="form-control" />
+        <span asp-validation-for="UserToUpdate.FirstName" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="@Model.UserToUpdate.LastName" class="control-label"></label>
+        <input asp-for="@Model.UserToUpdate.LastName" class="form-control" />
+        <span asp-validation-for="UserToUpdate.LastName" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="@Model.UserToUpdate.Email" class="control-label"></label>
+        <input asp-for="@Model.UserToUpdate.Email" class="form-control" />
+    </div>
+    <div class="form-group">
+        <label asp-for="@Model.UserToUpdate.Phone" class="control-label"></label>
+        <input asp-for="@Model.UserToUpdate.Phone" class="form-control" />
+    </div>
+    <div class="form-check form-switch">
+        <input type="checkbox" asp-for="@Model.UserToUpdate.Administrator" id="" class="form-check-input" />
+        <label asp-for="@Model.UserToUpdate.Administrator" class="form-check-label"></label>
+    </div>
+    <div class="form-group">
+        <input type="submit" asp-page-handler="Update" asp-route-userid="@Model.UserToUpdate.UserId" value="Opdater" class="btn btn-outline-success" />
+        <input type="submit" asp-page-handler="Cancel" value="Fortryd" class="btn btn-outline-warning" />
+    </div>
+</form>
