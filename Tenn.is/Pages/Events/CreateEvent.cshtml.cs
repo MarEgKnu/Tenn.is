@@ -13,7 +13,7 @@ namespace Tennis.Pages.Events
         public CreateEventModel(IEventService eventService)
         {
             _eventService = eventService;
-            Event = new Event(1, "", 0, "", new Helpers.TimeBetween(DateTime.Now, DateTime.Now.AddHours(1)));
+            Event = new Event(1, "", 0, "", new Helpers.TimeBetween(DateTime.Now, DateTime.Now.AddHours(1)), false);
         }
         [BindProperty]
         public Event Event { get; set; }

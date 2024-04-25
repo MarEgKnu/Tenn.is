@@ -23,6 +23,18 @@ namespace Tennis.Models
             EventTime = eventTime;
             Cancelled = false;
         }
+
+        public Event(int eventId, string title, int cancellationThresholdMinutes, string description, TimeBetween eventTime, bool cancelled)
+        {
+            EventID = eventId;
+            Title = title;
+            CancellationThresholdMinutes = cancellationThresholdMinutes;
+            Description = description;
+            EventTime = eventTime;
+            Cancelled = cancelled;
+        }
+
+
         public int EventID { get; set; }
         [Required(ErrorMessage = "Titel er krævet")]
         [StringLength(60)]

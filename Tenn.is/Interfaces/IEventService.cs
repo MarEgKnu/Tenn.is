@@ -4,6 +4,11 @@ namespace Tennis.Interfaces
 {
     public interface IEventService
     {
+        public event Action<Event> OnCancelling;
+        public event Action<Event> OnCreate;
+        public event Action<Event> OnDelete;
+        public event Action<Event> OnEdit;
+
         bool CreateEvent(Event evt);
 
         bool DeleteEvent(int id);

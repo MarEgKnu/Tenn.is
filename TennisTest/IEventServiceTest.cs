@@ -42,6 +42,15 @@ namespace TennisTest
             Assert.AreEqual("epic event", newEvents[0].Title);
             Assert.AreEqual("big event", newEvents[0].Description);
         }
+        [TestMethod]
+        public void CreateEventTest_Fail_Null()
+        {
+            TestSetUp();
+    
+            bool sucess = eventService.CreateEvent(null);
+            Assert.IsFalse(sucess);
+           
+        }
         [ExpectedException(typeof(ArgumentException))]
         [TestMethod]
         public void CreateEventTest_Fail_StartTimeBiggerThanEndTime()
@@ -148,8 +157,34 @@ namespace TennisTest
             Event afterEdit = eventService.GetEventByNumber(events[0].EventID);
             Assert.AreEqual("big event", afterEdit.Title);
             Assert.AreEqual("epic event", afterEdit.Description);
+            Assert.AreEqual(false, afterEdit.Cancelled);
             Assert.AreEqual(events[0].EventID, afterEdit.EventID);
             Assert.IsTrue(sucess);
+        }
+        [TestMethod]
+        public void EditEventTest_Fail_Null()
+        {
+            TestSetUp();
+            Event newEvent = new Event(1, "epic event", 30, "big event", new TimeBetween(new DateTime(2030, 12, 6), new DateTime(2030, 12, 7)));
+            eventService.CreateEvent(newEvent);
+            Event eventInDB = eventService.GetAllEvents().First();
+            bool sucess = eventService.EditEvent(null, eventInDB.EventID);
+            eventInDB = eventService.GetAllEvents().First();
+            Assert.IsFalse(sucess);
+            Assert.AreEqual("epic event", eventInDB.Title);
+            Assert.AreEqual("big event", eventInDB.Description);
+            Assert.AreEqual(30, eventInDB.CancellationThresholdMinutes);
+            Assert.AreEqual(false, eventInDB.Cancelled);
+
+
+        }
+        [TestMethod]
+        public void EditEventTest_Fail_CantFindEventFromID()
+        {
+            TestSetUp();
+            Event editedEvent = new Event(1, "epic eventeee", 30, "big eventeee", new TimeBetween(new DateTime(2030, 12, 6), new DateTime(2030, 12, 7)));
+            bool sucess = eventService.EditEvent(editedEvent, int.MaxValue);
+            Assert.IsFalse(sucess);
         }
 
 
@@ -409,13 +444,199 @@ namespace TennisTest
             Assert.AreEqual(3, events.Count);
         }
 
+        [TestMethod]
+        public void OnCreate_Event_Sucess()
+        {
+            bool ranEvent = false;
+            TestSetUp();
+            Action<Event> function = e =>
+            {
+                Assert.AreEqual("epic event", e.Title);
+                Assert.AreEqual(10, e.CancellationThresholdMinutes);
+                Assert.AreEqual("big event", e.Description);
+                ranEvent = true;
+
+            };
+                
+                                       
+            eventService.OnCreate += function;
+            Event newEvent = new Event(1, "epic event", 10, "big event", new TimeBetween(new DateTime(2030, 12, 5), new DateTime(2030, 12, 6)));
+            eventService.CreateEvent(newEvent);
+            eventService.OnCreate -= function;
+            Assert.IsTrue(ranEvent);  
+        }
+        [TestMethod]
+        public void OnCreate_Event_Fail_Null()
+        {
+            bool ranEvent = false;
+            TestSetUp();
+            Action<Event> function = e =>
+            {
+                
+                ranEvent = true;
+
+            };
 
 
+            eventService.OnCreate += function;
+            
+            eventService.CreateEvent(null);
+            eventService.OnCreate -= function;
+            Assert.IsFalse(ranEvent);
+
+        }
+
+        [TestMethod]
+        public void OnDelete_Event_Sucess()
+        {
+            bool ranEvent = false;
+            TestSetUp();
+            Action<Event> function = e =>
+            {
+                Assert.AreEqual("epic event", e.Title);
+                Assert.AreEqual(10, e.CancellationThresholdMinutes);
+                Assert.AreEqual("big event", e.Description);
+                ranEvent = true;
+
+            };
 
 
+            eventService.OnDelete += function;
+            Event newEvent = new Event(1, "epic event", 10, "big event", new TimeBetween(new DateTime(2030, 12, 5), new DateTime(2030, 12, 6)));
+            eventService.CreateEvent(newEvent);
+            eventService.DeleteEvent(eventService.GetAllEvents().First().EventID);
+            eventService.OnDelete -= function;
+            Assert.IsTrue(ranEvent);
+        }
+        [TestMethod]
+        public void OnDelete_Event_Fail_Null()
+        {
+            bool ranEvent = false;
+            TestSetUp();
+            Action<Event> function = e =>
+            {
+
+                ranEvent = true;
+
+            };
 
 
+            eventService.OnDelete += function;
+
+            eventService.DeleteEvent(int.MaxValue);
+            eventService.OnDelete -= function;
+            Assert.IsFalse(ranEvent);
+
+        }
+
+        [TestMethod]
+        public void OnEdit_Event_Sucess()
+        {
+            bool ranEvent = false;
+            TestSetUp();
+            Action<Event> function = e =>
+            {
+                Assert.AreEqual("epic event222", e.Title);
+                Assert.AreEqual(20, e.CancellationThresholdMinutes);
+                Assert.AreEqual("big event", e.Description);
+                ranEvent = true;
+
+            };
 
 
+            eventService.OnEdit += function;
+            Event newEvent = new Event(1, "epic event", 10, "big event", new TimeBetween(new DateTime(2030, 12, 5), new DateTime(2030, 12, 6)));
+            Event editedEvent = new Event(1, "epic event222", 20, "big event", new TimeBetween(new DateTime(2030, 12, 5), new DateTime(2030, 12, 6)));
+            eventService.CreateEvent(newEvent);
+            eventService.EditEvent(editedEvent, eventService.GetAllEvents().First().EventID);
+            eventService.OnEdit -= function;
+            Assert.IsTrue(ranEvent);
+        }
+        [TestMethod]
+        public void OnEdit_Event_Fail_EventIsNull()
+        {
+            bool ranEvent = false;
+            TestSetUp();
+            Action<Event> function = e =>
+            {
+                ranEvent = true;
+
+            };
+
+
+            eventService.OnEdit += function;
+            Event newEvent = new Event(1, "epic event", 10, "big event", new TimeBetween(new DateTime(2030, 12, 5), new DateTime(2030, 12, 6)));
+            Event editedEvent = new Event(1, "epic event222", 20, "big event", new TimeBetween(new DateTime(2030, 12, 5), new DateTime(2030, 12, 6)));
+            eventService.CreateEvent(newEvent);
+            eventService.EditEvent(null, eventService.GetAllEvents().First().EventID);
+            eventService.OnEdit -= function;
+            Assert.IsFalse(ranEvent);
+        }
+
+        [TestMethod]
+        public void OnEdit_Event_Fail_IDNotFound()
+        {
+            bool ranEvent = false;
+            TestSetUp();
+            Action<Event> function = e =>
+            {
+                ranEvent = true;
+
+            };
+
+
+            eventService.OnEdit += function;
+            Event newEvent = new Event(1, "epic event", 10, "big event", new TimeBetween(new DateTime(2030, 12, 5), new DateTime(2030, 12, 6)));
+            Event editedEvent = new Event(1, "epic event222", 20, "big event", new TimeBetween(new DateTime(2030, 12, 5), new DateTime(2030, 12, 6)));
+            eventService.CreateEvent(newEvent);
+            eventService.EditEvent(editedEvent, int.MaxValue);
+            eventService.OnEdit -= function;
+            Assert.IsFalse(ranEvent);
+        }
+
+
+        [TestMethod]
+        public void OnCancelling_Event_Sucess()
+        {
+            bool ranEvent = false;
+            TestSetUp();
+            Action<Event> function = e =>
+            {
+                Assert.AreEqual("epic event222", e.Title);
+                Assert.AreEqual(20, e.CancellationThresholdMinutes);
+                Assert.AreEqual("big event", e.Description);
+                Assert.AreEqual(true, e.Cancelled);
+                ranEvent = true;
+
+            };
+
+
+            eventService.OnCancelling += function;
+            Event newEvent = new Event(1, "epic event", 10, "big event", new TimeBetween(new DateTime(2030, 12, 5), new DateTime(2030, 12, 6)));
+            Event editedEvent = new Event(1, "epic event222", 20, "big event", new TimeBetween(new DateTime(2030, 12, 5), new DateTime(2030, 12, 6)), true);
+            eventService.CreateEvent(newEvent);
+            eventService.EditEvent(editedEvent, eventService.GetAllEvents().First().EventID);
+            eventService.OnCancelling -= function;
+            Assert.IsTrue(ranEvent);
+        }
+        [TestMethod]
+        public void OnCancelling_Event_Fail_EventIsNull()
+        {
+            bool ranEvent = false;
+            TestSetUp();
+            Action<Event> function = e =>
+            {
+                ranEvent = true;
+
+            };
+
+
+            eventService.OnCancelling += function;
+            Event newEvent = new Event(1, "epic event", 10, "big event", new TimeBetween(new DateTime(2030, 12, 5), new DateTime(2030, 12, 6)));
+            eventService.CreateEvent(newEvent);
+            eventService.EditEvent(null, eventService.GetAllEvents().First().EventID);
+            eventService.OnCancelling -= function;
+            Assert.IsFalse(ranEvent);
+        }
     }
 }

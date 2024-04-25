@@ -1,4 +1,5 @@
 ﻿using Microsoft.Data.SqlClient;
+using Microsoft.Identity.Client;
 using System.Data;
 using System.Windows.Input;
 using Tennis.Exceptions;
@@ -33,13 +34,17 @@ namespace Tennis.Services
         private string getFromIdString = "SELECT * FROM Events\n" +
                                          "WHERE EventID = @EventID";
         private string insertString = "INSERT INTO Events (Title, Description, Cancelled, DateStart, DateEnd, CancellationThreshold )\n" +
-            "                          VALUES (@Title, @Description, @Cancelled, @DateStart, @DateEnd, @CancellationThreshold)";
+                                      "OUTPUT INSERTED.EventID\n" +
+                                      "VALUES (@Title, @Description, @Cancelled, @DateStart, @DateEnd, @CancellationThreshold)";
 
         private string deleteString = "DELETE FROM Events WHERE EventID = @EventID";
 
         private string updateById = "UPDATE Events SET Title = @Title, Description = @Description, Cancelled = @Cancelled, DateStart = @DateStart, DateEnd = @DateEnd, CancellationThreshold = @CancellationThreshold WHERE EventID = @EventID";
 
-
+        public event Action<Event> OnCancelling;
+        public event Action<Event> OnCreate;
+        public event Action<Event> OnDelete;
+        public event Action<Event> OnEdit;
         public bool CreateEvent(Event evt)
         {
             if (evt == null)
@@ -63,15 +68,10 @@ namespace Tennis.Services
                     command.Parameters.AddWithValue("@DateStart", evt.EventTime.StartTime);
                     command.Parameters.AddWithValue("@DateEnd", evt.EventTime.EndTime);
                     command.Parameters.AddWithValue("@CancellationThreshold", evt.CancellationThresholdMinutes);
-                    int noOfRows = command.ExecuteNonQuery();
-                    if (noOfRows == 1)
-                    {
-                        return true;
-                    }
-                    else
-                    {
-                        return false;
-                    }
+                    int primaryKey = (int)command.ExecuteScalar();
+                    OnCreate?.Invoke(GetEventByNumber(primaryKey));
+                    return true;
+                    
                 }
                 catch (SqlException ex)
                 {
@@ -92,13 +92,19 @@ namespace Tennis.Services
                 try
                 {
                     connection.Open();
+                    Event deletedEvent = GetEventByNumber(id);
                     SqlCommand command = new SqlCommand(deleteString, connection);
                     command.Parameters.AddWithValue("@EventId", id);
                     if (command.ExecuteNonQuery() != 1)
                     {
                         return false;
                     }
-                    return true;
+                    else
+                    {
+                        OnDelete?.Invoke(deletedEvent);
+                        return true;
+                    }
+                    
                 }
                 catch (SqlException ex)
                 {
@@ -126,6 +132,7 @@ namespace Tennis.Services
             {
                 try
                 {
+                    Event BeforeEdit = GetEventByNumber(id);
                     connection.Open();
                     SqlCommand command = new SqlCommand(updateById, connection);
                     command.Parameters.AddWithValue("@EventID", id);
@@ -139,7 +146,17 @@ namespace Tennis.Services
                     {
                         return false;
                     }
-                    return true;
+                    else
+                    {
+                        if (!BeforeEdit.Cancelled && evt.Cancelled)
+                        {
+                            OnCancelling?.Invoke(GetEventByNumber(id));
+                        }
+                        OnEdit?.Invoke(GetEventByNumber(id));
+                        return true;
+                    }
+                    
+                    
                 }
                 catch (SqlException ex)
                 {
@@ -171,7 +188,7 @@ namespace Tennis.Services
                         bool cancelled = reader.GetBoolean("Cancelled");
                         TimeBetween eventTime = new TimeBetween(reader.GetDateTime("DateStart"), reader.GetDateTime("DateEnd"));
                         int cancellationThreshold = reader.GetInt32("CancellationThreshold");
-                        Event @event = new Event(eventID,title, cancellationThreshold, description, eventTime);
+                        Event @event = new Event(eventID,title, cancellationThreshold, description, eventTime, cancelled);
                         events.Add(@event);
                     }
                     reader.Close();
@@ -206,7 +223,7 @@ namespace Tennis.Services
                         bool cancelled = reader.GetBoolean("Cancelled");
                         TimeBetween eventTime = new TimeBetween(reader.GetDateTime("DateStart"), reader.GetDateTime("DateEnd"));
                         int cancellationThreshold = reader.GetInt32("CancellationThreshold");
-                        Event @event = new Event(eventID, title, cancellationThreshold, description, eventTime);
+                        Event @event = new Event(eventID, title, cancellationThreshold, description, eventTime, cancelled);
                         reader.Close();
                         return @event;
                     }
