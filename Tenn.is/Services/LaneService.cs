@@ -43,7 +43,7 @@ namespace Tennis.Services
                     SqlDataReader reader = command.ExecuteReader();
                     while (reader.Read())
                     {
-                        Lanelist.Add(new Lane(reader.GetInt32("LANENUMBER"), reader.GetBoolean("OUTDOOR"), reader.GetBoolean("PADELTENNIS")));
+                        Lanelist.Add(new Lane(reader.GetInt32("LANENUMBER"), reader.GetBoolean("OUTDOORS"), reader.GetBoolean("PADELTENNIS")));
                     }
                 }
                 catch (SqlException sqlExp)
@@ -69,7 +69,7 @@ namespace Tennis.Services
                     SqlDataReader reader = command.ExecuteReader();
                     while (reader.Read())
                     {
-                        return new Lane(reader.GetInt32("LANENUMBER"), reader.GetBoolean("OUTDOOR"), reader.GetBoolean("PADELTENNIS"));
+                        return new Lane(reader.GetInt32("LANENUMBER"), reader.GetBoolean("OUTDOORS"), reader.GetBoolean("PADELTENNIS"));
                     }
 
                 }
