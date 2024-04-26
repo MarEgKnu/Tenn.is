@@ -16,9 +16,10 @@ namespace Tennis.Pages.Lanes
             Service = service;
         }
 
-        public void OnGet(int Id)
+        public IActionResult OnGet(int Id)
         {
             DelLane = Service.GetLaneByNumber(Id);
+            return Page();
         }
 
         public IActionResult OnPostDelete()
