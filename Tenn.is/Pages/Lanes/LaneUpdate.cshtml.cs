@@ -18,15 +18,16 @@ namespace Tennis.Pages.Lanes
             Service = service;
         }
 
-        public void OnGet(int id)
+        public IActionResult OnGet(int id)
         {            
             LaneToUpdate = Service.GetLaneByNumber(id);
             Id = id;
+            return Page();
         }
 
-        public IActionResult OnPostUpdate()
+        public IActionResult OnPostUpdate(int id)
         {
-            Service.EditLane(LaneToUpdate, Id);
+            Service.EditLane(LaneToUpdate, id);
             return RedirectToPage("LaneIndex");
         }
 

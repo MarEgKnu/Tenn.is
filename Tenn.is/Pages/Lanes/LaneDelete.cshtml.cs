@@ -22,9 +22,9 @@ namespace Tennis.Pages.Lanes
             return Page();
         }
 
-        public IActionResult OnPostDelete()
+        public IActionResult OnPostDelete(int id)
         {
-            Service.DeleteLane(DelLane.Id);
+            Service.DeleteLane(id);
             return RedirectToPage("LaneIndex");
         }
 
