@@ -14,16 +14,17 @@
             </div>
             <div class="form-group">
                 <label asp-for="@Model.LaneToUpdate.OutDoor" class="control-label"></label>
-                <input asp-for="@Model.LaneToUpdate.OutDoor" class="form-control" />
+                <input asp-for="@Model.LaneToUpdate.OutDoor"/>
+                
             </div>
             <div class="form-group">
                 <label asp-for="@Model.LaneToUpdate.PadelTennis" class="control-label"></label>
-                <input asp-for="@Model.LaneToUpdate.PadelTennis" class="form-control" />
+                <input asp-for="@Model.LaneToUpdate.PadelTennis"/>
             </div>
 
             <div class="form-group">
-                <input type="submit" value="Update" class="btn btn-primary" />
-                <input type="submit" value="Cancel" class="btn btn-primary" />
+                <input type="submit" value="Update" asp-page-handler="Update" class="btn btn-primary" />
+                <input type="submit" value="Cancel" asp-page-handler="Cancel" class="btn btn-primary" />
             </div>
         </form>
     </div>
