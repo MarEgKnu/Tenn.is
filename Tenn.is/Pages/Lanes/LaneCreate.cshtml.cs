@@ -11,9 +11,13 @@ namespace Tennis.Pages.Lanes
         [BindProperty]
         public Lane NewLane{ get; set; }
 
-        public void OnGet(ILaneService service)
+        public LaneCreateModel(ILaneService service)
         {
             Service = service;
+        }
+
+        public void OnGet()
+        {
         }
 
         public IActionResult OnPostCreate() 

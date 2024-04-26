@@ -9,10 +9,15 @@ namespace Tennis.Pages.Lanes
     {
         ILaneService Service;
         public List<Lane> LaneList { get; set; }
-        public void OnGet(ILaneService service)
+
+        public LaneIndexModel(ILaneService service)
         {
             Service = service;
-            LaneList = service.GetAllLanes();
+        }
+
+        public void OnGet()
+        {
+            LaneList = Service.GetAllLanes();
         }
 
 

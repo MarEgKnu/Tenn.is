@@ -12,9 +12,14 @@ namespace Tennis.Pages.Lanes
         public Lane LaneToUpdate { get; set; }
         [BindProperty]
         public int Id { get; set; }
-        public void OnGet(ILaneService service, int id)
+
+        public LaneUpdateModel(ILaneService service)
         {
             Service = service;
+        }
+
+        public void OnGet(int id)
+        {            
             LaneToUpdate = Service.GetLaneByNumber(id);
             Id = id;
         }

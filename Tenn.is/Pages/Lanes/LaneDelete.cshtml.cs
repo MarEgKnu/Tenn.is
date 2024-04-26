@@ -10,9 +10,14 @@ namespace Tennis.Pages.Lanes
         ILaneService Service;
         [BindProperty]
         public Lane DelLane { get; set; }
-        public void OnGet(ILaneService service, int Id)
+
+        public LaneDeleteModel(ILaneService service)
         {
             Service = service;
+        }
+
+        public void OnGet(int Id)
+        {
             DelLane = Service.GetLaneByNumber(Id);
         }
 
