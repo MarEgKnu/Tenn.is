@@ -6,18 +6,18 @@ using System.Threading.Tasks;
 
 namespace TennisTest
 {
-    [TestClass]
-    public class ILaneBookingServiceTest
-    {
+    //    [TestClass]
+    //    public class ILaneBookingServiceTest
+    //    {
 
-        void TestSetUp()
-        {
+    //        void TestSetUp()
+    //        {
 
-        }
+    //        }
 
-        [TestMethod]
-        public void TestMethod1()
-        {
-        }
-    }
+    //        [TestMethod]
+    //        public void TestMethod1()
+    //        {
+    //        }
+    //    }
 }
