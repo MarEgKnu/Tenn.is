@@ -14,6 +14,11 @@
             PadelTennis = padelTennis;
         }
 
+        public Lane()
+        {
+            
+        }
+
         public override string ToString()
         {
             return $"";
