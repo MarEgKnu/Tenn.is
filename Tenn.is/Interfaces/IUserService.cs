@@ -14,7 +14,7 @@ namespace Tennis.Interfaces
 
         User GetUserById(int id);
 
-        bool LogIn(string UserName, string Password);
+        User? VerifyUser(string UserName, string Password);
 
         void LogOut(HttpContext context);
 

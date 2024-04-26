@@ -223,14 +223,23 @@ namespace Tennis.Services
             return user;
         }
 
-        public bool LogIn(string UserName, string Password)
+        public User? VerifyUser(string UserName, string Password)
         {
-            throw new NotImplementedException();
+            List<User> users = GetAllUsers();
+            foreach (User user in users)
+            {
+                if (user.Username == UserName && user.Password == Password)
+                {
+                    return user;
+                }
+            }
+            return null;
         }
 
         public void LogOut(HttpContext context)
         {
-            throw new NotImplementedException();
+            context.Session.Remove("Username");
+            context.Session.Remove("Password");
         }
 
         public bool AdminVerify(int id, string password)

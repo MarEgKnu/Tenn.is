@@ -37,6 +37,20 @@
                             <a class="nav-link text-dark" asp-area="" asp-page="/Users/Overview">Users</a>
                         </li>
                     </ul>
+                    @using Microsoft.AspNetCore.Http;
+                    @inject IHttpContextAccessor HttpContextAccessor
+                    @if (HttpContextAccessor.HttpContext.Session.GetString("Username") == null)
+                    {
+                        <a class="btn btn-success rounded-pill" asp-area="" asp-page="/Users/Login">
+                            <span class="text-light">Log ind</span>
+                        </a>
+                    }
+                    else
+                    {
+                        <a class="btn btn-outline-success rounded-pill" asp-area="" asp-page="/Users/Login" asp-page-handler="Logout">
+                            @HttpContextAccessor.HttpContext.Session.GetString("Username")
+                        </a>
+                    }
                 </div>
             </div>
         </nav>
