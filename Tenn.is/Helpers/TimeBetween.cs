@@ -1,49 +1,130 @@
-﻿namespace Tennis.Helpers
+﻿using Microsoft.AspNetCore.Mvc;
+using System.ComponentModel.DataAnnotations;
+
+namespace Tennis.Helpers
 {
     public class TimeBetween
     {
 
-        public TimeBetween(DateTime startTime, DateTime endTime)
+        public TimeBetween(DateTime? startTime, DateTime? endTime)
         {
-            if (endTime <= startTime)
+            if (startTime == null || endTime == null)
             {
-                throw new ArgumentException("Start Time is larger than End Time");
+                _startTime = startTime;
+                _endTime = endTime;
             }
-            StartTime = startTime;
-            EndTime = endTime;
+            else if (endTime <= startTime)
+            {
+                throw new ArgumentException("Starttid kan ikke være senere end sluttid");
+            }
+            else
+            {
+                _startTime = startTime;
+                _endTime = endTime;
+            }
+            
         }
 
-        private DateTime _startTime;
+        private DateTime? _startTime;
 
-        private DateTime _endTime;
-
-        public DateTime StartTime
+        private DateTime? _endTime;
+        [Required(ErrorMessage = "Startid er krævet"), DisplayFormat(DataFormatString = "{0:yyyy-MM-ddTHH:mm}", ApplyFormatInEditMode = true)]
+        public DateTime? StartTime
         {
             get { return _startTime; }
             set
             {
-                if (value > EndTime)
+                if (value == null)
                 {
-                    throw new ArgumentException("Start Time is larger than End Time");
+                    _startTime = value;
                 }
-                _startTime = value;
+                else if (value >= EndTime)
+                {
+                    throw new ArgumentException("Starttid kan ikke være senere end sluttid");
+                }
+                else
+                {
+                    _startTime = value;
+                }
+                
             }
         }
-
-        public DateTime EndTime
+        [Required(ErrorMessage = "Sluttid er krævet"), DisplayFormat(DataFormatString = "{0:yyyy-MM-ddTHH:mm}", ApplyFormatInEditMode = true)]
+        public DateTime? EndTime
         {
             get { return _endTime; }
             set { 
-                if (value < StartTime)
+                if (value == null)
                 {
-                    throw new ArgumentException("Start Time is larger than End Time");
+                    _endTime = value;
                 }
-                _endTime = value; }
+                else if (value <= StartTime)
+                {
+                    throw new ArgumentException("Starttid kan ikke være senere end sluttid");
+                }
+                else
+                {
+                    _endTime = value;
+                }
+                 }
         }
 
-        public TimeSpan TimeSpan { get {
+        public TimeSpan? TimeSpan { get {
                 return EndTime - StartTime;
             } }
+
+        public void SetNewTime(DateTime? startTime, DateTime? endTime)
+        {
+            if (startTime == null || endTime == null)
+            {
+                _startTime = startTime;
+                _endTime = endTime;
+            }
+            else if (endTime <= startTime)
+            {
+                throw new ArgumentException("Starttid kan ikke være senere end sluttid");
+            }
+            else
+            {
+                _startTime = startTime;
+                _endTime = endTime;
+            }
+        }
+
+        public RelativeTime TimeState
+        {
+            get
+            {
+                if (EndTime < DateTime.Now)
+                {
+                    return RelativeTime.Past;
+                }
+                else if (StartTime > DateTime.Now)
+                {
+                    return RelativeTime.Future;
+                }
+                else
+                {
+                    return RelativeTime.Ongoing;
+                }
+                
+            }
+        }
+        public RelativeTime TimeStateAt(DateTime date)
+        {
+            if (EndTime < date)
+            {
+                return RelativeTime.Past;
+            }
+            else if (StartTime > date)
+            {
+                return RelativeTime.Future;
+            }
+            else
+            {
+                return RelativeTime.Ongoing;
+            }   
+        }
 
     }
 }
