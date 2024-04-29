@@ -11,12 +11,12 @@ namespace Tennis.Services
     public class ArticleService : Connection, IArticleService
     {
         private string sqlCreateArticleWithImg = "INSERT INTO Articles (Title, Content, TimeStamp, ImgPath) VALUES (@title, @content, CURRENT_TIMESTAMP, @imgPath";
-        private string sqlCreateArticle = "INSERT INTO Articles (Title, Content, TimeStamp) VALUES (@title, @content, CURRENT_TIMESTAMP)";
-        private string sqlGetAllArticles = "SELECT ArticleID, Title, Content, AuthorID, TimeStamp, LastEdited, ImgPath FROM Articles";
-        private string sqlGetArticleById = "SELECT * FROM Articles WHERE ArticleID = @articleId";
+        private string _sqlCreateArticle = "INSERT INTO Articles (Title, Content, TimeStamp) VALUES (@title, @content, CURRENT_TIMESTAMP)";
+        private string _sqlGetAllArticles = "SELECT ArticleID, Title, Content, AuthorID, TimeStamp, LastEdited, ImgPath FROM Articles";
+        private string _sqlGetArticleById = "SELECT * FROM Articles WHERE ArticleID = @articleId";
         private string sqlEditArticleWithImg = "UPDATE Articles SET Title = @newTitle, Content = @newContent, LastEdited = CURRENT_TIMESTAMP, ImgPath = @newImgPath WHERE ArticleID = @articleId";
-        private string sqlEditArticle = "UPDATE Articles SET Title = @newTitle, Content = @newContent, LastEdited = CURRENT_TIMESTAMP WHERE ArticleID = @articleId";
-        private string sqlDeleteArticle = "DELETE FROM Articles WHERE ArticleID = @articleId";
+        private string _sqlEditArticle = "UPDATE Articles SET Title = @newTitle, Content = @newContent, LastEdited = CURRENT_TIMESTAMP WHERE ArticleID = @articleId";
+        private string _sqlDeleteArticle = "DELETE FROM Articles WHERE ArticleID = @articleId";
         
 
         // KOLONNERNES NUMMER - INT SOM KOLONNENAVN
@@ -52,7 +52,7 @@ namespace Tennis.Services
             {
                 try
                 {
-                    SqlCommand command = new SqlCommand(sqlCreateArticle, connection);
+                    SqlCommand command = new SqlCommand(_sqlCreateArticle, connection);
                     command.Parameters.AddWithValue("@title", article.Title);
                     command.Parameters.AddWithValue("@content", article.Content);
                     command.Connection.Open();
@@ -79,7 +79,7 @@ namespace Tennis.Services
             {
                 try
                 {
-                    SqlCommand command = new SqlCommand(sqlGetAllArticles, connection);
+                    SqlCommand command = new SqlCommand(_sqlGetAllArticles, connection);
                     command.Connection.Open();
                     SqlDataReader reader = command.ExecuteReader();
                     while (reader.Read())
@@ -116,7 +116,7 @@ namespace Tennis.Services
             {
                 try
                 {
-                    SqlCommand command = new SqlCommand(sqlGetArticleById, connection);
+                    SqlCommand command = new SqlCommand(_sqlGetArticleById, connection);
                     command.Parameters.AddWithValue("@articleID", id);
                     command.Connection.Open();
 
@@ -156,7 +156,7 @@ namespace Tennis.Services
             {
                 try
                 {
-                    SqlCommand command = new SqlCommand(sqlEditArticle, connection);
+                    SqlCommand command = new SqlCommand(_sqlEditArticle, connection);
                     command.Parameters.AddWithValue("@newTitle", article.Title);
                     command.Parameters.AddWithValue("@newContent", article.Content);
                     command.Parameters.AddWithValue("@articleId", id);
@@ -186,7 +186,7 @@ namespace Tennis.Services
             {
                 try
                 {
-                    SqlCommand command = new SqlCommand(sqlDeleteArticle, connection);
+                    SqlCommand command = new SqlCommand(_sqlDeleteArticle, connection);
                     command.Parameters.AddWithValue("@articleID", id);
                     command.Connection.Open();
                     int noOfRows = command.ExecuteNonQuery();
