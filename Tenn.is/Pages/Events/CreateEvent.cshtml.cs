@@ -25,13 +25,13 @@ namespace Tennis.Pages.Events
         {
             //TODO: check if admin
             if (Event.EventState == RelativeTime.Past)
-            {
-                //TODO: better error messages for if starttime is bigger than endtime
+            {   
                 ModelState.AddModelError("Event.EventTime.EndTime", "Kan ikke oprette events i fortid");
             }
-            ModelState.ExceptionToErrorMessage();
+            
             if (!ModelState.IsValid)
             {
+                ModelState.ExceptionToErrorMessage();
                 return Page();
             }
             

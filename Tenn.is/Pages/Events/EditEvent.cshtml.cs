@@ -45,9 +45,9 @@ namespace Tennis.Pages.Events
                 //TODO: better error messages for if starttime is bigger than endtime
                 ModelState.AddModelError("Event.EventTime.EndTime", "Kan ikke redigere events til at være i fortid");
             }
-            ModelState.ExceptionToErrorMessage();
             if (!ModelState.IsValid)
             {
+                ModelState.ExceptionToErrorMessage();
                 return Page();
             }
             try
