@@ -5,9 +5,9 @@
 }
 
 
-<h3>List of contries </h3>
+<h3>Liste af banner </h3>
 <p>
-    <a asp-page="LaneCreate">Create a new Lane</a>
+    <a asp-page="LaneCreate">skab en ny banne</a>
 </p>
 
 
@@ -15,35 +15,53 @@
     <thead>
         <tr>
             <th>
-                Id
+                bannensnummer
             </th>
             <th>
-                Outside?
+                er det udenfor?
             </th>
             <th>
-                Is it padeltennis?
+                er det padeltennis?
             </th>
         </tr>
     </thead>
     <tbody>
-        @foreach (var item in Model.LaneList)
+        @if (Model.LaneList.Count != 0)
         {
-            <tr>
-                <td>
-                    @item.Id
-                </td>
-                <td>
-                    @item.OutDoor 
-                </td>
-                <td>
-                    @item.PadelTennis
-                </td>
-                <td>
-                    <a asp-page="LaneDelete" asp-route-Id="@item.Id">Delete </a>|
+            @foreach (var item in Model.LaneList)
+            {
+                <tr>
+                    <td>
+                        @item.Id
+                    </td>
+                    <td>
 
-                    <a asp-page="LaneUpdate" asp-route-Id="@item.Id">Update</a>
-                </td>
-            </tr>
+                        @if (item.OutDoor == true)
+                        {
+                            <p>ja</p>
+                        }
+                        else
+                        {
+                            <p>nej</p>
+                        }
+                    </td>
+                    <td>
+                        @if (item.PadelTennis == true)
+                        {
+                            <p>ja</p>
+                        }
+                        else
+                        {
+                            <p>nej</p>
+                        }
+                    </td>
+                    <td>
+                        <a asp-page="LaneDelete" asp-route-Id="@item.Id">fjern </a>|
+
+                        <a asp-page="LaneUpdate" asp-route-Id="@item.Id">opdater</a>
+                    </td>
+                </tr>
+            }
         }
     </tbody>
 </table>
