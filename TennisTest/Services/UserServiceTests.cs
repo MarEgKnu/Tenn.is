@@ -30,7 +30,7 @@ namespace Tennis.Services.Tests
         public void CreateUserTest_Valid()
         {
             //Setup
-            User user = new User(101, "test", "Test", "Testson", "test", "testestest", "1234", false, false);
+            User user = new User(101, "test1", "Test", "Testson", "test", "testestest", "1234", false, false);
             int before = 0;
             int after = 0;
             //Execution + cleanup
@@ -45,20 +45,59 @@ namespace Tennis.Services.Tests
 
         [TestMethod()]
         [ExpectedException(typeof(SqlException))]
-        public void CreateUserTest_Invalid_AlreadyExists()
+        public void CreateUserTest_Invalid_IDAlreadyExists()
         {
             //Setup
-            User user = new User(201, "test", "Test", "Testson", "test", "testestest", "1234", false, false);
+            User user = new User(201, "test2", "Test", "Testson", "test", "testestest", "1234", false, false);
+            UserService userService = new UserService(true);
+            int before = 0;
+            int after = 0;
+            //Execution + cleanup
+            try { 
+
+            userService.CreateUser(user);
+            before = userService.GetAllUsers().Count();
+            userService.CreateUser(user);
+                after = userService.GetAllUsers().Count();
+            } catch (SqlException ex)
+            {
+                throw ex;
+            } finally
+            {
+                userService.DeleteUser(user.UserId);
+            }
+                //Assert
+                Assert.AreEqual(before, after);
+
+        }
+        [TestMethod()]
+        [ExpectedException(typeof(SqlException))]
+        public void CreateUserTest_Invalid_NameAlreadyExists()
+        {
+            //Setup
+            User user = new User(201, "test3", "Test", "Testson", "test", "testestest", "1234", false, false);
+            User sameuser = new User(301, "test3", "Test", "Testson", "test", "testestest", "1234", false, false);
 
             int before = 0;
             int after = 0;
             //Execution + cleanup
             UserService userService = new UserService(true);
-            userService.CreateUser(user);
-            before = userService.GetAllUsers().Count();
-            userService.CreateUser(user);
-            after = userService.GetAllUsers().Count();
-            userService.DeleteUser(user.UserId);
+            try
+            {
+
+                userService.CreateUser(user);
+                before = userService.GetAllUsers().Count();
+                userService.CreateUser(sameuser);
+                after = userService.GetAllUsers().Count();
+            }
+            catch (SqlException ex)
+            {
+                throw ex;
+            }
+            finally
+            {
+                userService.DeleteUser(user.UserId);
+            }
             //Assert
             Assert.AreEqual(before, after);
         }
@@ -66,7 +105,7 @@ namespace Tennis.Services.Tests
         public void CreateUserTest_Invalid_BadID()
         {
             //Setup
-            User user = new User(0, "test", "Test", "Testson", "test", "testestest", "1234", false, false);
+            User user = new User(0, "test4", "Test", "Testson", "test", "testestest", "1234", false, false);
 
             int before = 0;
             int after = 0;
@@ -83,7 +122,7 @@ namespace Tennis.Services.Tests
         public void GetUserByIdTest_Valid()
         {
             //Setup
-            User originaluser = new User(102, "test", "Test", "Testson", "test", "testestest", "1234", false, false);
+            User originaluser = new User(102, "test5", "Test", "Testson", "test", "testestest", "1234", false, false);
             UserService service = new UserService(true);
             service.CreateUser(originaluser);
 
@@ -98,7 +137,7 @@ namespace Tennis.Services.Tests
         public void GetUserByIdTest_Invalid_NoUserfound()
         {
             //Setup
-            User originaluser = new User(202, "test", "Test", "Testson", "test", "testestest", "1234", false, false);
+            User originaluser = new User(202, "test6", "Test", "Testson", "test", "testestest", "1234", false, false);
             UserService service = new UserService(true);
             service.CreateUser(originaluser);
 
@@ -114,7 +153,7 @@ namespace Tennis.Services.Tests
         public void DeleteUserTest_Valid()
         {
             //Setup
-            User user = new User(103, "test", "Test", "Testson", "test", "testestest", "1234", false, false);
+            User user = new User(103, "test7", "Test", "Testson", "test", "testestest", "1234", false, false);
 
             int before = 0;
             int after = 0;
@@ -166,14 +205,14 @@ namespace Tennis.Services.Tests
         public void EditUserTest_Valid()
         {
             //Setup
-            User user = new User(104, "test", "Test", "Testson", "test", "testestest", "1234", false, false);
+            User user = new User(104, "test8", "Test", "Testson", "test", "testestest", "1234", false, false);
 
 
             UserService userService = new UserService(true);
             userService.CreateUser(user);
 
             //Execution + cleanup
-            User newuser = new User(104, "test", "Test", "Testson", "newmail", "testestest", "1234", false, false);
+            User newuser = new User(104, "test8", "Test", "Testson", "newmail", "testestest", "1234", false, false);
 
             userService.EditUser(newuser, user.UserId);
 
@@ -186,7 +225,7 @@ namespace Tennis.Services.Tests
         public void EditUserTest_Invalid_IDNotFound()
         {
             //Setup
-            User user = new User(204, "test", "Test", "Testson", "test", "testestest", "1234", false, false);
+            User user = new User(204, "test9", "Test", "Testson", "test", "testestest", "1234", false, false);
 
             UserService userService = new UserService(true);
             userService.CreateUser(user);
