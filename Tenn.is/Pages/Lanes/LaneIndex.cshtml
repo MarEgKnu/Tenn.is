@@ -1,0 +1,49 @@
+﻿@page
+@model Tennis.Pages.Lanes.LaneIndexModel
+@{
+    ViewData["Title"] = "LaneIndex";
+}
+
+
+<h3>List of contries </h3>
+<p>
+    <a asp-page="LaneCreate">Create a new Lane</a>
+</p>
+
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                Id
+            </th>
+            <th>
+                Outside?
+            </th>
+            <th>
+                Is it padeltennis?
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model.LaneList)
+        {
+            <tr>
+                <td>
+                    @item.Id
+                </td>
+                <td>
+                    @item.OutDoor 
+                </td>
+                <td>
+                    @item.PadelTennis
+                </td>
+                <td>
+                    <a asp-page="LaneDelete" asp-route-Id="@item.Id">Delete </a>|
+
+                    <a asp-page="LaneUpdate" asp-route-Id="@item.Id">Update</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
