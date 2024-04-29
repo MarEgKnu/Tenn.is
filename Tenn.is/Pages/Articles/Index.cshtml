@@ -1,33 +1,59 @@
 ﻿@page
+@using Tennis.Models
 @model Tennis.Pages.Articles.IndexModel
 @{
 }
 
 <!-- NEWSFEED -->
-<section>
-    <div class="card" style="max-width: 40rem">
-        <!-- Card Header-->
-        <div class="card-header">
-            <div class="d-flex mb-3">
-                <p>
-                    <span class="text-dark mb-0">
-                            <strong>Article Title</strong>
-                    </span>
-                    <span>
-                        <a href="" class="text-muted d-block" style="margin-top: 10px">
-                            <small>User Name</small>
-                        </a>
-                    </span>
-                </p>
-            </div>
-        </div>
-        <!-- Card Body -->
-        <div class="card-body">
-            <div class="d-flex mb-3">
-                Article Content
-            </div>
-        </div>
-    </div>
-</section>
+@foreach (var a in Model.AllArticles) {
 
-<!-- Content -->
+    <!-- ONE ARTICLE CARD -->
+    <p class="align-items-md-center">
+        <div class="card" style="width: 45rem;">
+            <div class="card-body">
+                <h5 class="card-title">
+                    <strong>
+                        @a.Title
+                    </strong>
+                </h5>
+
+                @if (a.AuthorID != null) {
+                    <h6 class="card-subtitle mb-2 text-muted">
+                        - a.AuthorID,
+                    </h6>
+                }
+                else {
+                    <h6 class="card-subtitle mb-2 text-muted">
+                        - Deleted User,
+                    </h6>
+                }
+
+                <h6 class="card-subtitle mb-2 text-muted">
+                    @a.TimeStamp
+                </h6>
+
+                <p class="card-text">
+                    @a.Content
+                </p>
+
+                @if (a.ImgPath != null) {
+                    <img class="card-img" src="..." alt="@a.Title" />
+                }
+
+            </div>
+            <footer>
+                <span>
+
+                    <a asp-page="/Articles/EditArticle" asp-route-id="@a.ArticleID" class="link-info" style="float:inline-start">
+                        Edit
+                    </a>
+                </span>
+                <span>
+                    <a asp-page="/Articles/DeleteArticle" asp-route-id="@a.ArticleID" class="link-danger" style="float:inline-end">
+                        Delete
+                    </a>
+                </span>
+            </footer>
+        </div>
+    </p>
+}

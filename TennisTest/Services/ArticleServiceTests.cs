@@ -61,12 +61,22 @@ namespace Tennis.Services.Tests
             //Arrange
             ArticleService testService = new ArticleService(true);
             int articleToEdit = 3;
-            Article editedArticle = new Article("Edittttt", "ddddg har edited den her artikel");
+            Article editedArticlea = new Article("aa", "aa");
+            Article editedArticleb = new Article("bb", "bb");
+
             string? originalTitle = testService.GetArticleById(articleToEdit).Title;
+            bool returnedBool = false;
+            string? newTitle = null;
 
             //Act
-            bool returnedBool = testService.EditArticle(editedArticle, 3);
-            string? newTitle = testService.GetArticleById(articleToEdit).Title;
+            if (originalTitle == "aa") {
+                returnedBool = testService.EditArticle(editedArticleb, 3);
+                newTitle = testService.GetArticleById(articleToEdit).Title;
+            }
+            else {
+                returnedBool = testService.EditArticle(editedArticlea, 3);
+                newTitle = testService.GetArticleById(articleToEdit).Title;
+            }
 
             //Assert
             Assert.IsTrue((returnedBool) && (newTitle != originalTitle));
