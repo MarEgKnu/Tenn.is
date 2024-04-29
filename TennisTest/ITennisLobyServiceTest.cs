@@ -1,17 +1,17 @@
 namespace TennisTest
 {
-    [TestClass]
-    public class ITennisLobyServiceTest
-    {
+    //[TestClass]
+    //public class ITennisLobyServiceTest
+    //{
         
-        void TestSetUp()
-        {
+    //    void TestSetUp()
+    //    {
 
-        }
+    //    }
 
-        [TestMethod]
-        public void TestMethod1()
-        {
-        }
-    }
+    //    [TestMethod]
+    //    public void TestMethod1()
+    //    {
+    //    }
+    //}
 }

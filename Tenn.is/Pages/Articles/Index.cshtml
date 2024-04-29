@@ -1,0 +1,59 @@
+﻿@page
+@using Tennis.Models
+@model Tennis.Pages.Articles.IndexModel
+@{
+}
+
+<!-- NEWSFEED -->
+@foreach (var a in Model.AllArticles) {
+
+    <!-- ONE ARTICLE CARD -->
+    <p class="align-items-md-center">
+        <div class="card" style="width: 45rem;">
+            <div class="card-body">
+                <h5 class="card-title">
+                    <strong>
+                        @a.Title
+                    </strong>
+                </h5>
+
+                @if (a.AuthorID != null) {
+                    <h6 class="card-subtitle mb-2 text-muted">
+                        - a.AuthorID,
+                    </h6>
+                }
+                else {
+                    <h6 class="card-subtitle mb-2 text-muted">
+                        - Deleted User,
+                    </h6>
+                }
+
+                <h6 class="card-subtitle mb-2 text-muted">
+                    @a.TimeStamp
+                </h6>
+
+                <p class="card-text">
+                    @a.Content
+                </p>
+
+                @if (a.ImgPath != null) {
+                    <img class="card-img" src="..." alt="@a.Title" />
+                }
+
+            </div>
+            <footer>
+                <span>
+
+                    <a asp-page="/Articles/EditArticle" asp-route-id="@a.ArticleID" class="link-info" style="float:inline-start">
+                        Edit
+                    </a>
+                </span>
+                <span>
+                    <a asp-page="/Articles/DeleteArticle" asp-route-id="@a.ArticleID" class="link-danger" style="float:inline-end">
+                        Delete
+                    </a>
+                </span>
+            </footer>
+        </div>
+    </p>
+}

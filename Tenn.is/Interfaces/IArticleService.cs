@@ -12,6 +12,6 @@ namespace Tennis.Interfaces
 
         List<Article> GetAllArticles();
 
-        Article GetArticleById(int id);
+        Article? GetArticleById(int id);
     }
 }
