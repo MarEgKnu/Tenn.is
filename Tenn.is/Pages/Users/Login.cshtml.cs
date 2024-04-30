@@ -50,7 +50,7 @@ namespace Tennis.Pages.Users
                 {
                     HttpContext.Session.SetString("Username", Username);
                     HttpContext.Session.SetString("Password", Password);
-                    return RedirectToPage("Overview");
+                    return RedirectToPage("Index");
                 }
                 else
                 {

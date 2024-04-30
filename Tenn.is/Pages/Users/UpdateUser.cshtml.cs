@@ -14,16 +14,49 @@ namespace Tennis.Pages.Users
         public User UserToUpdate { get; set; }
         public string OldPassword { get; set; }
         public string Message { get; set; }
+        private bool _isOtherUser;
 
         public UpdateUserModel(IUserService userService)
         {
             _userService = userService;
         }
-        public IActionResult OnGet(int userid)
+        public IActionResult OnGetAdmin(int userid)
         {
+            _isOtherUser = true;
             try
             {
+                if (_userService.AdminVerify(HttpContext.Session.GetString("Username"), HttpContext.Session.GetString("Password"))) { 
                 UserToUpdate = _userService.GetUserById(userid);
+                OldPassword = UserToUpdate.Password;
+                return Page();
+                } else
+                {
+                    return RedirectToPage("Login");
+                }
+            }
+            catch (SqlException sqlExp)
+            {
+                UserToUpdate = new User();
+                ViewData["ErrorMessage"] = "Databasefejl: " + sqlExp.Message;
+                return Page();
+            }
+            catch (Exception ex)
+            {
+                UserToUpdate = new User();
+                ViewData["ErrorMessage"] = "Generel fejl: " + ex.Message;
+                return Page();
+            }
+        }
+        public IActionResult OnGet()
+        {
+            _isOtherUser = false;
+            try
+            {
+                if (HttpContext.Session.GetString("Username") == null)
+                {
+                    return RedirectToPage("Login");
+                }
+                UserToUpdate = _userService.VerifyUser(HttpContext.Session.GetString("Username"), HttpContext.Session.GetString("Password"));
                 OldPassword = UserToUpdate.Password;
                 return Page();
             }
@@ -55,7 +88,12 @@ namespace Tennis.Pages.Users
                 }
                 if (_userService.EditUser(UserToUpdate, userid))
                 {
+                    if (_isOtherUser) {
                     return RedirectToPage("Overview");
+                    } else
+                    {
+                        return RedirectToPage("Index");
+                    }
                 }
                 else
                 {

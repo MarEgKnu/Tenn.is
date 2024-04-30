@@ -67,7 +67,7 @@
                             <button class="btn btn-outline-secondary disabled btn-sm w-100" style="margin-top: 5px">
                                 Fjern</button>
                         } else {
-                        <a asp-page="UpdateUser" asp-route-userid="@item.UserId" class="btn btn-outline-success btn-sm w-100">Opdater</a><br /><a asp-page="DeleteUser" asp-route-userid="@item.UserId" class="btn btn-outline-warning btn-sm w-100" style="margin-top: 5px">Fjern</a>
+                        <a asp-page="UpdateUser" asp-page-handler="Admin" asp-route-userid="@item.UserId" class="btn btn-outline-success btn-sm w-100">Opdater</a><br /><a asp-page="DeleteUser" asp-route-userid="@item.UserId" class="btn btn-outline-warning btn-sm w-100" style="margin-top: 5px">Fjern</a>
                         }
                     </td>
                 </tr>

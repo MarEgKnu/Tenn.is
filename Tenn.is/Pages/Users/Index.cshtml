@@ -1,0 +1,21 @@
+﻿@page
+@model Tennis.Pages.Users.IndexModel
+@{
+    ViewData["Title"] = "Brugerinfo";
+}
+
+<h1 class="display-4">Brugerinfo for @Model.CurrentUser.Username:</h1>
+
+<label>Brugernavn:</label> @Model.CurrentUser.Username
+<br />
+<label>Navn:</label> @Model.CurrentUser.FirstName @Model.CurrentUser.LastName
+<br />
+@if (Model.CurrentUser.UserId == 0)
+{
+    <span class="text-success">System admin.</span>
+}
+else if (Model.CurrentUser.Administrator)
+{
+    <span class="text-success">Administrator.</span>
+}
+<br />

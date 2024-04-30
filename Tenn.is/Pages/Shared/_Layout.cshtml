@@ -50,9 +50,17 @@
                     }
                     else
                     {
-                        <a class="btn btn-outline-success rounded-pill" asp-area="" asp-page="/Users/Login" asp-page-handler="Logout">
-                            @HttpContextAccessor.HttpContext.Session.GetString("Username")
-                        </a>
+                        <div class="dropdown">
+                            <button type="button" class="btn btn-outline-success rounded-pill dropdown-toggle" data-bs-toggle="dropdown">
+                                @HttpContextAccessor.HttpContext.Session.GetString("Username")
+                                </button>
+                                <ul class="dropdown-menu">
+                                <li><a asp-area="" asp-page="/Users/Index" class="dropdown-item">Min info</a></li>
+                                <li><a asp-area="" asp-page="/Users/UpdateUser" class="dropdown-item">Opdater</a></li>
+                                <li><hr class="dropdown-divider"></hr></li>
+                                <li><a asp-area="" asp-page="/Users/Login" asp-page-handler="Logout" class="dropdown-item">Log ud</a></li>
+                            </ul>
+                        </div>
                     }
                 </div>
             </div>
