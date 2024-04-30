@@ -12,6 +12,8 @@ namespace Tennis.Interfaces
 
         bool CreateEvent(Event evt);
 
+        bool CreateEventNoRequirements(Event evt);
+
         bool DeleteEvent(int id);
 
         bool EditEvent(Event evt, int id);

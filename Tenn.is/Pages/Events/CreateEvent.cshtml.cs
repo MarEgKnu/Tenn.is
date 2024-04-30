@@ -10,20 +10,29 @@ namespace Tennis.Pages.Events
     public class CreateEventModel : PageModel
     {
         private IEventService _eventService;
-        public CreateEventModel(IEventService eventService)
+        private IUserService _userService;
+        public CreateEventModel(IEventService eventService, IUserService userService)
         {
             _eventService = eventService;
+            _userService = userService;
             Event = new Event(1, "", 0, "", new Helpers.TimeBetween(DateTime.Now, DateTime.Now.AddHours(1)), false);
         }
         [BindProperty]
         public Event Event { get; set; }
-        public void OnGet()
+        public IActionResult OnGet()
         {
-            //TODO: check if admin
+            if (!_userService.AdminVerify(HttpContext.Session.GetString("Username"), HttpContext.Session.GetString("Password"))) 
+            {
+                return RedirectToPage("AccessDenied"); 
+            }
+            return Page();
         }
         public IActionResult OnPost()
         {
-            //TODO: check if admin
+            if (!_userService.AdminVerify(HttpContext.Session.GetString("Username"), HttpContext.Session.GetString("Password")))
+            {
+                return RedirectToPage("AccessDenied");
+            }
             if (Event.EventState == RelativeTime.Past)
             {   
                 ModelState.AddModelError("Event.EventTime.EndTime", "Kan ikke oprette events i fortid");

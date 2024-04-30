@@ -53,7 +53,7 @@ namespace Tennis.Services
             }
             else if (evt.EventState == RelativeTime.Past)
             {
-                throw new InvalidTimeException("Event cannot be created in the past");
+                throw new InvalidTimeException("Event kan ikke blive oprettet i fortid");
             }
             using (SqlConnection connection = new SqlConnection(connectionString))
             {
@@ -72,6 +72,42 @@ namespace Tennis.Services
                     OnCreate?.Invoke(GetEventByNumber(primaryKey));
                     return true;
                     
+                }
+                catch (SqlException ex)
+                {
+                    throw;
+                }
+                catch (Exception ex)
+                {
+                    throw;
+                }
+            }
+            return false;
+        }
+
+        public bool CreateEventNoRequirements(Event evt)
+        {
+            if (evt == null)
+            {
+                return false;
+            }
+            using (SqlConnection connection = new SqlConnection(connectionString))
+            {
+
+                try
+                {
+                    SqlCommand command = new SqlCommand(insertString, connection);
+                    command.Connection.Open();
+                    command.Parameters.AddWithValue("@Title", evt.Title);
+                    command.Parameters.AddWithValue("@Description", evt.Description);
+                    command.Parameters.AddWithValue("@Cancelled", evt.Cancelled);
+                    command.Parameters.AddWithValue("@DateStart", evt.EventTime.StartTime);
+                    command.Parameters.AddWithValue("@DateEnd", evt.EventTime.EndTime);
+                    command.Parameters.AddWithValue("@CancellationThreshold", evt.CancellationThresholdMinutes);
+                    int primaryKey = (int)command.ExecuteScalar();
+                    OnCreate?.Invoke(GetEventByNumber(primaryKey));
+                    return true;
+
                 }
                 catch (SqlException ex)
                 {

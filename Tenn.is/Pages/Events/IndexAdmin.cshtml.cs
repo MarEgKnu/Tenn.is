@@ -8,11 +8,13 @@ using System.ComponentModel.DataAnnotations;
 using Tennis.Helpers;
 using Tennis.Interfaces;
 using Tennis.Models;
+using Tennis.Services;
 
 namespace Tennis.Pages.Events
 {
     public class IndexAdminModel : PageModel
     {
+        private IUserService _userService;
         private IEventService _eventService;
         [BindProperty(SupportsGet = true)]
         public string GenericFilter { get; set; }
@@ -46,14 +48,18 @@ namespace Tennis.Pages.Events
         [BindProperty(SupportsGet = true)]
         public bool Descending { get; set; }
 
-        public IndexAdminModel(IEventService eventService)
+        public IndexAdminModel(IEventService eventService, IUserService userService)
         {
             _eventService = eventService;
             CancelelledFilterOptions = new SelectList(BoolHelpers.CancelledBoolKeyValuePair, "Key", "Value");
+            _userService = userService;
         }
-        public void OnGet()
+        public IActionResult OnGet()
         {
-            //TODO: check if admin!
+            if (!_userService.AdminVerify(HttpContext.Session.GetString("Username"), HttpContext.Session.GetString("Password")))
+            {
+                return RedirectToPage("AccessDenied");
+            }
             if (SortBy == PrevSortBy)
             {
                 Descending = !Descending;
@@ -87,6 +93,7 @@ namespace Tennis.Pages.Events
                 ViewData["ErrorMessage"] = "Generel fejl. Fejlbesked:\n" + ex.Message;
             }
             SortEvents();
+            return Page();
         }
         public void OnPost()
         {

@@ -6,6 +6,7 @@ namespace Tennis.Interfaces
     {
         bool CreateEventBooking(EventBooking eventBooking);
 
+
         bool DeleteEventBooking(int id);
 
         bool EditEventBooking(EventBooking eventBooking, int id);
@@ -13,5 +14,9 @@ namespace Tennis.Interfaces
         List<EventBooking> GetAllEventBookings();
 
         EventBooking GetEventBookingById(int id);
+
+        List<EventBooking> GetAllBookingsByEventID(int id);
+
+       EventBooking? AlreadyHasEventBooking(int userID, int eventID);
     }
 }
