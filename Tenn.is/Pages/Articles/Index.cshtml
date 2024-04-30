@@ -4,6 +4,9 @@
 @{
 }
 
+
+
+
 <!-- NEWSFEED -->
 @foreach (var a in Model.AllArticles) {
 
@@ -44,7 +47,7 @@
             <footer>
                 <span>
 
-                    <a asp-page="/Articles/EditArticle" asp-route-id="@a.ArticleID" class="link-info" style="float:inline-start">
+                    <a asp-page="/Articles/EditArticle" asp-route-id="@a.ArticleID" class="link-info" style="float:left">
                         Edit
                     </a>
                 </span>
