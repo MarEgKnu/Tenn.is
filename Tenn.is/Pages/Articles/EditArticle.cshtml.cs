@@ -8,8 +8,13 @@ namespace Tennis.Pages.Articles
 {
     public class EditArticleModel : PageModel
     {
-        public Article ArticleToEdit { get; set; }
+        [BindProperty]
+        public string ArticleTitle { get; set; }
 
+        [BindProperty]
+        public string ArticleContent { get; set; }
+
+        public Article ArticleToEdit { get; set; }
         private IArticleService _articleService {  get; set; }
         public EditArticleModel(IArticleService articleService)
         {
@@ -19,6 +24,12 @@ namespace Tennis.Pages.Articles
         public void OnGet(int id)
         {
             ArticleToEdit = _articleService.GetArticleById(id);
+        }
+
+        public void OnPost()
+        {
+            Article editedArticle = new Article(ArticleTitle, ArticleContent);
+            _articleService.EditArticle(editedArticle, ArticleToEdit.ArticleID);
         }
     }
 }

@@ -4,7 +4,10 @@
 @{
 }
 
-
+<!-- CREATE NEW ARTICLE BUTTON -->
+<span>
+    <a class="btn btn-outline-success rounded-pill" asp-page="/Articles/CreateArticle" style="float:left">Create New Article</a>
+</span>
 
 
 <!-- NEWSFEED -->
@@ -46,15 +49,10 @@
             </div>
             <footer>
                 <span>
-
-                    <a asp-page="/Articles/EditArticle" asp-route-id="@a.ArticleID" class="link-info" style="float:left">
-                        Edit
-                    </a>
+                    <a class="btn btn-outline-info rounded-pill btn-sm" asp-page="/Articles/EditArticle" asp-route-id="@a.ArticleID" style="float:left">Edit</a>
                 </span>
                 <span>
-                    <a asp-page="/Articles/DeleteArticle" asp-route-id="@a.ArticleID" class="link-danger" style="float:inline-end">
-                        Delete
-                    </a>
+                    <a class="btn btn-outline-danger rounded-pill btn-sm" asp-page="/Articles/DeleteArticle" asp-route-id="@a.ArticleID" style="float:right">Delete</a>
                 </span>
             </footer>
         </div>

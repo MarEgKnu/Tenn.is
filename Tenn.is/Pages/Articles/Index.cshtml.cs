@@ -10,26 +10,33 @@ namespace Tennis.Pages.Articles
     {
         public bool IsLoggedIn = false;
         public bool IsAdmin = false;
+        public string Username = string.Empty;
 
         public List<Article> AllArticles { get; set; }
         public UserService _userService {  get; set; }
 
         private IArticleService _articleService;
-        public IndexModel(IArticleService articleService, UserService userService)
+        public IndexModel(IArticleService articleService)
         {
             _articleService = new ArticleService(true);
-            _userService = userService;
         }
 
         public void OnGet()
         {
             AllArticles = _articleService.GetAllArticles();
 
-            if (_userService.VerifyUser(HttpContext.Session.GetString("Username"), HttpContext.Session.GetString("Password")) != null)
-            {
-                IsLoggedIn = true;
-                //if (_userService.AdminVerify() { }
-            } 
+        //    if (_userService.VerifyUser(HttpContext.Session.GetString("Username"), HttpContext.Session.GetString("Password")) != null)
+        //    {
+        //        IsLoggedIn = true;
+        //        Username = HttpContext.Session.GetString("Username");
+
+        //        if (_userService.AdminVerify(Username, HttpContext.Session.GetString("Password"))) 
+        //        {
+        //            IsAdmin = true;
+        //        }
+        //        else { IsAdmin = false; }
+        //    } 
+        //    else { IsLoggedIn = false; }
         }
     }
 }

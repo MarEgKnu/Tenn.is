@@ -242,9 +242,14 @@ namespace Tennis.Services
             context.Session.Remove("Password");
         }
 
-        public bool AdminVerify(int id, string password)
+        public bool AdminVerify(string username, string password)
         {
-            throw new NotImplementedException();
+            User userToVerify = VerifyUser(username, password);
+            if (userToVerify != null)
+            {
+                return userToVerify.Administrator;
+            }
+            return false;
         }
 
         public string RandomPassword()
