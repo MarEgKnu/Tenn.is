@@ -30,10 +30,16 @@
     <div class="form-group">
         <label asp-for="@Model.NewUser.Email" class="control-label"></label>
         <input asp-for="@Model.NewUser.Email" class="form-control" />
+        <span asp-validation-for="NewUser.Email" class="text-danger"></span>
     </div>
     <div class="form-group">
         <label asp-for="@Model.NewUser.Phone" class="control-label"></label>
-        <input asp-for="@Model.NewUser.Phone" class="form-control" />
+        <div class="input-group">
+            <span class="input-group-text">+45 </span>
+        <input type="text" asp-for="@Model.NewUser.Phone" class="form-control" />
+        </div>
+        <span asp-validation-for="NewUser.Phone" class="text-danger"></span>
+        <p class="text-danger">@Model.PhoneString</p>
     </div>
     <div class="form-group">
         <input type="submit" value="Tilføj bruger" class="btn btn-primary" />

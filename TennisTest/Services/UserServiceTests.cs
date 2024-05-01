@@ -264,17 +264,64 @@ namespace Tennis.Services.Tests
             Assert.AreEqual(8, password.Length);
         }
 
+        [TestMethod()]
+        public void ValidatePhoneLength_Valid_CorrectLength_Spaces()
+        {
+            UserService users = new UserService(true);
+            string dummyNumber = "12 34 56 78";
+            bool valid = users.ValidatePhoneLength(dummyNumber);
 
-        //[TestMethod()]
-        //public void LogInTest()
-        //{
-        //    Assert.Fail();
-        //}
+            Assert.IsTrue(valid);
+        }
 
-        //[TestMethod()]
-        //public void LogOutTest()
-        //{
-        //    Assert.Fail();
-        //}
+        [TestMethod()]
+        public void ValidatePhoneLength_Valid_CorrectLength_NoSpaces()
+        {
+            UserService users = new UserService(true);
+            string dummyNumber = "12345678";
+            bool valid = users.ValidatePhoneLength(dummyNumber);
+
+            Assert.IsTrue(valid);
+        }
+
+        [TestMethod()]
+        public void ValidatePhoneLength_Invalid_TooLong()
+        {
+            UserService users = new UserService(true);
+            string dummyNumber = "123456789";
+            bool valid = users.ValidatePhoneLength(dummyNumber);
+
+            Assert.IsFalse(valid);
+        }
+
+        [TestMethod()]
+        public void ValidatePhoneLength_Invalid_TooShort()
+        {
+            UserService users = new UserService(true);
+            string dummyNumber = "1234567";
+            bool valid = users.ValidatePhoneLength(dummyNumber);
+
+            Assert.IsFalse(valid);
+        }
+
+        [TestMethod()]
+        public void ValidatePhoneLength_Invalid_PaddedWithSpaces()
+        {
+            UserService users = new UserService(true);
+            string dummyNumber = "1 2 3 4 ";
+            bool valid = users.ValidatePhoneLength(dummyNumber);
+
+            Assert.IsFalse(valid);
+        }
+
+        [TestMethod()]
+        public void ValidatePhoneLength_Invalid_Null()
+        {
+            UserService users = new UserService(true);
+            string dummyNumber = null;
+            bool valid = users.ValidatePhoneLength(dummyNumber);
+
+            Assert.IsFalse(valid);
+        }
     }
 }

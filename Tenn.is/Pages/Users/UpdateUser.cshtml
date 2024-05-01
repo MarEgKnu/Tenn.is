@@ -6,6 +6,8 @@
 <p class="text-danger">@Model.Message</p>
 <form method="post">
      <input type="hidden" asp-for="@Model.UserToUpdate.UserId" />
+    <input type="hidden" asp-for="@Model.OldPassword" />
+    <input type="hidden" asp-for="@Model.UserToUpdate.RandomPassword" />
     <div class="form-group">
         <label asp-for="@Model.UserToUpdate.Username" class="control-label"></label>
         <input asp-for="@Model.UserToUpdate.Username" class="form-control" />
@@ -38,12 +40,20 @@
     </div>
     <div class="form-group">
         <label asp-for="@Model.UserToUpdate.Phone" class="control-label"></label>
-        <input asp-for="@Model.UserToUpdate.Phone" class="form-control" />
+        <div class="input-group">
+            <span class="input-group-text">+45 </span>
+        <input type="text" asp-for="@Model.UserToUpdate.Phone" class="form-control" />
+        </div>
+        <span asp-validation-for="UserToUpdate.Phone" class="text-danger"></span>
+        <p class="text-danger">@Model.PhoneString</p>
     </div>
-    <div class="form-check form-switch">
-        <input type="checkbox" asp-for="@Model.UserToUpdate.Administrator" id="" class="form-check-input" />
+    @if (Model.Admin)
+    {
+        <div class="form-check form-switch">
+            <input type="checkbox" asp-for="@Model.UserToUpdate.Administrator" id="" class="form-check-input" />
         <label asp-for="@Model.UserToUpdate.Administrator" class="form-check-label"></label>
     </div>
+    }
     <div class="form-group">
         <input type="submit" asp-page-handler="Update" asp-route-userid="@Model.UserToUpdate.UserId" value="Opdater" class="btn btn-outline-success" />
         <input type="submit" asp-page-handler="Cancel" value="Fortryd" class="btn btn-outline-warning" />

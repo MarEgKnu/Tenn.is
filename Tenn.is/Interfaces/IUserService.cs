@@ -21,5 +21,9 @@ namespace Tennis.Interfaces
         bool AdminVerify(string username, string password);
 
         string RandomPassword();
+
+        public List<User> GetUsersOnConditions(List<Predicate<User>> conditions, List<User> users);
+
+        public bool ValidatePhoneLength(string phoneLength);
     }
 }

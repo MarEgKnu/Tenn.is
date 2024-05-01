@@ -12,9 +12,12 @@ namespace Tennis.Pages.Users
 
         [BindProperty]
         public User UserToUpdate { get; set; }
+        [BindProperty]
         public string OldPassword { get; set; }
         public string Message { get; set; }
+        public string PhoneString { get; set; }
         private bool _isOtherUser;
+        public bool Admin { get; set; }
 
         public UpdateUserModel(IUserService userService)
         {
@@ -28,6 +31,7 @@ namespace Tennis.Pages.Users
                 if (_userService.AdminVerify(HttpContext.Session.GetString("Username"), HttpContext.Session.GetString("Password"))) { 
                 UserToUpdate = _userService.GetUserById(userid);
                 OldPassword = UserToUpdate.Password;
+                    Admin = true;
                 return Page();
                 } else
                 {
@@ -85,6 +89,11 @@ namespace Tennis.Pages.Users
                 if (!UserToUpdate.RandomPassword || UserToUpdate.Password != OldPassword)
                 {
                     UserToUpdate.RandomPassword = false;
+                }
+                if (!_userService.ValidatePhoneLength(UserToUpdate.Phone))
+                {
+                    PhoneString = "Telefonnummer ikke formateret korrekt. Du behøver ikke skrive +45. Internationale telefonnumre er beklageligvis ikke gyldige";
+                    return Page();
                 }
                 if (_userService.EditUser(UserToUpdate, userid))
                 {

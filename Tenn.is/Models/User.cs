@@ -17,8 +17,10 @@ namespace Tennis.Models
         [Display(Name = "Efternavn")]
         [Required(ErrorMessage = "Udfyld efternavn")]
         public string LastName { get; set; }
+        [Required(ErrorMessage = "Udfyld email")]
         public string Email { get; set; }
-
+        [Display(Name = "Telefon nr")]
+        [Required(ErrorMessage = "Udfyld telefon nr")]
         public string Phone { get; set; }
         public bool Administrator { get; set; }
 

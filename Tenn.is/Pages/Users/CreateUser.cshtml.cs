@@ -11,6 +11,7 @@ namespace Tennis.Pages.Users
         private IUserService _userService;
 
         public string DatabaseString { get; set; }
+        public string PhoneString { get; set; }
 
         [BindProperty]
         public User NewUser { get; set; }
@@ -33,11 +34,17 @@ namespace Tennis.Pages.Users
             {
                 return Page();
             }
+            if (!_userService.ValidatePhoneLength(NewUser.Phone))
+            {
+                PhoneString = "Telefonnummer ikke formateret korrekt. Du behøver ikke skrive +45. Internationale telefonnumre er beklageligvis ikke gyldige";
+                return Page();
+            }
             try
             {
                 NewUser.UserId = _userService.GetAllUsers().Count();
                 NewUser.Administrator = false;
                 NewUser.RandomPassword = true;
+                NewUser.Phone = NewUser.Phone.Replace(" ", "");
                 if (_userService.CreateUser(NewUser))
                 {
                     return RedirectToPage("Overview");

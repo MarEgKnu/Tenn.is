@@ -5,7 +5,32 @@
 }
 
 <a asp-page="CreateUser" class="btn btn-outline-primary">Opret ny bruger</a>
-<table class="table">
+<br />
+<form method="get">
+    <input asp-for="AdvancedSearch" onclick="this.form.submit()" />
+    <label for="AdvancedSearch">Advanceret søgning</label><br>
+    <input asp-for="AdminSearch" onclick="this.form.submit()" />
+    <label for="AdminSearch">Søg kun blandt adminstratorer</label><br>
+    @if(!Model.AdvancedSearch) {
+    <div class="input-group w-25">
+        <span class="input-group-text">Søg:</span>
+        <input type="text" class="form-control" asp-for="@Model.GenericFilter" onchange="this.form.submit()" />
+        </div>
+    } else
+    {
+        <div class="input-group w-50">
+            <span class="input-group-text" style="width: 13%;">Navn:</span>
+            <input type="text" class="form-control" asp-for="@Model.UsernameFilter" onchange="this.form.submit()" placeholder="Brugernavn"/>
+                                 <input type="text" class="form-control" asp-for="@Model.NameFilter" onchange="this.form.submit()" placeholder="For- eller efternavn"/>
+        </div>
+        <div class="input-group w-50">
+            <span class="input-group-text" style="width: 13%;">Kontakt:</span>
+             <input type="text" class="form-control" asp-for="@Model.EmailFilter" onchange="this.form.submit()" placeholder="E-mail"/>
+             <input type="text" class="form-control" asp-for="@Model.PhoneFilter" onchange="this.form.submit()" placeholder="Telefon nr"/>
+        </div>
+        <br />
+    }
+    <table class="table">
     <thead>
         <tr>
             <th>
@@ -76,3 +101,4 @@
     </tbody>
 
 </table>
+</form>

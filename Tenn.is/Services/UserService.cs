@@ -263,5 +263,41 @@ namespace Tennis.Services
             }
             return password;
         }
+
+        public List<User> GetUsersOnConditions(List<Predicate<User>> conditions, List<User> users)
+        {
+            if (users == null)
+            {
+                return new List<User>();
+            }
+            else if (conditions == null || conditions.Count == 0)
+            {
+                return users;
+            }
+            foreach (Predicate<User> condition in conditions)
+            {
+                if (condition == null)
+                {
+                    continue;
+                }
+                users = users.FindAll(condition);
+                if (users.Count == 0)
+                {
+                    return users;
+                }
+            }
+            return users;
+        }
+
+        public bool ValidatePhoneLength(string phoneLength)
+        {
+            if (string.IsNullOrEmpty(phoneLength))
+            {
+                return false;
+            }
+            string trimmed = phoneLength.Replace(" ", "");
+
+            return trimmed.Length == 8;
+        }
     }
 }
