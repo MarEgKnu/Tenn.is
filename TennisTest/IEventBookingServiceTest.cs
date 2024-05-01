@@ -301,6 +301,203 @@ namespace TennisTest
             Assert.AreEqual("big event", hasBooking.Event.Title);
             Assert.AreEqual(new DateTime(2040, 10, 20), hasBooking.Event.EventTime.StartTime);
         }
+        [TestMethod]
+        public void GetEventBookingById_Sucess()
+        {
+            TestSetUp();
+            TimeBetween time = new TimeBetween(new DateTime(2040, 10, 20), new DateTime(2040, 10, 30));
+            eventService.CreateEvent(new Event(1, "big event", 0, "meget stor event", time));
+
+            Event evt1 = eventService.GetAllEvents()[0];
+
+            userService.CreateUser(new User(1, "KlausXxX", "Klaus", "Nielsen", "xxxx@gmail.com", "ZxKjdJF!!!45", "12345678", false, false));
+
+            User user = userService.GetAllUsers()[0];
+            EventBooking booking = new EventBooking(evt1, user, "Ingen cola");
+            bookingService.CreateEventBooking(booking);
+            booking = bookingService.GetAllEventBookings().FirstOrDefault();
+            EventBooking foundBooking = bookingService.GetEventBookingById(booking.BookingID);
+            Assert.IsNotNull(booking);
+            Assert.IsNotNull(foundBooking);
+            Assert.AreEqual(booking.Comment, foundBooking.Comment);
+            Assert.AreEqual(booking.User.UserId, foundBooking.User.UserId);
+            Assert.AreEqual(booking.Event.EventID, foundBooking.Event.EventID);
+        }
+        [TestMethod]
+        public void GetEventBookingById_NotFound()
+        {
+            TestSetUp();
+            TimeBetween time = new TimeBetween(new DateTime(2040, 10, 20), new DateTime(2040, 10, 30));
+            eventService.CreateEvent(new Event(1, "big event", 0, "meget stor event", time));
+
+            Event evt1 = eventService.GetAllEvents()[0];
+
+            userService.CreateUser(new User(1, "KlausXxX", "Klaus", "Nielsen", "xxxx@gmail.com", "ZxKjdJF!!!45", "12345678", false, false));
+
+            User user = userService.GetAllUsers()[0];
+            EventBooking booking = new EventBooking(evt1, user, "Ingen cola");
+            bookingService.CreateEventBooking(booking);
+            booking = bookingService.GetAllEventBookings().FirstOrDefault();
+            EventBooking foundBooking = bookingService.GetEventBookingById(int.MaxValue);
+            Assert.IsNotNull(booking);
+            Assert.IsNull(foundBooking);
+
+        }
+        [TestMethod]
+        public void DeleteBooking_Sucess()
+        {
+            TestSetUp();
+            TimeBetween time = new TimeBetween(new DateTime(2040, 10, 20), new DateTime(2040, 10, 30));
+            eventService.CreateEvent(new Event(1, "big event", 0, "meget stor event", time));
+
+            Event evt1 = eventService.GetAllEvents()[0];
+
+            userService.CreateUser(new User(1, "KlausXxX", "Klaus", "Nielsen", "xxxx@gmail.com", "ZxKjdJF!!!45", "12345678", false, false));
+
+            User user = userService.GetAllUsers()[0];
+            EventBooking booking = new EventBooking(evt1, user, "Ingen cola");
+            bookingService.CreateEventBooking(booking);
+            int beforeCount = bookingService.GetAllEventBookings().Count;
+            booking = bookingService.GetAllEventBookings().FirstOrDefault();
+            bool sucess = bookingService.DeleteEventBooking(booking.BookingID);
+            int afterCount = bookingService.GetAllEventBookings().Count;
+            Assert.IsTrue(sucess);
+            Assert.IsNotNull(booking);
+            Assert.AreEqual(beforeCount - 1, afterCount);
+        }
+        [TestMethod]
+        public void DeleteBooking_Fail_BookingNotFound()
+        {
+            TestSetUp();
+            TimeBetween time = new TimeBetween(new DateTime(2040, 10, 20), new DateTime(2040, 10, 30));
+            eventService.CreateEvent(new Event(1, "big event", 0, "meget stor event", time));
+
+            Event evt1 = eventService.GetAllEvents()[0];
+
+            userService.CreateUser(new User(1, "KlausXxX", "Klaus", "Nielsen", "xxxx@gmail.com", "ZxKjdJF!!!45", "12345678", false, false));
+
+            User user = userService.GetAllUsers()[0];
+            EventBooking booking = new EventBooking(evt1, user, "Ingen cola");
+            bookingService.CreateEventBooking(booking);
+            int beforeCount = bookingService.GetAllEventBookings().Count;
+            bool sucess = bookingService.DeleteEventBooking(int.MaxValue);
+            int afterCount = bookingService.GetAllEventBookings().Count;
+            Assert.IsFalse(sucess);
+            Assert.AreEqual(beforeCount, afterCount);
+        }
+
+        [TestMethod]
+        public void CanBook_Suceed()
+        {
+            TestSetUp();
+            TimeBetween time = new TimeBetween(new DateTime(2040, 10, 20), new DateTime(2040, 10, 30));
+            eventService.CreateEvent(new Event(1, "big event", 0, "meget stor event", time));
+
+            Event evt1 = eventService.GetAllEvents()[0];
+
+            userService.CreateUser(new User(1, "KlausXxX", "Klaus", "Nielsen", "xxxx@gmail.com", "ZxKjdJF!!!45", "12345678", false, false));
+
+            User user = userService.GetAllUsers()[0];
+            bool canBook = bookingService.CanBook(user, evt1);
+          
+            Assert.IsTrue(canBook);
+        }
+        [TestMethod]
+        public void CanBook_Fail_EventCancelled()
+        {
+            TestSetUp();
+            TimeBetween time = new TimeBetween(new DateTime(2040, 10, 20), new DateTime(2040, 10, 30));
+            eventService.CreateEvent(new Event(1, "big event", 0, "meget stor event", time, true));
+
+            Event evt1 = eventService.GetAllEvents()[0];
+
+            userService.CreateUser(new User(1, "KlausXxX", "Klaus", "Nielsen", "xxxx@gmail.com", "ZxKjdJF!!!45", "12345678", false, false));
+
+            User user = userService.GetAllUsers()[0];
+            bool canBook = bookingService.CanBook(user, evt1);
+
+            Assert.IsFalse(canBook);
+
+        }
+        [TestMethod]
+        public void CanBook_Fail_AlreadyHaveBooking()
+        {
+            TestSetUp();
+            TimeBetween time = new TimeBetween(new DateTime(2040, 10, 20), new DateTime(2040, 10, 30));
+            eventService.CreateEvent(new Event(1, "big event", 0, "meget stor event", time, true));
+
+            Event evt1 = eventService.GetAllEvents()[0];
+
+            userService.CreateUser(new User(1, "KlausXxX", "Klaus", "Nielsen", "xxxx@gmail.com", "ZxKjdJF!!!45", "12345678", false, false));
+
+            User user = userService.GetAllUsers()[0];
+            EventBooking booking = new EventBooking(evt1, user, "Ingen cola");
+            bookingService.CreateEventBooking(booking);
+
+            bool canBook = bookingService.CanBook(user, evt1);
+
+            Assert.IsFalse(canBook);
+
+        }
+        [TestMethod]
+        public void CanBook_Fail_EventIsInPast()
+        {
+            TestSetUp();
+            TimeBetween time = new TimeBetween(new DateTime(2020, 10, 20), new DateTime(2020, 10, 30));
+            eventService.CreateEventNoRequirements(new Event(1, "big event", 0, "meget stor event", time, true));
+
+            Event evt1 = eventService.GetAllEvents()[0];
+
+            userService.CreateUser(new User(1, "KlausXxX", "Klaus", "Nielsen", "xxxx@gmail.com", "ZxKjdJF!!!45", "12345678", false, false));
+
+            User user = userService.GetAllUsers()[0];
+
+
+            bool canBook = bookingService.CanBook(user, evt1);
+
+            Assert.IsFalse(canBook);
+
+        }
+        [TestMethod]
+        public void CanBook_Fail_UserIsNull()
+        {
+            TestSetUp();
+            TimeBetween time = new TimeBetween(new DateTime(2020, 10, 20), new DateTime(2020, 10, 30));
+            eventService.CreateEventNoRequirements(new Event(1, "big event", 0, "meget stor event", time, true));
+
+            Event evt1 = eventService.GetAllEvents()[0];
+
+            userService.CreateUser(new User(1, "KlausXxX", "Klaus", "Nielsen", "xxxx@gmail.com", "ZxKjdJF!!!45", "12345678", false, false));
+
+            User user = userService.GetAllUsers()[0];
+
+
+            bool canBook = bookingService.CanBook(null, evt1);
+
+            Assert.IsFalse(canBook);
+
+        }
+        [TestMethod]
+        public void CanBook_Fail_EventIsNull()
+        {
+            TestSetUp();
+            TimeBetween time = new TimeBetween(new DateTime(2020, 10, 20), new DateTime(2020, 10, 30));
+            eventService.CreateEventNoRequirements(new Event(1, "big event", 0, "meget stor event", time, true));
+
+            Event evt1 = eventService.GetAllEvents()[0];
+
+            userService.CreateUser(new User(1, "KlausXxX", "Klaus", "Nielsen", "xxxx@gmail.com", "ZxKjdJF!!!45", "12345678", false, false));
+
+            User user = userService.GetAllUsers()[0];
+
+
+            bool canBook = bookingService.CanBook(user, null);
+
+            Assert.IsFalse(canBook);
+
+        }
     }
-    
 }
+
+    
+

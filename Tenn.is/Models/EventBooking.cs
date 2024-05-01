@@ -1,4 +1,6 @@
-﻿namespace Tennis.Models
+﻿using Tennis.Helpers;
+
+namespace Tennis.Models
 {
     public class EventBooking
     {
@@ -28,5 +30,13 @@
         public User User { get; set; }
 
         public string? Comment { get; set; }
+
+        public bool CanBeCancelled { get
+            {
+                if (Event == null || User == null) return false;
+                return DateTime.Now.AddMinutes(Event.CancellationThresholdMinutes) <= Event.EventTime.StartTime  && 
+                    !Event.Cancelled &&
+                     Event.EventState != RelativeTime.Past; ;
+            } }
     }
 }

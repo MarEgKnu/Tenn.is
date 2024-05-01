@@ -1,5 +1,8 @@
 ﻿using Microsoft.Data.SqlClient;
+using Microsoft.IdentityModel.Tokens;
 using System.Data;
+using System.Linq.Expressions;
+using System.Reflection;
 using Tennis.Exceptions;
 using Tennis.Helpers;
 using Tennis.Interfaces;
@@ -40,6 +43,9 @@ namespace Tennis.Services
                                          "WHERE EventID = @EventID";
         private string getBookingOnUserIDAndEventID = "SELECT * FROM EventBookings\n" +
                                                       "WHERE EventID = @EventID AND UserID = @UserID";
+        private string getAllOnBookingID = "SELECT * FROM EventBookings\n" +
+                                           "WHERE BookingID = @BookingID";
+        private string deleteString = "DELETE FROM EventBookings WHERE BookingID = @BookingID";
         public bool CreateEventBooking(EventBooking eventBooking)
         {
             if (eventBooking == null || eventBooking.User == null || 
@@ -81,7 +87,8 @@ namespace Tennis.Services
                     command.Connection.Open();
                     command.Parameters.AddWithValue("@EventID", eventBooking.Event.EventID);
                     command.Parameters.AddWithValue("@UserID", eventBooking.User.UserId);
-                    command.Parameters.AddWithValue("@Comment", eventBooking.Comment);
+                    _ = (eventBooking.Comment.IsNullOrEmpty()) ? command.Parameters.AddWithValue("@Comment", DBNull.Value) : command.Parameters.AddWithValue("@Comment", eventBooking.Comment);
+                    //command.Parameters.AddWithValue("@Comment", eventBooking.Comment);
                     int primaryKey = (int)command.ExecuteScalar();
                     //OnCreate?.Invoke(GetEventByNumber(primaryKey));
                     return true;
@@ -101,7 +108,35 @@ namespace Tennis.Services
 
         public bool DeleteEventBooking(int id)
         {
-            throw new NotImplementedException();
+            using (SqlConnection connection = new SqlConnection(connectionString))
+            {
+                try
+                {
+                    connection.Open();
+                    EventBooking deletedBooking = GetEventBookingById(id);
+                    SqlCommand command = new SqlCommand(deleteString, connection);
+                    command.Parameters.AddWithValue("@BookingId", id);
+                    if (command.ExecuteNonQuery() != 1)
+                    {
+                        return false;
+                    }
+                    else
+                    {
+                        //OnDelete?.Invoke(deletedBooking);
+                        return true;
+                    }
+
+                }
+                catch (SqlException ex)
+                {
+                    throw;
+                }
+                catch (Exception ex)
+                {
+                    throw;
+                }
+            }
+            return false;
         }
 
         public bool EditEventBooking(EventBooking eventBooking, int id)
@@ -134,7 +169,30 @@ namespace Tennis.Services
 
         public EventBooking GetEventBookingById(int id)
         {
-            throw new NotImplementedException();
+            List<EventBooking> eventBookings = new List<EventBooking>();
+            using (SqlConnection connection = new SqlConnection(connectionString))
+            {
+
+                try
+                {
+                    SqlCommand command = new SqlCommand(getAllOnBookingID, connection);
+                    command.Connection.Open();
+                    command.Parameters.AddWithValue("@BookingID", id);
+                    eventBookings = ProcessReader(command);
+
+                    //OnCreate?.Invoke(GetEventByNumber(primaryKey));
+
+                }
+                catch (SqlException ex)
+                {
+                    throw;
+                }
+                catch (Exception ex)
+                {
+                    throw;
+                }
+            }
+            return eventBookings.FirstOrDefault();
         }
 
         public List<EventBooking> GetAllBookingsByEventID(int id)
@@ -210,6 +268,28 @@ namespace Tennis.Services
             }
             reader.Close();
             return eventBookings;
+        }
+
+        public List<EventBooking> GetEventBookingsOnConditions(List<Predicate<EventBooking>> conditions)
+        {
+            throw new NotImplementedException();
+        }
+
+        public List<EventBooking> GetEventBookingsOnConditions(List<Predicate<EventBooking>> conditions, List<EventBooking> eventBookings)
+        {
+            throw new NotImplementedException();
+        }
+        /// <summary>
+        /// Returns a bool specifiying if the given user is allowed to create a booking for the specified event
+        /// </summary>
+        /// <param name="user"></param>
+        /// <param name="evt"></param>
+        /// <returns></returns>
+        public bool CanBook(User user, Event evt)
+        {
+            if (user == null || evt == null) return false;
+            EventBooking booking = AlreadyHasEventBooking(user.UserId, evt.EventID);
+            return booking == null && !evt.Cancelled && evt.EventState != RelativeTime.Past;
         }
     }
 }
