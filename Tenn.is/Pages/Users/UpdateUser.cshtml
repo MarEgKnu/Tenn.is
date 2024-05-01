@@ -52,7 +52,10 @@
         <div class="form-check form-switch">
             <input type="checkbox" asp-for="@Model.UserToUpdate.Administrator" id="" class="form-check-input" />
         <label asp-for="@Model.UserToUpdate.Administrator" class="form-check-label"></label>
-    </div>
+        </div>
+    } else
+    {
+        <input type="hidden" asp-for="@Model.UserToUpdate.Administrator" />
     }
     <div class="form-group">
         <input type="submit" asp-page-handler="Update" asp-route-userid="@Model.UserToUpdate.UserId" value="Opdater" class="btn btn-outline-success" />
