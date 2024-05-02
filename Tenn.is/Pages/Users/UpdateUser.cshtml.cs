@@ -35,7 +35,7 @@ namespace Tennis.Pages.Users
                 return Page();
                 } else
                 {
-                    return RedirectToPage("Login");
+                    return RedirectToPage("Login", "Redirect", new { message = "Du har ikke tilladelse til at se denne side. Log venligst ind som admin" });
                 }
             }
             catch (SqlException sqlExp)

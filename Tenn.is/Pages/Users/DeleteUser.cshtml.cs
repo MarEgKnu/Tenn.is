@@ -21,9 +21,16 @@ namespace Tennis.Pages.Users
 
         public IActionResult OnGet(int userid)
         {
-            try { 
-            UserToDelete = _userService.GetUserById(userid);
-            return Page();
+            try
+            {
+                if (_userService.AdminVerify(HttpContext.Session.GetString("Username"), HttpContext.Session.GetString("Password")))
+                {
+                    UserToDelete = _userService.GetUserById(userid);
+                    return Page();
+                } else
+                {
+                    return RedirectToPage("Login", "Redirect", new { message = "Du har ikke tilladelse til at se denne side. Log venligst ind som admin" });
+                }
             }
             catch (SqlException sqlExp)
             {

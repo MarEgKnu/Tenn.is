@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.Data.SqlClient;
 using Tennis.Interfaces;
 using Tennis.Models;
 
@@ -25,6 +26,12 @@ namespace Tennis.Pages.Users
 
         }
 
+        public IActionResult OnGetRedirect(string message)
+        {
+            Message = message;
+            return Page();
+        }
+
         public IActionResult OnPost() 
         {
             bool valid = true;
@@ -47,26 +54,40 @@ namespace Tennis.Pages.Users
             }
             if (valid)
             {
-                User loginUser = _userService.VerifyUser(Username, Password);
-                if (loginUser != null)
+                try
                 {
-                    HttpContext.Session.SetString("Username", Username);
-                    HttpContext.Session.SetString("Password", Password);
-                    if (loginUser.RandomPassword)
+                    User loginUser = _userService.VerifyUser(Username, Password);
+                    if (loginUser != null)
                     {
-                        return RedirectToPage("FirstSetup");
+                        HttpContext.Session.SetString("Username", Username);
+                        HttpContext.Session.SetString("Password", Password);
+                        if (loginUser.RandomPassword)
+                        {
+                            return RedirectToPage("FirstSetup");
+                        }
+                        return RedirectToPage("Index");
                     }
-                    return RedirectToPage("Index");
+                    else
+                    {
+                        Message = "Forkert brugernavn eller password";
+                        Username = "";
+                        Password = "";
+                        return Page();
+                    }
                 }
-                else
+                catch (SqlException sqlExp)
                 {
-                    Message = "Forkert brugernavn eller password";
-                    Username = "";
-                    Password = "";
+                    ViewData["ErrorMessage"] = "Databasefejl: " + sqlExp.Message;
+                    return Page();
+                }
+                catch (Exception ex)
+                {
+                    ViewData["ErrorMessage"] = "Generel fejl: " + ex.Message;
                     return Page();
                 }
             }
                 return Page();
+
         }
         public void OnGetLogout()
         {
