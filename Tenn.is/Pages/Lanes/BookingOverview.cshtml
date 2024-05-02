@@ -1,4 +1,61 @@
 ﻿@page
 @model Tennis.Pages.Lanes.BookingOverviewModel
 @{
+    ViewData["Title"] = "Book en bane";
 }
+
+<div class="d-flex flex-row justify-content-start">
+    <form method="get">
+<div class="w-50">
+        <div align="center">
+        <p>Måned</p>
+    </div>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>
+                    Søn
+                </th>
+                <th>
+                    Man
+                </th>
+                <th>
+                    Tir
+                </th>
+                <th>
+                    Ons
+                </th>
+                <th>
+                    Tor
+                </th>
+                <th>
+                    Fre
+                </th>
+                <th>
+                    Lør
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            @for(int week=1; week<=5; week++)
+            {
+                <tr>
+                    @for(int weekday=1; weekday<=7; weekday++)
+                    {
+                    int totalIteration = (weekday + ((week - 1) * 7));
+                        <td>
+                        @if (Model.FirstOfTheWeek < totalIteration && totalIteration < (Model.DatesOfTheMonth.Count+1 + Model.FirstOfTheWeek))
+                        {
+                                        <input type="hidden" asp-for="chosendate" value="@Model.DatesOfTheMonth[totalIteration-Model.FirstOfTheWeek-1]" />
+                                        <input type="submit" value="@Model.DatesOfTheMonth[totalIteration-Model.FirstOfTheWeek-1].Day" asp-route-chosendate="@Model.DatesOfTheMonth[totalIteration-Model.FirstOfTheWeek-1].Ticks" />
+                            }
+                        </td>
+                    }
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+    </form>
+    <p>Chosen date: @Model.chosendate</p>
+</div>
