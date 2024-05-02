@@ -12,7 +12,8 @@
     <h1 style="font-weight:bold">Slet Event</h1>
     <h2 style="font-weight:bold">
         Er du sikker på at du vil slette @Model.Event.Title for evigt? <br />
-        Du kan aflyse eventen istedet ved at klikke her</h2>
+        Du kan aflyse eventen istedet ved at klikke <a asp-page="/Events/EditEvent" asp-route-eventID="@Model.Event.EventID">her</a>
+    </h2>
 
     <p style="font-weight:bold">ID:</p>
     <p>@Model.Event.EventID</p>

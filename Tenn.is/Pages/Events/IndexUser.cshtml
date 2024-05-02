@@ -88,7 +88,7 @@ Søg events: <input asp-for="StringFilter" onchange="this.form.submit()" />
 
                         @if (booking != null && booking.CanBeCancelled)
                         {
-                            <a asp-page="CancelBooking" asp-route-userid="@booking.BookingID" class="btn btn-outline-warning btn-sm w-100" style="margin-top: 5px">Afmeld</a>
+                            <a asp-page="CancelEventBooking" asp-route-bookingID="@booking.BookingID" class="btn btn-outline-warning btn-sm w-100" style="margin-top: 5px">Afmeld</a>
                         }
                         else
                         {

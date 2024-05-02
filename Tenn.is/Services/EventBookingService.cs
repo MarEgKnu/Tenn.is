@@ -35,6 +35,9 @@ namespace Tennis.Services
             _userService = userService;
         }
         public event Action<EventBooking> OnCreate;
+        public event Action<EventBooking> OnDelete;
+        public event Action<EventBooking> OnEdit;
+
         private string insertString = "INSERT INTO EventBookings (EventID, UserID, Comment)\n" +
                                       "OUTPUT INSERTED.BookingID\n" +
                                       "VALUES (@EventID, @UserID, @Comment)";
@@ -90,7 +93,7 @@ namespace Tennis.Services
                     _ = (eventBooking.Comment.IsNullOrEmpty()) ? command.Parameters.AddWithValue("@Comment", DBNull.Value) : command.Parameters.AddWithValue("@Comment", eventBooking.Comment);
                     //command.Parameters.AddWithValue("@Comment", eventBooking.Comment);
                     int primaryKey = (int)command.ExecuteScalar();
-                    //OnCreate?.Invoke(GetEventByNumber(primaryKey));
+                    OnCreate?.Invoke(GetEventBookingById(primaryKey));
                     return true;
 
                 }
@@ -122,7 +125,7 @@ namespace Tennis.Services
                     }
                     else
                     {
-                        //OnDelete?.Invoke(deletedBooking);
+                        OnDelete?.Invoke(deletedBooking);
                         return true;
                     }
 

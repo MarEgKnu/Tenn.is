@@ -4,6 +4,9 @@ namespace Tennis.Interfaces
 {
     public interface IEventBookingService
     {
+        public event Action<EventBooking> OnCreate;
+        public event Action<EventBooking> OnDelete;
+        public event Action<EventBooking> OnEdit;
         bool CreateEventBooking(EventBooking eventBooking);
 
 
