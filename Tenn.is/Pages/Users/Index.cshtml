@@ -12,10 +12,10 @@
 <br />
 @if (Model.CurrentUser.UserId == 0)
 {
-    <span class="text-success">System admin.</span>
+    <span class="text-success">System admin.</span> <a asp-area="" asp-page="/Users/Overview" class="btn btn-outline-success">Brugeroversigt</a>
 }
 else if (Model.CurrentUser.Administrator)
 {
-    <span class="text-success">Administrator.</span>
+    <span class="text-success">Administrator.</span> <a asp-area="" asp-page="/Users/Overview" class="btn btn-outline-success">Brugeroversigt</a>
 }
 <br />

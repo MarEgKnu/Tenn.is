@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Tennis.Interfaces;
+using Tennis.Models;
 
 namespace Tennis.Pages.Users
 {
@@ -46,10 +47,15 @@ namespace Tennis.Pages.Users
             }
             if (valid)
             {
-                if(_userService.VerifyUser(Username, Password) != null)
+                User loginUser = _userService.VerifyUser(Username, Password);
+                if (loginUser != null)
                 {
                     HttpContext.Session.SetString("Username", Username);
                     HttpContext.Session.SetString("Password", Password);
+                    if (loginUser.RandomPassword)
+                    {
+                        return RedirectToPage("FirstSetup");
+                    }
                     return RedirectToPage("Index");
                 }
                 else

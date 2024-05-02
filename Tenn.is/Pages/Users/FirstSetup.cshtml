@@ -1,0 +1,30 @@
+﻿@page
+@model Tennis.Pages.Users.FirstSetupModel
+@{
+    ViewData["Title"] = "Velkommen til Gadevang";
+}
+
+<div align="center">
+    <h1>Velkommen til Gadevang Tennisklub!</h1>
+    <p>Før du booker din første bane, vil vi lige bede dig om at ændre dit password. Det gør tingene lige lidt mere sikre. :)</p>
+    <p>Passwordet skal være mindst 8 bogstaver langt. Vi anbefaler en mix af store og små bogstaver samt tal.</p>
+
+    <form method="post">
+        <div class="form-group">
+            <table>
+                <tr>
+                    <td>Password: </td>
+                    <td><Input type="password" asp-for="@Model.NewPassword" /></td>
+                </tr>
+            </table>
+            <span class="text-danger">@Model.PasswordMessage</span>
+        </div>
+        <br />
+        <div class="form-group">
+            <Input type="submit" value="Opdater" class="btn btn-success" />
+        </div>
+
+
+    </form>
+</div>
+
