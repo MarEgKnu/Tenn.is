@@ -25,12 +25,12 @@ namespace Tennis.Services
         }
 
 
-        string GetAllLaneBookingSQL = "SELECT * FROM LANEBOOKINGS WHERE TrainingTeamID IS NULL";
+        string GetAllLaneBookingSQL = "SELECT * FROM LANEBOOKINGS";
         string GetLaneBookingByIdSQL = "SELECT * FROM LANEBOOKINGS WHERE BOOKINGID = @BookingID";
         string CreateLaneBookingSQL = "INSERT INTO LANEBOOKINGS ( LaneNumber, Cancelled, DateStart, DateEnd, UserID,  MateID , TrainingTeamID) VALUES ( @LaneNumber, @cancelled, @DateStart, @DateEnd, @UserID,  @MateID, @TrainingTeamID ) ";
         string DeleteLaneBookingSQL = "DELETE FROM LANEBOOKINGS WHERE BOOKINGID = @BookingID";
         string UpdateLaneBookingSQL = "UPDATE LANEBOOKINGS SET LaneNumber = @LaneNumber, DateStart = @DateStart, DateEnd = @DateEnd WHERE @ID = BOOKINGID";
-        string CancelLaneBookingSQL = "UPDATE LANEBOOKINGS SET Cancelled = TRUE WHERE BOOKINGID = @BookingID";
+        string CancelLaneBookingSQL = "UPDATE LANEBOOKINGS SET Cancelled = 'TRUE' WHERE BOOKINGID = @BookingID";
 
 
 
@@ -86,7 +86,7 @@ namespace Tennis.Services
 
         public UserLaneBooking GetUserLaneBookingById(int id)
         {
-            string GetUserLaneBookingByIdSQL = GetLaneBookingByIdSQL + " WHERE TrainingTeamID = NULL";
+            string GetUserLaneBookingByIdSQL = GetLaneBookingByIdSQL + " AND TrainingTeamID IS NULL";
             using (SqlConnection connection = new SqlConnection(connectionString))
                 try
                 {
@@ -94,10 +94,13 @@ namespace Tennis.Services
                     command.Parameters.AddWithValue("@BookingID", id);
                     command.Connection.Open();
                     SqlDataReader reader = command.ExecuteReader();
-                    TimeBetween timeBetween = new TimeBetween(reader.GetDateTime("DateStart"), reader.GetDateTime("DateEnd"));
                     if (reader.Read())
-                    return new UserLaneBooking(reader.GetInt32("BookingID"), reader.GetInt32("LaneNumber"), timeBetween, reader.GetInt32("UserID"), reader.GetInt32("MateID"), reader.GetBoolean("Cancelled"));
+                    {
+                        TimeBetween timeBetween = new TimeBetween(reader.GetDateTime("DateStart"), reader.GetDateTime("DateEnd"));
+                        return new UserLaneBooking(reader.GetInt32("BookingID"), reader.GetInt32("LaneNumber"), timeBetween, reader.GetInt32("UserID"), reader.GetInt32("MateID"), reader.GetBoolean("Cancelled"));
+
                     }
+                }
                 catch (SqlException sqlExp)
                 {
                     Console.WriteLine("Database error" + sqlExp.Message);
@@ -170,6 +173,8 @@ namespace Tennis.Services
         {
             if (GetUserLaneBookingById(laneBooking.BookingID) is not null)
                 return false;
+            if (VerifyNewBooking(laneBooking) == false)
+                return false;
             using (SqlConnection connection = new SqlConnection(connectionString))
                 try
                 {
@@ -201,6 +206,59 @@ namespace Tennis.Services
         {
             throw new NotImplementedException();
         }
+
+        public bool VerifyNewBooking(UserLaneBooking laneBooking)
+        {
+            List<UserLaneBooking> userLaneBookingList = GetAllLaneBookings<UserLaneBooking>();
+            if (laneBooking.MateID == laneBooking.UserID)
+                return false;
+            IEnumerable<UserLaneBooking> UserAlredyBooked = from b in userLaneBookingList where laneBooking._timeBetween.StartTime == b._timeBetween.StartTime && laneBooking.UserID == b.UserID select b ;
+            if (UserAlredyBooked.Count() > 0)
+                return false;
+            if (laneBooking.MateID > 0)
+            {
+                IEnumerable<UserLaneBooking> MateAlredyBooked = from b in userLaneBookingList where laneBooking._timeBetween.StartTime == b._timeBetween.StartTime && laneBooking.MateID == b.MateID select b;
+                if (UserAlredyBooked.Count() > 0)
+                    return false;
+
+                Mate4HoursRule(laneBooking, userLaneBookingList);
+            }
+            IEnumerable<UserLaneBooking> AlreadyBooked = from b in userLaneBookingList where laneBooking._timeBetween.StartTime == b._timeBetween.StartTime && laneBooking.LaneNumber == b.LaneNumber select b;
+            if (AlreadyBooked.Count() > 0)
+                return false;
+
+            User4HoursRule(laneBooking, userLaneBookingList);
+
+            return true;
+        }
+
+        public bool User4HoursRule(UserLaneBooking laneBooking, List<UserLaneBooking> userLaneBookingList )
+        {
+            IEnumerable<UserLaneBooking> fourthMostRecentBookingUser = from b in userLaneBookingList where laneBooking._timeBetween.StartTime.Value.AddDays(-14) <= b._timeBetween.StartTime && laneBooking._timeBetween.StartTime.Value.AddDays(14) >= b._timeBetween.StartTime && laneBooking.UserID == b.UserID orderby b._timeBetween.StartTime select b;
+            List<UserLaneBooking> fourthMostRecentBookingUserList = fourthMostRecentBookingUser.ToList();
+            for (int i = 0; i < fourthMostRecentBookingUser.Count() - 3; i++)
+            {
+                if (fourthMostRecentBookingUserList[i]._timeBetween.StartTime.Value.AddDays(14) > fourthMostRecentBookingUserList[i + 3]._timeBetween.StartTime)
+                    return false;
+            }
+            return true;
+        }
+
+        public bool Mate4HoursRule(UserLaneBooking laneBooking, List<UserLaneBooking> userLaneBookingList)
+        {
+            IEnumerable<UserLaneBooking> fourthMostRecentBookingMate = from b in userLaneBookingList where laneBooking._timeBetween.StartTime.Value.AddDays(-14) <= b._timeBetween.StartTime && laneBooking._timeBetween.StartTime.Value.AddDays(14) >= b._timeBetween.StartTime && laneBooking.MateID == b.MateID orderby b._timeBetween.StartTime select b;
+            List<UserLaneBooking> fourthMostRecentBookingMateList = fourthMostRecentBookingMate.ToList();
+            for (int i = 0; i < fourthMostRecentBookingMateList.Count() - 3; i++)
+            {
+                if (fourthMostRecentBookingMateList[i]._timeBetween.StartTime.Value.AddDays(14) > fourthMostRecentBookingMateList[i + 3]._timeBetween.StartTime)
+                    return false;
+            }
+            return true;
+        }
+
+
+
+
 
         public bool DeleteLaneBooking(int id)
         {

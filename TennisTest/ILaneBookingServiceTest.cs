@@ -89,7 +89,8 @@ namespace TennisTest
             userService.CreateUser(new User(201, "test2", "Test", "Testson", "test", "testestest", "1234", false, false));
             userService.CreateUser(new User(101, "test1", "Test", "Testson", "test", "testestest", "1234", false, false));
             laneBookingService.CreateLaneBooking(new UserLaneBooking(1, 1, timeBetween, 201, 101, false));
-            bool Testresult = laneBookingService.DeleteLaneBooking(1);
+            int Id = laneBookingService.GetAllLaneBookings<UserLaneBooking>().First().BookingID;
+            bool Testresult = laneBookingService.DeleteLaneBooking(Id);
             CleanTest();
             Assert.IsTrue(Testresult);
         }
@@ -159,7 +160,8 @@ namespace TennisTest
             TestSetUp();
             CreateLaneBooking();
             bool Testresult = false;
-            if (laneBookingService.GetUserLaneBookingById(1) != null)
+            int Id = laneBookingService.GetAllLaneBookings<UserLaneBooking>().First().BookingID;
+            if (laneBookingService.GetUserLaneBookingById(Id) != null)
                 Testresult = true;
             CleanTest();
             Assert.IsTrue(Testresult);
@@ -177,7 +179,8 @@ namespace TennisTest
         {
             TestSetUp();
             CreateLaneBooking();
-            bool Testresult = laneBookingService.CancelLaneBonking(1);
+            int Id = laneBookingService.GetAllLaneBookings<UserLaneBooking>().First().BookingID;
+            bool Testresult = laneBookingService.CancelLaneBonking(Id);
             CleanTest();
             Assert.IsTrue(Testresult);
         }
