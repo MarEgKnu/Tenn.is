@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using System.Globalization;
 using Tennis.Interfaces;
 using Tennis.Models;
@@ -8,36 +9,155 @@ namespace Tennis.Pages.Lanes
 {
     public class BookingOverviewModel : PageModel
     {
-        private DateTime _now;
+        private ILaneService _laneService;
+        private DateTime _displayedMonth;
         public List<DateTime> DatesOfTheMonth { get; set; }
         public int FirstOfTheWeek { get; set; }
         public List<LaneBooking> Bookings { get; set; }
+        public List<Lane> Lanes { get; set; }
         public Calendar Calendar { get; set; }
+
+        public SelectList SelectOptions { get; set; }
+
+        public SelectList FromOptions { get; set; }
+
+        public SelectList ToOptions { get; set; }
         [BindProperty(SupportsGet = true)]
-        public DateTime? chosendate { get; set; }
-        public BookingOverviewModel()
+        public int StartFilter {  get; set; }
+        [BindProperty(SupportsGet = true)]
+        public int EndFilter { get; set; }
+
+        [BindProperty(SupportsGet = true)]
+        public int SelectedMonth { get; set; }
+
+        [BindProperty(SupportsGet = true)]
+        public string DateString { get; set; }
+
+        public DateTime? SelectedDay { get {
+                bool succeeded = DateTime.TryParse(DateString, out DateTime result);
+                if (succeeded)
+                {
+                    return result;
+                }
+                else
+                {
+                    return null;
+                }
+            } }
+        public BookingOverviewModel(ILaneService laneService)
         {
+            _laneService = laneService;
             Calendar = new GregorianCalendar();
-        }
-        public void OnGet(int chosendate)
-        {
-            if (chosendate == null)
+            Dictionary<string, int> options = new Dictionary<string, int>()
             {
-                this.chosendate = null;
+                {
+                    "Januar", 1
+                },
+                                {
+                    "Febuar", 2
+                },
+                                                {
+                    "Marts", 3
+                },
+                                                                {
+                    "April", 4
+                },
+                                                                                {
+                    "Maj", 5
+                },
+                                                                                                {
+                    "Juni", 6
+                },
+                                                                                                                {
+                    "Juli", 7
+                },
+                                                                                                                                {
+                    "August", 8
+                },
+                                                                                                                                                {
+                    "September", 9
+                },
+                                                                                                                                                                {
+                    "Oktober", 10
+                },
+                                                                                                                                                                                {
+                    "November", 11
+                },
+                                                                                                                                                                                                {
+                    "December", 12
+                },
+            };
+            SelectOptions = new SelectList(options, "Value", "Key");
+            Dictionary<string, int> hourOptions = new Dictionary<string, int>()
+            {
+                {
+                    "8:00",8
+                },
+                {
+                    "9:00",9
+                },
+                {
+                    "10:00",10
+                },
+                {
+                    "11:00",11
+                },
+                {
+                    "12:00",12
+                },
+                {
+                    "13:00",13
+                },
+                {
+                    "14:00",14
+                },
+                {
+                    "15:00",15
+                },
+                {
+                    "16:00",16
+                },
+                {
+                    "17:00",17
+                },
+                {
+                    "18:00",18
+                },
+                {
+                    "19:00",19
+                },
+                {
+                    "20:00",20
+                },
+                {
+                    "21:00",21
+                }
+
+            };
+            FromOptions = new SelectList(hourOptions,"Value","Key");
+            ToOptions = new SelectList(hourOptions,"Value","Key");
+            StartFilter = 8;
+            EndFilter = 21;
+        }
+        public void OnGet()
+        {
+            Lanes = _laneService.GetAllLanes();
+            if (SelectedMonth == 0)
+            {
+                _displayedMonth = DateTime.Now;
+                SelectedMonth = _displayedMonth.Month;
             }
             else
             {
-                this.chosendate = new DateTime((int)chosendate);
+                _displayedMonth = new DateTime(DateTime.Now.Year, SelectedMonth, 1);
             }
-
-            _now = DateTime.Now;
             Bookings = new List<LaneBooking>();
             DatesOfTheMonth = new List<DateTime>();
-            for(int i = 1; i <= Calendar.GetDaysInMonth(_now.Year, _now.Month); i++)
+            for(int i = 1; i <= Calendar.GetDaysInMonth(_displayedMonth.Year, _displayedMonth.Month); i++)
             {
-                DatesOfTheMonth.Add(new DateTime(_now.Year, _now.Month, i));
+                DatesOfTheMonth.Add(new DateTime(_displayedMonth.Year, _displayedMonth.Month, i));
             }
-            FirstOfTheWeek = (int)Calendar.GetDayOfWeek(new DateTime(_now.Year, _now.Month, 1));
+            FirstOfTheWeek = (int)Calendar.GetDayOfWeek(new DateTime(_displayedMonth.Year, _displayedMonth.Month, 1));
         }
     }
 }
