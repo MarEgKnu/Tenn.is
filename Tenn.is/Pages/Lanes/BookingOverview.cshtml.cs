@@ -131,13 +131,15 @@ namespace Tennis.Pages.Lanes
                 },
                 {
                     "21:00",21
+                },
+                {
+                    "22:00",22
                 }
-
             };
             FromOptions = new SelectList(hourOptions,"Value","Key");
             ToOptions = new SelectList(hourOptions,"Value","Key");
             StartFilter = 8;
-            EndFilter = 21;
+            EndFilter = 22;
         }
         public void OnGet()
         {

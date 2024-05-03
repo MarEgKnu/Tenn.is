@@ -7,40 +7,41 @@
 <div class="container">
     <p>Filter:</p>
     <select asp-for="@Model.StartFilter" asp-items="@Model.FromOptions" onchange="this.form.submit()"></select>
+        <select asp-for="@Model.EndFilter" asp-items="@Model.ToOptions" onchange="this.form.submit()"></select>
 </div>
-<div class="d-flex flex-row justify-content-start" style="height: 500px">
-<div class="h-50" style="width: 30%">
+<div class="d-flex row justify-content-start" style="height: 500px">
+<div class="col-md-6">
         <div align="center">
         <select asp-for="@Model.SelectedMonth" asp-items="@Model.SelectOptions" onchange="this.form.submit()"></select>
     </div>
     <div class="container">
-    <table class="table m-auto">
+    <table class="table table-borderless m-auto">
         <thead>
             <tr>
-                <th>
+                <th class="text-center" style="width: 14%">
                     Søn
                 </th>
-                <th>
+                            <th class="text-center" style="width: 14%">
                     Man
                 </th>
-                <th>
+                            <th class="text-center" style="width: 14%">
                     Tir
                 </th>
-                <th>
+                            <th class="text-center" style="width: 14%">
                     Ons
                 </th>
-                <th>
+                            <th class="text-center" style="width: 14%">
                     Tor
                 </th>
-                <th>
+                            <th class="text-center" style="width: 14%">
                     Fre
                 </th>
-                <th>
+                            <th class="text-center" style="width: 14%">
                     Lør
                 </th>
             </tr>
         </thead>
-        <tbody>
+        <tbody class="">
             @for(int week=1; week<=6; week++)
             {
                 <tr>
@@ -48,40 +49,49 @@
                     {
                     int totalIteration = (weekday + ((week - 1) * 7));
 
-                                <td>
                                     @if (Model.FirstOfTheWeek < totalIteration && totalIteration < (Model.DatesOfTheMonth.Count + 1 + Model.FirstOfTheWeek))
                                     {
                                         int actualDate = Model.DatesOfTheMonth[totalIteration - Model.FirstOfTheWeek - 1].Day;
                                             if (Model.SelectedDay != null && Model.SelectedDay.Value.Day == actualDate)
                                             {
-                                                <button type="submit"
+                                            <td class="table-warning border" align="center">
+                                                <button class="w-100" type="submit"
                                                 value="@Model.DatesOfTheMonth[totalIteration-Model.FirstOfTheWeek-1].ToString()"
                                                 name="DateString"
-                                                style="border: solid; border-color: yellow; padding: 0px; background-color: transparent;;">
-                                                    <div>
-                                                        <span>@actualDate</span>
+                                                style="border: none; margin:auto; padding: 0px; background-color: transparent;">
+                                                    <div class="m-auto w-100">
+                                                        <span class="text-black-50">@actualDate</span>
                                                     </div>
+                                                    <div style="word-spacing: -2px">
                                                     @foreach (var item in @Model.Lanes)
                                                     {
-                                                        <span style="font-size: 20%; letter-spacing: -2px;">&#129001;</span>
+                                                        <span style="font-size: 30%; letter-spacing: -2px;">&#129001;</span>
                                                     }
+                                                    </div>
                                                 </button>
+                                                </td>
                                         } else { 
-                                        <button type="submit" 
+                                            <td class="border" align="center">
+                                        <button class="w-100" type="submit" 
                                         value="@Model.DatesOfTheMonth[totalIteration-Model.FirstOfTheWeek-1].ToString()" 
                                         name="DateString" 
-                                        style="border: solid; border-color:transparent; padding: 0px; background-color: transparent;;">
-                                            <div>
-                                                <span>@actualDate</span>
+                                        style="border: none; margin:auto; padding: 0px; background-color: transparent;">
+                                            <div class="m-auto w-100">
+                                                <span class="text-black-50">@actualDate</span>
                                             </div>
+                                                    <div style="word-spacing: -2px">
                                             @foreach (var item in @Model.Lanes)
                                             {
-                                                        <span style="font-size: 20%; letter-spacing: -2px;">&#129001;</span>
+                                                        <span style="font-size: 30%; letter-spacing: -2px;">&#129001;</span>
                                             }
+                                            </div>
                                         </button>
+                                                </td>
+                                            }
+                                        } else
+                                        {
+                                            <td></td>
                                         }
-                                    }
-                        </td>
                     }
                 </tr>
             }
@@ -92,9 +102,9 @@
 
     @if(Model.SelectedDay != null)
     {
-        <div class="container-fluid w-75 border" align="center" style="max-height: 500px; overflow-y: scroll">
+        <div class="container-fluid col-md-6 border" align="center" style="max-height: 500px; overflow-y: scroll">
             <h3 class="display-6">@Model.SelectedDay.Value.Date.ToShortDateString()</h3>
-            <table class="table table-bordered">
+            <table class="table table-bordered table-hover">
                 <thead>
                     <tr>
                         <th>
