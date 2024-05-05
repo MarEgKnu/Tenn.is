@@ -58,6 +58,28 @@ namespace Tennis.Models
                 return EventTime.TimeState;
             }
         }
+        public TimeSpan? TimeUntillOrAfterStart
+        {
+            get
+            {
+                return EventTime.TimeUntillOrAfterStart;
+            }
+        }
+        public string TimeTillStartDisplay
+        {
+            get
+            {
+                if (TimeUntillOrAfterStart.Value.TotalDays < 1 || TimeUntillOrAfterStart.Value.TotalDays >= -1)
+                {
+                    return $"{Math.Abs(TimeUntillOrAfterStart.Value.Hours)} time{(TimeUntillOrAfterStart.Value.Hours != 1 ? "r" : "")} og {Math.Abs(TimeUntillOrAfterStart.Value.Minutes)} minut{(TimeUntillOrAfterStart.Value.Minutes != 1 ? "ter" : "")}{(TimeUntillOrAfterStart.Value.TotalSeconds < 0 ? " siden" : " til")} start";
+                }
+                else
+                {
+                    return $"{Math.Abs(TimeUntillOrAfterStart.Value.Days)} dag{(TimeUntillOrAfterStart.Value.Days != 1 ? "e" : "") }, {Math.Abs(TimeUntillOrAfterStart.Value.Hours)} time{(TimeUntillOrAfterStart.Value.Hours != 1 ? "r" : "")} og {Math.Abs(TimeUntillOrAfterStart.Value.Minutes)} minut{(TimeUntillOrAfterStart.Value.Minutes != 1 ? "ter" : "")}{(TimeUntillOrAfterStart.Value.TotalSeconds < 0 ? " siden" : " til")} start";
+                }
+                    
+            }
+        }
         /// <summary>
         /// Returns a RelativeTime enum, representing if the event is ongoing, in the past, or in the future at the specified time
         /// </summary>

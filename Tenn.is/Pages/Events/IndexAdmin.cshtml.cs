@@ -48,6 +48,10 @@ namespace Tennis.Pages.Events
         [BindProperty(SupportsGet = true)]
         public bool Descending { get; set; }
 
+        [BindProperty(SupportsGet = true)]
+        public bool ViewOldEventsFilter { get; set; }
+
+
         public IndexAdminModel(IEventService eventService, IUserService userService)
         {
             _eventService = eventService;
@@ -126,6 +130,9 @@ namespace Tennis.Pages.Events
                     case "CancellationThreshold":
                         Events = Events.OrderByDescending(e => e.CancellationThresholdMinutes).ToList();
                         break;
+                    case "EventState":
+                        Events = Events.OrderByDescending(e => e.EventState).ToList();
+                        break;
                     default:
                         break;
                 }
@@ -155,6 +162,9 @@ namespace Tennis.Pages.Events
                     case "CancellationThreshold":
                         Events = Events.OrderBy(e => e.CancellationThresholdMinutes).ToList();
                         break;
+                    case "EventState":
+                        Events = Events.OrderBy(e => e.EventState).ToList();
+                        break;
                     default:
                         break;
                 }
@@ -162,11 +172,17 @@ namespace Tennis.Pages.Events
         }
         public void FilterEventsBasic()
         {
+            List<Predicate<Event>> conditions = new List<Predicate<Event>>();
             if (!GenericFilter.IsNullOrEmpty())
             {
-                Events = Events.FindAll(e => e.Title.ToLower().Contains(GenericFilter.ToLower()) ||
+                conditions.Add(e => e.Title.ToLower().Contains(GenericFilter.ToLower()) ||
                                 e.Description.ToLower().Contains(GenericFilter.ToLower()));
             }
+            if (!ViewOldEventsFilter)
+            {
+                conditions.Add(e => e.EventState != RelativeTime.Past);
+            }
+            Events = _eventService.GetEventsOnConditions(conditions, Events);
         }
         public void FilterEventsAdvanced()
         {
@@ -174,6 +190,10 @@ namespace Tennis.Pages.Events
             if (EventIDFilter != null) 
             {
                 conditions.Add(e => e.EventID == EventIDFilter);   
+            }
+            if (!ViewOldEventsFilter)
+            {
+                conditions.Add(e => e.EventState != RelativeTime.Past);
             }
             if (!TitleFilter.IsNullOrEmpty())
             {

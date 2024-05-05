@@ -39,7 +39,14 @@ Søg events: <input asp-for="StringFilter" onchange="this.form.submit()" />
                         Status: &#128997; Aflyst
                     </h6>
                 }
-                else if (evt.EventState == RelativeTime.Past)
+                else
+                {
+                    <h6 class="card-subtitle mb-2 text-muted">
+                        Status: @RelativeTimeHelpers.TimeDisplay[evt.EventState]<br />
+                        @evt.TimeTillStartDisplay
+                    </h6>
+                }
+                @* else if (evt.EventState == RelativeTime.Past)
                 {
                     <h6 class="card-subtitle mb-2 text-muted">
                         Status: &#128997; Fortid
@@ -54,9 +61,10 @@ Søg events: <input asp-for="StringFilter" onchange="this.form.submit()" />
                 else
                 {
                     <h6 class="card-subtitle mb-2 text-muted">
-                        Status: &#129001; Kommende
+                        Status: &#129001; Kommende<br />
+                         @evt.TimeTillStartDisplay til start
                     </h6>
-                }          
+                }           *@
 
                 <h6 class="card-subtitle mb-2 text-muted">
                     @evt.EventTime.StartTime.Value.ToString("dd/MM/yyyy HH:mm") til @evt.EventTime.EndTime.Value.ToString("dd/MM/yyyy HH:mm")

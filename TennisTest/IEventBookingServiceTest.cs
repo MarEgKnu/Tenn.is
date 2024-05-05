@@ -658,6 +658,197 @@ namespace TennisTest
 
         }
 
+
+        [TestMethod]
+        public void GetEventBookingFromUser_Sucess()
+        {
+            TestSetUp();
+            TimeBetween time = new TimeBetween(new DateTime(2040, 10, 20), new DateTime(2040, 10, 30));
+            eventService.CreateEvent(new Event(1, "big event", 0, "meget stor event", time));
+
+            Event evt1 = eventService.GetAllEvents()[0];
+
+            userService.CreateUser(new User(1, "KlausXxX", "Klaus", "Nielsen", "xxxx@gmail.com", "ZxKjdJF!!!45", "12345678", false, false));
+
+            User user = userService.GetAllUsers()[0];
+            EventBooking booking = new EventBooking(evt1, user, "Ingen cola");
+            bookingService.CreateEventBooking(booking);
+
+            booking = bookingService.GetEventBookingsByUser(user.UserId).FirstOrDefault();
+
+            Assert.AreEqual("Ingen cola", booking.Comment);
+            Assert.AreEqual(user.UserId, booking.User.UserId);
+            Assert.AreEqual(evt1.EventID, booking.Event.EventID);
+            Assert.AreEqual(user.Username, booking.User.Username);
+        }
+        [TestMethod]
+        public void GetEventBookingFromUser_Failure_UserNotFound()
+        {
+            TestSetUp();
+            TimeBetween time = new TimeBetween(new DateTime(2040, 10, 20), new DateTime(2040, 10, 30));
+            eventService.CreateEvent(new Event(1, "big event", 0, "meget stor event", time));
+
+            Event evt1 = eventService.GetAllEvents()[0];
+
+            userService.CreateUser(new User(1, "KlausXxX", "Klaus", "Nielsen", "xxxx@gmail.com", "ZxKjdJF!!!45", "12345678", false, false));
+
+            User user = userService.GetAllUsers()[0];
+            EventBooking booking = new EventBooking(evt1, user, "Ingen cola");
+            bookingService.CreateEventBooking(booking);
+
+            List<EventBooking> bookings = bookingService.GetEventBookingsByUser(int.MaxValue);
+
+            Assert.AreEqual(0, bookings.Count);
+        }
+
+        [TestMethod]
+        public void GetEventBookingFromUser_UserHasNoBookings()
+        {
+            TestSetUp();
+            TimeBetween time = new TimeBetween(new DateTime(2040, 10, 20), new DateTime(2040, 10, 30));
+            eventService.CreateEvent(new Event(1, "big event", 0, "meget stor event", time));
+
+            Event evt1 = eventService.GetAllEvents()[0];
+
+            userService.CreateUser(new User(1, "KlausXxX", "Klaus", "Nielsen", "xxxx@gmail.com", "ZxKjdJF!!!45", "12345678", false, false));
+
+            User user = userService.GetAllUsers()[0];
+
+            List<EventBooking> bookings = bookingService.GetEventBookingsByUser(user.UserId);
+
+            Assert.AreEqual(0, bookings.Count);
+        }
+
+
+        [TestMethod]
+        public void GetBookingsOnConditions_Sucess_SearchEventTitleAndComment()
+        {
+            TestSetUp();
+            TimeBetween time = new TimeBetween(new DateTime(2040, 10, 20), new DateTime(2040, 10, 30));
+            eventService.CreateEvent(new Event(1, "big event", 0, "meget stor event", time));
+
+            Event evt1 = eventService.GetAllEvents()[0];
+
+            userService.CreateUser(new User(1, "KlausXxX", "Klaus", "Nielsen", "xxxx@gmail.com", "ZxKjdJF!!!45", "12345678", false, false));
+
+            userService.CreateUser(new User(2, "KlausXxXYyY", "Klaus", "Nielsen", "xxxx@gmail.com", "ZxKjdJF!!!45", "12345678", false, false));
+
+            User user1 = userService.GetAllUsers()[0];
+            User user2 = userService.GetAllUsers()[1];
+
+            EventBooking booking = new EventBooking(evt1, user1, "Ingen cola");
+            EventBooking booking2 = new EventBooking(evt1, user2, "Masser af cola");
+
+            bookingService.CreateEventBooking(booking);
+            bookingService.CreateEventBooking(booking2);
+
+
+            List<Predicate<EventBooking>> conditions = new List<Predicate<EventBooking>>();
+
+            conditions.Add(new Predicate<EventBooking>(e => e.Event.Title == "big event" && e.Comment == "Ingen cola"));
+
+            List<EventBooking> bookings = bookingService.GetEventBookingsOnConditions(conditions);
+
+            Assert.AreEqual(1, bookings.Count);
+            Assert.AreEqual(booking.Comment, bookings.First().Comment);
+            Assert.AreEqual(user1.UserId, bookings.First().User.UserId);
+            Assert.AreEqual(evt1.EventID, bookings.First().Event.EventID);
+        }
+
+
+        [TestMethod]
+        public void GetBookingsOnConditions_Fail_ConditionNull()
+        {
+            TestSetUp();
+            TimeBetween time = new TimeBetween(new DateTime(2040, 10, 20), new DateTime(2040, 10, 30));
+            eventService.CreateEvent(new Event(1, "big event", 0, "meget stor event", time));
+
+            Event evt1 = eventService.GetAllEvents()[0];
+
+            userService.CreateUser(new User(1, "KlausXxX", "Klaus", "Nielsen", "xxxx@gmail.com", "ZxKjdJF!!!45", "12345678", false, false));
+
+            userService.CreateUser(new User(2, "KlausXxXYyY", "Klaus", "Nielsen", "xxxx@gmail.com", "ZxKjdJF!!!45", "12345678", false, false));
+
+            User user1 = userService.GetAllUsers()[0];
+            User user2 = userService.GetAllUsers()[1];
+
+            EventBooking booking = new EventBooking(evt1, user1, "Ingen cola");
+            EventBooking booking2 = new EventBooking(evt1, user2, "Masser af cola");
+
+            bookingService.CreateEventBooking(booking);
+            bookingService.CreateEventBooking(booking2);
+
+
+            List<Predicate<EventBooking>> conditions = new List<Predicate<EventBooking>>();
+            conditions.Add(null);
+
+
+            List<EventBooking> bookings = bookingService.GetEventBookingsOnConditions(conditions);
+
+            Assert.AreEqual(2, bookings.Count);
+        }
+        [TestMethod]
+        public void GetBookingsOnConditions_Fail_ListNull()
+        {
+            TestSetUp();
+            TimeBetween time = new TimeBetween(new DateTime(2040, 10, 20), new DateTime(2040, 10, 30));
+            eventService.CreateEvent(new Event(1, "big event", 0, "meget stor event", time));
+
+            Event evt1 = eventService.GetAllEvents()[0];
+
+            userService.CreateUser(new User(1, "KlausXxX", "Klaus", "Nielsen", "xxxx@gmail.com", "ZxKjdJF!!!45", "12345678", false, false));
+
+            userService.CreateUser(new User(2, "KlausXxXYyY", "Klaus", "Nielsen", "xxxx@gmail.com", "ZxKjdJF!!!45", "12345678", false, false));
+
+            User user1 = userService.GetAllUsers()[0];
+            User user2 = userService.GetAllUsers()[1];
+
+            EventBooking booking = new EventBooking(evt1, user1, "Ingen cola");
+            EventBooking booking2 = new EventBooking(evt1, user2, "Masser af cola");
+
+            bookingService.CreateEventBooking(booking);
+            bookingService.CreateEventBooking(booking2);
+
+
+            List<Predicate<EventBooking>> conditions = null;
+
+
+            List<EventBooking> bookings = bookingService.GetEventBookingsOnConditions(conditions);
+
+            Assert.AreEqual(2, bookings.Count);
+        }
+
+        [TestMethod]
+        public void GetBookingsOnConditions_Sucess_EmptyList()
+        {
+            TestSetUp();
+            TimeBetween time = new TimeBetween(new DateTime(2040, 10, 20), new DateTime(2040, 10, 30));
+            eventService.CreateEvent(new Event(1, "big event", 0, "meget stor event", time));
+
+            Event evt1 = eventService.GetAllEvents()[0];
+
+            userService.CreateUser(new User(1, "KlausXxX", "Klaus", "Nielsen", "xxxx@gmail.com", "ZxKjdJF!!!45", "12345678", false, false));
+
+            userService.CreateUser(new User(2, "KlausXxXYyY", "Klaus", "Nielsen", "xxxx@gmail.com", "ZxKjdJF!!!45", "12345678", false, false));
+
+            User user1 = userService.GetAllUsers()[0];
+            User user2 = userService.GetAllUsers()[1];
+
+            EventBooking booking = new EventBooking(evt1, user1, "Ingen cola");
+            EventBooking booking2 = new EventBooking(evt1, user2, "Masser af cola");
+
+            bookingService.CreateEventBooking(booking);
+            bookingService.CreateEventBooking(booking2);
+
+
+            List<Predicate<EventBooking>> conditions = new List<Predicate<EventBooking>>();
+
+
+            List<EventBooking> bookings = bookingService.GetEventBookingsOnConditions(conditions);
+
+            Assert.AreEqual(2, bookings.Count);
+        }
+
     }
 }
 

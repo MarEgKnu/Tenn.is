@@ -13,7 +13,7 @@
     @if (!Model.AdvancedSearch)
     {
         <p>
-            Søg Events: <input type="text" asp-for="@Model.GenericFilter" onchange="this.form.submit()" />
+            Søg Events: <input type="text" asp-for="@Model.GenericFilter" onchange="this.form.submit()" /> Vis gamle events: <input asp-for="ViewOldEventsFilter" onchange="this.form.submit()" />
         </p>
     }
     else
@@ -22,6 +22,7 @@
             Søg EventID: <input type="text" asp-for="@Model.EventIDFilter" onchange="this.form.submit()" />
             Søg Titel:<input type="text" asp-for="@Model.TitleFilter" onchange="this.form.submit()" />
             Søg Beskrivelse: <input asp-for="@Model.DescriptionFilter" onchange="this.form.submit()" />
+            Vis gamle events: <input asp-for="ViewOldEventsFilter" onchange="this.form.submit()" />
             Aflyst:
             <select asp-for="@Model.CancelledFilter" asp-items="@Model.CancelelledFilterOptions" onchange="this.form.submit()">
                     <option value="">Alle</option>
@@ -70,7 +71,11 @@
                     <input type="radio" asp-for="@Model.SortBy" value="EndTime" onclick="this.form.submit()" />
                 </th>
                 <th>
-                    Afmældningsgrænse<br />
+                    Status<br />
+                    <input type="radio" asp-for="@Model.SortBy" value="EventState" onclick="this.form.submit()" />
+                </th>
+                <th>
+                    Afmeldningsgrænse<br />
                     <input type="radio" asp-for="@Model.SortBy" value="CancellationThreshold" onclick="this.form.submit()" />
                 </th>
                 <th>
@@ -101,6 +106,9 @@
                         </td>
                         <td>
                             @item.EventTime.EndTime.Value.ToString("dd/MM/yyyy HH:mm")
+                        </td>
+                        <td>
+                            @RelativeTimeHelpers.TimeDisplay[item.EventState]
                         </td>
                         <td>
                             @item.CancellationThresholdMinutes

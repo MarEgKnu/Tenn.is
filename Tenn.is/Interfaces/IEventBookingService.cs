@@ -18,11 +18,19 @@ namespace Tennis.Interfaces
 
         EventBooking GetEventBookingById(int id);
 
+
+        List<EventBooking> GetEventBookingsByUser(int userID);
+
         List<EventBooking> GetAllBookingsByEventID(int id);
 
         EventBooking? AlreadyHasEventBooking(int userID, int eventID);
 
-
+        /// <summary>
+        /// Returns a bool specifiying if the given user is allowed to create a booking for the specified event
+        /// </summary>
+        /// <param name="user"></param>
+        /// <param name="evt"></param>
+        /// <returns></returns>
         bool CanBook(User user, Event evt);           
 
         /// <summary>

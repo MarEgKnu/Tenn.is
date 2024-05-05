@@ -331,20 +331,6 @@ namespace TennisTest
         }
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
         public void GetEventsByConditionsOtherCTOR_Fail_ConditionNull()
         {
             TestSetUp();

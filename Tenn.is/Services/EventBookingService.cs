@@ -49,6 +49,9 @@ namespace Tennis.Services
         private string getAllOnBookingID = "SELECT * FROM EventBookings\n" +
                                            "WHERE BookingID = @BookingID";
         private string deleteString = "DELETE FROM EventBookings WHERE BookingID = @BookingID";
+
+        private string getAllOnUserID = "SELECT * FROM EventBookings\n" +
+                                        "WHERE UserID = @UserID";
         public bool CreateEventBooking(EventBooking eventBooking)
         {
             if (eventBooking == null || eventBooking.User == null || 
@@ -226,6 +229,35 @@ namespace Tennis.Services
             return eventBookings;
         }
 
+
+        public List<EventBooking> GetEventBookingsByUser(int userID)
+        {
+            List<EventBooking> eventBookings = new List<EventBooking>();
+            using (SqlConnection connection = new SqlConnection(connectionString))
+            {
+
+                try
+                {
+                    SqlCommand command = new SqlCommand(getAllOnUserID, connection);
+                    command.Connection.Open();
+                    command.Parameters.AddWithValue("@UserID", userID);
+                    eventBookings = ProcessReader(command);
+
+                    //OnCreate?.Invoke(GetEventByNumber(primaryKey));
+
+                }
+                catch (SqlException ex)
+                {
+                    throw;
+                }
+                catch (Exception ex)
+                {
+                    throw;
+                }
+            }
+            return eventBookings;
+        }
+
         public EventBooking? AlreadyHasEventBooking(int userID, int eventID)
         {
             List<EventBooking> eventBookings = new List<EventBooking>();
@@ -275,19 +307,49 @@ namespace Tennis.Services
 
         public List<EventBooking> GetEventBookingsOnConditions(List<Predicate<EventBooking>> conditions)
         {
-            throw new NotImplementedException();
+            List<EventBooking> bookings = GetAllEventBookings();
+            if (conditions == null || conditions.Count == 0)
+            {
+                return bookings;
+            }
+
+            foreach (Predicate<EventBooking> condition in conditions)
+            {
+                if (condition == null)
+                {
+                    continue;
+                }
+                bookings = bookings.FindAll(condition);
+                if (bookings.Count == 0)
+                {
+                    return bookings;
+                }
+            }
+            return bookings;
         }
 
-        public List<EventBooking> GetEventBookingsOnConditions(List<Predicate<EventBooking>> conditions, List<EventBooking> eventBookings)
+        public List<EventBooking> GetEventBookingsOnConditions(List<Predicate<EventBooking>> conditions, List<EventBooking> bookings)
         {
-            throw new NotImplementedException();
+            if (conditions == null || conditions.Count == 0)
+            {
+                return bookings;
+            }
+
+            foreach (Predicate<EventBooking> condition in conditions)
+            {
+                if (condition == null)
+                {
+                    continue;
+                }
+                bookings = bookings.FindAll(condition);
+                if (bookings.Count == 0)
+                {
+                    return bookings;
+                }
+            }
+            return bookings;
         }
-        /// <summary>
-        /// Returns a bool specifiying if the given user is allowed to create a booking for the specified event
-        /// </summary>
-        /// <param name="user"></param>
-        /// <param name="evt"></param>
-        /// <returns></returns>
+      
         public bool CanBook(User user, Event evt)
         {
             if (user == null || evt == null) return false;
