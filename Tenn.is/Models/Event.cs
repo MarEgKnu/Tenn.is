@@ -69,7 +69,7 @@ namespace Tennis.Models
         {
             get
             {
-                if (TimeUntillOrAfterStart.Value.TotalDays < 1 || TimeUntillOrAfterStart.Value.TotalDays >= -1)
+                if (TimeUntillOrAfterStart.Value.TotalDays < 1 || TimeUntillOrAfterStart.Value.TotalDays <= -1)
                 {
                     return $"{Math.Abs(TimeUntillOrAfterStart.Value.Hours)} time{(TimeUntillOrAfterStart.Value.Hours != 1 ? "r" : "")} og {Math.Abs(TimeUntillOrAfterStart.Value.Minutes)} minut{(TimeUntillOrAfterStart.Value.Minutes != 1 ? "ter" : "")}{(TimeUntillOrAfterStart.Value.TotalSeconds < 0 ? " siden" : " til")} start";
                 }
