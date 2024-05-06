@@ -4,7 +4,7 @@
     ViewData["Title"] = "LaneUpdate";
 }
 
-<h1>Update Lane</h1>
+<h1>Opdater bannen</h1>
 <div class="row">
     <div class="col-md-4">
         <form method="post">
@@ -23,8 +23,8 @@
             </div>
 
             <div class="form-group">
-                <input type="submit" value="Update" asp-page-handler="Update" asp-route-id="@Model.LaneToUpdate.Id" class="btn btn-primary" />
-                <input type="submit" value="Cancel" asp-page-handler="Cancel" class="btn btn-primary" />
+                <input type="submit" value="Opdater" asp-page-handler="Update" asp-route-id="@Model.LaneToUpdate.Id" class="btn btn-primary" />
+                <input type="submit" value="Fortryd" asp-page-handler="Cancel" class="btn btn-primary" />
             </div>
         </form>
     </div>
