@@ -7,7 +7,7 @@
 
 <h3>Liste af banner </h3>
 <p>
-    <a asp-page="LaneCreate">skab en ny banne</a>
+    <a asp-page="LaneCreate">Lav en ny banne</a>
 </p>
 
 
@@ -15,13 +15,13 @@
     <thead>
         <tr>
             <th>
-                bannensnummer
+                Banenummer
             </th>
             <th>
-                er det udenfor?
+                Udenfor/indenfor
             </th>
             <th>
-                er det padeltennis?
+                Banetype
             </th>
         </tr>
     </thead>
@@ -38,27 +38,27 @@
 
                         @if (item.OutDoor == true)
                         {
-                            <p>ja</p>
+                            <p>Udenfor</p>
                         }
                         else
                         {
-                            <p>nej</p>
+                            <p>Indenfor</p>
                         }
                     </td>
                     <td>
                         @if (item.PadelTennis == true)
                         {
-                            <p>ja</p>
+                            <p>Padel</p>
                         }
                         else
                         {
-                            <p>nej</p>
+                            <p>Tennis</p>
                         }
                     </td>
                     <td>
-                        <a asp-page="LaneDelete" asp-route-Id="@item.Id">fjern </a>|
+                        <a asp-page="LaneDelete" asp-route-Id="@item.Id">Fjern </a>|
 
-                        <a asp-page="LaneUpdate" asp-route-Id="@item.Id">opdater</a>
+                        <a asp-page="LaneUpdate" asp-route-Id="@item.Id">Opdater</a>
                     </td>
                 </tr>
             }
