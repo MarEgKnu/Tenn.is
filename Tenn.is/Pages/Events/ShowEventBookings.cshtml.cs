@@ -41,7 +41,7 @@ namespace Tennis.Pages.Events
             }
             try
             {
-                Bookings = _eventBookingService.GetEventBookingsByUser(LoggedInUser.UserId);
+                Bookings = _eventBookingService.GetEventBookingsByUser(LoggedInUser.UserId).OrderByDescending(b => b.Event.EventTime.StartTime).ToList();
                 FilterBookings();
                 
             }
