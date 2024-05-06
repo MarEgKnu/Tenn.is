@@ -1,0 +1,20 @@
+﻿@page
+@model Tennis.Pages.Articles.CreateArticleModel
+@{
+}
+
+<form method="post">
+    <div class="form-group">
+        <label for="ArticleTitle">Titel</label>
+        <input type="text" class="form-control" name="ArticleTitle" placeholder="">
+    </div>
+    <div class="form-group">
+        <label for="ArticleContent">Another label</label>
+        <input type="text" class="form-control" name="ArticleContent" placeholder="">
+    </div>
+@*     <div class="form-group">
+        <label for="formInputImage">Image</label>
+        <input type="file" class="form-control-file" id="formInputImage">
+    </div> *@
+    <button type="submit" class="btn btn-outline-success mb-2">Submit</button>
+</form>

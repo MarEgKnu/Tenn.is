@@ -4,16 +4,65 @@
 }
 
 <!-- EDIT ARTICLE -->
-<form>
+<form method="post" style="box-sizing:content-box">
+    <label> 
+        <strong>Titel</strong>
+    </label>
+    <br />
+    <input asp-for="NewArticle.Title" type="text" />
+    <br />
+
+
+    <label>
+        <strong>Content</strong>
+    </label>
+    <br />
+    <textarea asp-for="NewArticle.Content" rows="10" cols="40"></textarea>
+    <br />
+
+    <button type="submit" class="btn btn-success mb-2">Submit</button>
+
+</form> 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+@* 
+<form method="post">
     <div class="form-group">
-        <label for="editArticleTitleInput">Example label</label>
-        <input type="text" class="form-control" id="editArticleTitleInput" placeholder="@Model.ArticleToEdit.Title">
+        <label for="editArticleTitleInput">Title</label>
+        <input type="text" class="form-control" name="editArticleTitleInput" value="@Model.ArticleToEdit.Title">
     </div>
     <div class="form-group">
-        <label for="editArticleContentInput">Another label</label>
-        <input type="text" class="form-control" id="editArticleContentInput" placeholder="Model.ArticleToEdit.Content">
+        <label for="editArticleContentInput">Content</label>
+        <input type="text" class="form-control" name="editArticleContentInput" value="@Model.ArticleToEdit.Content">
     </div>
     <p>
         <button type="submit" class="btn btn-primary mb-2">Save changes</button>
     </p>
-</form>
+</form> *@
+
+
+
+
+@* <form method="post">
+    <input asp-for="@Model.ArticleTitle" type="text" value="@Model.ArticleToEdit.Title" />
+</form> *@
