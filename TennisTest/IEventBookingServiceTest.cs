@@ -747,7 +747,8 @@ namespace TennisTest
 
             conditions.Add(new Predicate<EventBooking>(e => e.Event.Title == "big event" && e.Comment == "Ingen cola"));
 
-            List<EventBooking> bookings = bookingService.GetEventBookingsOnConditions(conditions);
+            List<EventBooking> bookings = bookingService.GetAllEventBookings();
+            bookings = FilterHelpers.GetItemsOnConditions(conditions, bookings);
 
             Assert.AreEqual(1, bookings.Count);
             Assert.AreEqual(booking.Comment, bookings.First().Comment);
@@ -782,8 +783,8 @@ namespace TennisTest
             List<Predicate<EventBooking>> conditions = new List<Predicate<EventBooking>>();
             conditions.Add(null);
 
-
-            List<EventBooking> bookings = bookingService.GetEventBookingsOnConditions(conditions);
+            List<EventBooking> bookings = bookingService.GetAllEventBookings();
+           bookings = FilterHelpers.GetItemsOnConditions(conditions, bookings);
 
             Assert.AreEqual(2, bookings.Count);
         }
@@ -812,8 +813,8 @@ namespace TennisTest
 
             List<Predicate<EventBooking>> conditions = null;
 
-
-            List<EventBooking> bookings = bookingService.GetEventBookingsOnConditions(conditions);
+            List<EventBooking> bookings = bookingService.GetAllEventBookings();
+            bookings = FilterHelpers.GetItemsOnConditions(conditions, bookings);
 
             Assert.AreEqual(2, bookings.Count);
         }
@@ -843,8 +844,8 @@ namespace TennisTest
 
             List<Predicate<EventBooking>> conditions = new List<Predicate<EventBooking>>();
 
-
-            List<EventBooking> bookings = bookingService.GetEventBookingsOnConditions(conditions);
+            List<EventBooking> bookings = bookingService.GetAllEventBookings();
+            bookings = FilterHelpers.GetItemsOnConditions(conditions, bookings);
 
             Assert.AreEqual(2, bookings.Count);
         }

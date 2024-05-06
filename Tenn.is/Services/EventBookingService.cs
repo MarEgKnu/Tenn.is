@@ -304,51 +304,6 @@ namespace Tennis.Services
             reader.Close();
             return eventBookings;
         }
-
-        public List<EventBooking> GetEventBookingsOnConditions(List<Predicate<EventBooking>> conditions)
-        {
-            List<EventBooking> bookings = GetAllEventBookings();
-            if (conditions == null || conditions.Count == 0)
-            {
-                return bookings;
-            }
-
-            foreach (Predicate<EventBooking> condition in conditions)
-            {
-                if (condition == null)
-                {
-                    continue;
-                }
-                bookings = bookings.FindAll(condition);
-                if (bookings.Count == 0)
-                {
-                    return bookings;
-                }
-            }
-            return bookings;
-        }
-
-        public List<EventBooking> GetEventBookingsOnConditions(List<Predicate<EventBooking>> conditions, List<EventBooking> bookings)
-        {
-            if (conditions == null || conditions.Count == 0)
-            {
-                return bookings;
-            }
-
-            foreach (Predicate<EventBooking> condition in conditions)
-            {
-                if (condition == null)
-                {
-                    continue;
-                }
-                bookings = bookings.FindAll(condition);
-                if (bookings.Count == 0)
-                {
-                    return bookings;
-                }
-            }
-            return bookings;
-        }
       
         public bool CanBook(User user, Event evt)
         {

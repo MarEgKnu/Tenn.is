@@ -97,7 +97,7 @@ namespace Tennis.Pages.Users
             {
                 conditions.Add(e => e.Phone.Contains(PhoneFilter));
             }
-            Users = _userService.GetUsersOnConditions(conditions, Users);
+            Users = FilterHelpers.GetItemsOnConditions(conditions, Users);
         }
     }
 }

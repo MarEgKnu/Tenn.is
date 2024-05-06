@@ -111,7 +111,7 @@ namespace Tennis.Helpers
             }
         }
 
-        public TimeSpan? TimeUntillOrAfterStart { get
+        public TimeSpan? TimeUntillStart { get
             {
                 return StartTime - DateTime.Now;
             } }

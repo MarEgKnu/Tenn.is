@@ -76,7 +76,7 @@ namespace Tennis.Pages.Events
             {
                 conditions.Add(e => e.EventStateAt(DateFilter.Value) == RelativeTime.Ongoing || e.EventStateAt(DateFilter.Value) == RelativeTime.Future);
             }
-            Events = _eventService.GetEventsOnConditions(conditions, Events);
+            Events = FilterHelpers.GetItemsOnConditions(conditions, Events);
         }
     }
 }

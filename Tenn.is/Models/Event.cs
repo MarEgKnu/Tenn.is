@@ -58,24 +58,24 @@ namespace Tennis.Models
                 return EventTime.TimeState;
             }
         }
-        public TimeSpan? TimeUntillOrAfterStart
+        public TimeSpan? TimeUntillStart
         {
             get
             {
-                return EventTime.TimeUntillOrAfterStart;
+                return EventTime.TimeUntillStart;
             }
         }
         public string TimeTillStartDisplay
         {
             get
             {
-                if (TimeUntillOrAfterStart.Value.TotalDays < 1 || TimeUntillOrAfterStart.Value.TotalDays <= -1)
+                if (TimeUntillStart.Value.TotalDays < 1 || TimeUntillStart.Value.TotalDays <= -1)
                 {
-                    return $"{Math.Abs(TimeUntillOrAfterStart.Value.Hours)} time{(TimeUntillOrAfterStart.Value.Hours != 1 ? "r" : "")} og {Math.Abs(TimeUntillOrAfterStart.Value.Minutes)} minut{(TimeUntillOrAfterStart.Value.Minutes != 1 ? "ter" : "")}{(TimeUntillOrAfterStart.Value.TotalSeconds < 0 ? " siden" : " til")} start";
+                    return $"{Math.Abs(TimeUntillStart.Value.Hours)} time{(TimeUntillStart.Value.Hours != 1 ? "r" : "")} og {Math.Abs(TimeUntillStart.Value.Minutes)} minut{(TimeUntillStart.Value.Minutes != 1 ? "ter" : "")}{(TimeUntillStart.Value.TotalSeconds < 0 ? " siden" : " til")} start";
                 }
                 else
                 {
-                    return $"{Math.Abs(TimeUntillOrAfterStart.Value.Days)} dag{(TimeUntillOrAfterStart.Value.Days != 1 ? "e" : "") }, {Math.Abs(TimeUntillOrAfterStart.Value.Hours)} time{(TimeUntillOrAfterStart.Value.Hours != 1 ? "r" : "")} og {Math.Abs(TimeUntillOrAfterStart.Value.Minutes)} minut{(TimeUntillOrAfterStart.Value.Minutes != 1 ? "ter" : "")}{(TimeUntillOrAfterStart.Value.TotalSeconds < 0 ? " siden" : " til")} start";
+                    return $"{Math.Abs(TimeUntillStart.Value.Days)} dag{(TimeUntillStart.Value.Days != 1 ? "e" : "") }, {Math.Abs(TimeUntillStart.Value.Hours)} time{(TimeUntillStart.Value.Hours != 1 ? "r" : "")} og {Math.Abs(TimeUntillStart.Value.Minutes)} minut{(TimeUntillStart.Value.Minutes != 1 ? "ter" : "")}{(TimeUntillStart.Value.TotalSeconds < 0 ? " siden" : " til")} start";
                 }
                     
             }

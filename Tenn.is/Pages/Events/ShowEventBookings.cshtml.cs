@@ -71,7 +71,7 @@ namespace Tennis.Pages.Events
             {
                 conditions.Add(e => e.Event.EventStateAt(DateFilter.Value) == RelativeTime.Ongoing || e.Event.EventStateAt(DateFilter.Value) == RelativeTime.Future);
             }
-            Bookings = _eventBookingService.GetEventBookingsOnConditions(conditions, Bookings);
+            Bookings = FilterHelpers.GetItemsOnConditions(conditions, Bookings);
         }
     }
 }

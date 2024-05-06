@@ -1,4 +1,5 @@
-﻿using Microsoft.Data.SqlClient;
+﻿using Microsoft.AspNetCore.Mvc.Filters;
+using Microsoft.Data.SqlClient;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -244,7 +245,8 @@ namespace TennisTest
             eventService.CreateEvent(newEvent);
             eventService.CreateEvent(newEvent2);
             eventService.CreateEvent(newEvent3);
-            List<Event> events = eventService.GetEventsOnConditions(conditions);
+            List<Event> events = eventService.GetAllEvents();
+            events = FilterHelpers.GetItemsOnConditions(conditions, events);
 
             Assert.AreEqual(3, events.Count);
         }
@@ -263,7 +265,8 @@ namespace TennisTest
             eventService.CreateEvent(newEvent);
             eventService.CreateEvent(newEvent2);
             eventService.CreateEvent(newEvent3);
-            List<Event> events = eventService.GetEventsOnConditions(conditions);
+            List<Event> events = eventService.GetAllEvents();
+            events = FilterHelpers.GetItemsOnConditions(conditions, events);
 
             Assert.AreEqual(3, events.Count);
         }
@@ -284,7 +287,8 @@ namespace TennisTest
             eventService.CreateEvent(newEvent);
             eventService.CreateEvent(newEvent2);
             eventService.CreateEvent(newEvent3);
-            List<Event> events = eventService.GetEventsOnConditions(conditions);
+            List<Event> events = eventService.GetAllEvents();
+            events = FilterHelpers.GetItemsOnConditions(conditions, events);
 
             Assert.AreEqual(2, events.Count);
             Assert.AreEqual(events[0].Title, "epic event");
@@ -306,7 +310,8 @@ namespace TennisTest
             eventService.CreateEvent(newEvent);
             eventService.CreateEvent(newEvent2);
             eventService.CreateEvent(newEvent3);
-            List<Event> events = eventService.GetEventsOnConditions(conditions);
+            List<Event> events = eventService.GetAllEvents();
+            events = FilterHelpers.GetItemsOnConditions(conditions, events);
 
             Assert.AreEqual(1, events.Count);
             Assert.AreEqual(events[0].Title, "epic event");
@@ -325,7 +330,8 @@ namespace TennisTest
             eventService.CreateEvent(newEvent);
             eventService.CreateEvent(newEvent2);
             eventService.CreateEvent(newEvent3);
-            List<Event> events = eventService.GetEventsOnConditions(conditions);
+            List<Event> events = eventService.GetAllEvents();
+            events = FilterHelpers.GetItemsOnConditions(conditions, events);
 
             Assert.AreEqual(3, events.Count);
         }
@@ -344,7 +350,7 @@ namespace TennisTest
             events.Add(newEvent);
             events.Add(newEvent2);
             events.Add(newEvent3);
-            events = eventService.GetEventsOnConditions(conditions, events);
+            events = FilterHelpers.GetItemsOnConditions(conditions, events);
 
             Assert.AreEqual(3, events.Count);
         }
@@ -363,7 +369,7 @@ namespace TennisTest
             events.Add(newEvent);
             events.Add(newEvent2);
             events.Add(newEvent3);
-            events = eventService.GetEventsOnConditions(conditions, events);
+            events = FilterHelpers.GetItemsOnConditions(conditions, events);
 
             Assert.AreEqual(3, events.Count);
         }
@@ -384,7 +390,7 @@ namespace TennisTest
             events.Add(newEvent);
             events.Add(newEvent2);
             events.Add(newEvent3);
-            events = eventService.GetEventsOnConditions(conditions, events);
+            events = FilterHelpers.GetItemsOnConditions(conditions, events);
 
             Assert.AreEqual(2, events.Count);
             Assert.AreEqual(events[0].Title, "epic event");
@@ -393,7 +399,7 @@ namespace TennisTest
 
 
         [TestMethod]
-        public void GetEventsByConditionsOtherCTOR_Success_SearchTitleANDDescription()
+        public void GetItemsByConditionsOtherCTOR_Success_SearchTitleANDDescription()
         {
             TestSetUp();
             List<Event> events = new List<Event>();
@@ -406,7 +412,7 @@ namespace TennisTest
             events.Add(newEvent);
             events.Add(newEvent2);
             events.Add(newEvent3);
-            events = eventService.GetEventsOnConditions(conditions, events);
+            events = FilterHelpers.GetItemsOnConditions(conditions, events);
 
             Assert.AreEqual(1, events.Count);
             Assert.AreEqual(events[0].Title, "epic event");
@@ -425,7 +431,7 @@ namespace TennisTest
             events.Add(newEvent);
             events.Add(newEvent2);
             events.Add(newEvent3);
-            events = eventService.GetEventsOnConditions(conditions, events);
+            events = FilterHelpers.GetItemsOnConditions(conditions, events);
 
             Assert.AreEqual(3, events.Count);
         }

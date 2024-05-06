@@ -182,7 +182,7 @@ namespace Tennis.Pages.Events
             {
                 conditions.Add(e => e.EventState != RelativeTime.Past);
             }
-            Events = _eventService.GetEventsOnConditions(conditions, Events);
+            Events = FilterHelpers.GetItemsOnConditions(conditions, Events);
         }
         public void FilterEventsAdvanced()
         {
@@ -215,7 +215,7 @@ namespace Tennis.Pages.Events
             {
                 conditions.Add(e => e.CancellationThresholdMinutes == CancellationThresholdFilter);
             }
-            Events = _eventService.GetEventsOnConditions(conditions, Events);
+            Events = FilterHelpers.GetItemsOnConditions(conditions, Events);
         }
     }
 }
