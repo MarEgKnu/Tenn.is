@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Data.SqlClient;
 using Tennis.Interfaces;
 using Tennis.Models;
+using Tennis.Services;
 
 namespace Tennis.Pages.Events
 {
@@ -12,15 +13,20 @@ namespace Tennis.Pages.Events
     {
         public Event Event { get; set; }
 
-        IEventService eventService;
-        public DeleteEventModel(IEventService eventService)
+        private IEventService eventService;
+        private IUserService userService;
+        public DeleteEventModel(IEventService eventService, IUserService userService)
         {
             this.eventService = eventService;
+            this.userService = userService;
         }
-        public void OnGet(int eventID)
+        public IActionResult OnGet(int eventID)
         {
-            //TODO: check if admin!
-            
+            if (!userService.AdminVerify(HttpContext.Session.GetString("Username"), HttpContext.Session.GetString("Password")))
+            {
+                return RedirectToPage("AccessDenied");
+            }
+
             try
             {
 
@@ -38,11 +44,15 @@ namespace Tennis.Pages.Events
             {
                 ViewData["ErrorMessage"] = "Generel fejl. Fejlbesked:\n " + ex.Message;
             }
+            return Page();
             
         }
         public IActionResult OnPost(int eventID)
         {
-            //TODO: check if admin
+            if (!userService.AdminVerify(HttpContext.Session.GetString("Username"), HttpContext.Session.GetString("Password")))
+            {
+                return RedirectToPage("AccessDenied");
+            }
             try
             {
                 bool result = eventService.DeleteEvent(eventID);

@@ -8,11 +8,13 @@ using System.ComponentModel.DataAnnotations;
 using Tennis.Helpers;
 using Tennis.Interfaces;
 using Tennis.Models;
+using Tennis.Services;
 
 namespace Tennis.Pages.Events
 {
     public class IndexAdminModel : PageModel
     {
+        private IUserService _userService;
         private IEventService _eventService;
         [BindProperty(SupportsGet = true)]
         public string GenericFilter { get; set; }
@@ -46,14 +48,22 @@ namespace Tennis.Pages.Events
         [BindProperty(SupportsGet = true)]
         public bool Descending { get; set; }
 
-        public IndexAdminModel(IEventService eventService)
+        [BindProperty(SupportsGet = true)]
+        public bool ViewOldEventsFilter { get; set; }
+
+
+        public IndexAdminModel(IEventService eventService, IUserService userService)
         {
             _eventService = eventService;
             CancelelledFilterOptions = new SelectList(BoolHelpers.CancelledBoolKeyValuePair, "Key", "Value");
+            _userService = userService;
         }
-        public void OnGet()
+        public IActionResult OnGet()
         {
-            //TODO: check if admin!
+            if (!_userService.AdminVerify(HttpContext.Session.GetString("Username"), HttpContext.Session.GetString("Password")))
+            {
+                return RedirectToPage("AccessDenied");
+            }
             if (SortBy == PrevSortBy)
             {
                 Descending = !Descending;
@@ -87,6 +97,7 @@ namespace Tennis.Pages.Events
                 ViewData["ErrorMessage"] = "Generel fejl. Fejlbesked:\n" + ex.Message;
             }
             SortEvents();
+            return Page();
         }
         public void OnPost()
         {
@@ -119,6 +130,9 @@ namespace Tennis.Pages.Events
                     case "CancellationThreshold":
                         Events = Events.OrderByDescending(e => e.CancellationThresholdMinutes).ToList();
                         break;
+                    case "EventState":
+                        Events = Events.OrderByDescending(e => e.EventState).ToList();
+                        break;
                     default:
                         break;
                 }
@@ -148,6 +162,9 @@ namespace Tennis.Pages.Events
                     case "CancellationThreshold":
                         Events = Events.OrderBy(e => e.CancellationThresholdMinutes).ToList();
                         break;
+                    case "EventState":
+                        Events = Events.OrderBy(e => e.EventState).ToList();
+                        break;
                     default:
                         break;
                 }
@@ -155,11 +172,17 @@ namespace Tennis.Pages.Events
         }
         public void FilterEventsBasic()
         {
+            List<Predicate<Event>> conditions = new List<Predicate<Event>>();
             if (!GenericFilter.IsNullOrEmpty())
             {
-                Events = Events.FindAll(e => e.Title.ToLower().Contains(GenericFilter.ToLower()) ||
+                conditions.Add(e => e.Title.ToLower().Contains(GenericFilter.ToLower()) ||
                                 e.Description.ToLower().Contains(GenericFilter.ToLower()));
             }
+            if (!ViewOldEventsFilter)
+            {
+                conditions.Add(e => e.EventState != RelativeTime.Past);
+            }
+            Events = _eventService.GetEventsOnConditions(conditions, Events);
         }
         public void FilterEventsAdvanced()
         {
@@ -167,6 +190,10 @@ namespace Tennis.Pages.Events
             if (EventIDFilter != null) 
             {
                 conditions.Add(e => e.EventID == EventIDFilter);   
+            }
+            if (!ViewOldEventsFilter)
+            {
+                conditions.Add(e => e.EventState != RelativeTime.Past);
             }
             if (!TitleFilter.IsNullOrEmpty())
             {

@@ -13,7 +13,7 @@
     @if (!Model.AdvancedSearch)
     {
         <p>
-            Søg Events: <input type="text" asp-for="@Model.GenericFilter" onchange="this.form.submit()" />
+            Søg Events: <input type="text" asp-for="@Model.GenericFilter" onchange="this.form.submit()" /> Vis gamle events: <input asp-for="ViewOldEventsFilter" onchange="this.form.submit()" />
         </p>
     }
     else
@@ -22,6 +22,7 @@
             Søg EventID: <input type="text" asp-for="@Model.EventIDFilter" onchange="this.form.submit()" />
             Søg Titel:<input type="text" asp-for="@Model.TitleFilter" onchange="this.form.submit()" />
             Søg Beskrivelse: <input asp-for="@Model.DescriptionFilter" onchange="this.form.submit()" />
+            Vis gamle events: <input asp-for="ViewOldEventsFilter" onchange="this.form.submit()" />
             Aflyst:
             <select asp-for="@Model.CancelledFilter" asp-items="@Model.CancelelledFilterOptions" onchange="this.form.submit()">
                     <option value="">Alle</option>
@@ -48,30 +49,34 @@
             <tr>
                 <th>
                     EventID<br />
-                    Sorter: <input type="radio" asp-for="@Model.SortBy" value="EventID" onclick="this.form.submit()"/>
+                    <input type="radio" asp-for="@Model.SortBy" value="EventID" onclick="this.form.submit()"/>
                 <th>
                    Titel<br />
-                    Sorter: <input type="radio" asp-for="@Model.SortBy" value="Title" onclick="this.form.submit()" />
+                    <input type="radio" asp-for="@Model.SortBy" value="Title" onclick="this.form.submit()" />
                 </th>
                 <th>
                     Beskrivelse<br />
-                    Sorter: <input type="radio" asp-for="@Model.SortBy" value="Description" onclick="this.form.submit()" />
+                    <input type="radio" asp-for="@Model.SortBy" value="Description" onclick="this.form.submit()" />
                 </th>
                 <th>
                     Aflyst<br />
-                    Sorter: <input type="radio" asp-for="@Model.SortBy" value="Cancelled" onclick="this.form.submit()" />
+                    <input type="radio" asp-for="@Model.SortBy" value="Cancelled" onclick="this.form.submit()" />
                 </th>
                 <th>
                     Starttid<br />
-                    Sorter: <input type="radio" asp-for="@Model.SortBy" value="StartTime" onclick="this.form.submit()" />
+                    <input type="radio" asp-for="@Model.SortBy" value="StartTime" onclick="this.form.submit()" />
                 </th>
                 <th>
                     Sluttid<br />
-                    Sorter: <input type="radio" asp-for="@Model.SortBy" value="EndTime" onclick="this.form.submit()" />
+                    <input type="radio" asp-for="@Model.SortBy" value="EndTime" onclick="this.form.submit()" />
                 </th>
                 <th>
-                    Afmældningsgrænse<br />
-                    Sorter: <input type="radio" asp-for="@Model.SortBy" value="CancellationThreshold" onclick="this.form.submit()" />
+                    Status<br />
+                    <input type="radio" asp-for="@Model.SortBy" value="EventState" onclick="this.form.submit()" />
+                </th>
+                <th>
+                    Afmeldningsgrænse<br />
+                    <input type="radio" asp-for="@Model.SortBy" value="CancellationThreshold" onclick="this.form.submit()" />
                 </th>
                 <th>
                     Funktioner
@@ -101,6 +106,9 @@
                         </td>
                         <td>
                             @item.EventTime.EndTime.Value.ToString("dd/MM/yyyy HH:mm")
+                        </td>
+                        <td>
+                            @RelativeTimeHelpers.TimeDisplay[item.EventState]
                         </td>
                         <td>
                             @item.CancellationThresholdMinutes

@@ -4,6 +4,7 @@ using Microsoft.Data.SqlClient;
 using Tennis.Helpers;
 using Tennis.Interfaces;
 using Tennis.Models;
+using Tennis.Services;
 
 namespace Tennis.Pages.Events
 {
@@ -12,13 +13,18 @@ namespace Tennis.Pages.Events
         [BindProperty]
         public Event Event {  get; set; }
         private IEventService eventService;
-        public EditEventModel(IEventService eventService)
+        private IUserService userService;
+        public EditEventModel(IEventService eventService, IUserService userService)
         {
             this.eventService = eventService;
+            this.userService = userService;
         }
-        public void OnGet(int eventID)
+        public IActionResult OnGet(int eventID)
         {
-            //TODO: check if admin
+            if (!userService.AdminVerify(HttpContext.Session.GetString("Username"), HttpContext.Session.GetString("Password")))
+            {
+                return RedirectToPage("AccessDenied");
+            }
             try
             {
 
@@ -36,10 +42,14 @@ namespace Tennis.Pages.Events
             {
                 ViewData["ErrorMessage"] = "Generel fejl. Fejlbesked:\n " + ex.Message;
             }
+            return Page();
         }
         public IActionResult OnPost(int eventID)
         {
-            //TODO: check if admin
+            if (!userService.AdminVerify(HttpContext.Session.GetString("Username"), HttpContext.Session.GetString("Password")))
+            {
+                return RedirectToPage("AccessDenied");
+            }
             if (Event.EventState == RelativeTime.Past)
             {
                 //TODO: better error messages for if starttime is bigger than endtime

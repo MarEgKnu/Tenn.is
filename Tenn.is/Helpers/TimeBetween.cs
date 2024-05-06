@@ -110,6 +110,11 @@ namespace Tennis.Helpers
                 
             }
         }
+
+        public TimeSpan? TimeUntillOrAfterStart { get
+            {
+                return StartTime - DateTime.Now;
+            } }
         public RelativeTime TimeStateAt(DateTime date)
         {
             if (EndTime < date)

@@ -1,0 +1,71 @@
+﻿@page
+@using Tennis.Helpers
+@model Tennis.Pages.Events.ShowEventBookingsModel
+@{
+    ViewData["Title"] = "Mine event tilmeldninger";
+}
+<form method="get">
+    Vis tilmeldinger fra dato: <input asp-for="@Model.DateFilter" onchange="this.form.submit()" />
+    Vis tilmeldinger til aflyste events: <input asp-for="CancelledFilter" onclick="this.form.submit()" />
+    Søg events: <input asp-for="TitleFilter" onchange="this.form.submit()" />
+    <!-- NEWSFEED -->
+    @foreach (var booking in Model.Bookings)
+    {
+        <!-- ONE ARTICLE CARD -->
+        if (booking.Event.EventState != RelativeTime.Past)
+        {
+            <p class="align-items-md-center">
+                <div class="card" style="width: 45rem;">
+                    <div class="card-body">
+                        <h5 class="card-title">
+                            <strong>
+                                Tilmelding til @booking.Event.Title
+                            </strong>
+                        </h5>
+
+                        @if (booking.Event.Cancelled)
+                        {
+                            <h6 class="card-subtitle mb-2 text-muted">
+                                &#128997; Aflyst
+                            </h6>
+                        }
+                        else
+                        {
+                            <h6 class="card-subtitle mb-2 text-muted">
+                                @RelativeTimeHelpers.TimeDisplay[booking.Event.EventState]<br />
+                                @booking.Event.TimeTillStartDisplay
+                            </h6>
+                        }
+                        <h6 class="card-subtitle mb-2 text-muted">
+                            @booking.Event.EventTime.StartTime.Value.ToString("dd/MM/yyyy HH:mm") til @booking.Event.EventTime.EndTime.Value.ToString("dd/MM/yyyy HH:mm")
+                        </h6>
+
+                        <h6 class="card-subtitle mb-2 text-muted">
+                            Du kan senest afmelde @booking.Event.CancellationThresholdMinutes minutter før start
+                        </h6>
+                    </div>
+                    <footer>
+                        <span>
+
+                            <a asp-page="EditEventBooking" asp-route-bookingID="@booking.BookingID" class="btn btn-outline-warning btn-sm w-100" style="margin-top: 5px">Rediger</a>
+                        </span>
+                        <span>
+
+                            @if (booking.CanBeCancelled)
+                            {
+                                <a asp-page="CancelEventBooking" asp-route-bookingID="@booking.BookingID" class="btn btn-outline-warning btn-sm w-100" style="margin-top: 5px">Afmeld</a>
+                            }
+                            else
+                            {
+                                <button class="btn btn-outline-secondary disabled btn-sm w-100">Afmeld</button>
+                            }
+
+                        </span>
+                    </footer>
+                </div>
+            </p>
+        }
+        
+    }
+</form>
+

@@ -331,20 +331,6 @@ namespace TennisTest
         }
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
         public void GetEventsByConditionsOtherCTOR_Fail_ConditionNull()
         {
             TestSetUp();
@@ -509,7 +495,7 @@ namespace TennisTest
             Assert.IsTrue(ranEvent);
         }
         [TestMethod]
-        public void OnDelete_Event_Fail_Null()
+        public void OnDelete_Event_Fail_CantFindEvent()
         {
             bool ranEvent = false;
             TestSetUp();
