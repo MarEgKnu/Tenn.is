@@ -17,6 +17,10 @@ namespace Tennis.Models
             _timeBetween = timeBetween;
         }
 
+        public LaneBooking() 
+        {
+
+        }
         public override string ToString()
         {
             return $"";
