@@ -18,6 +18,7 @@ namespace Tennis.Pages.Articles
         {
             _articleService = new ArticleService(true);
         }
+
         public void OnGet()
         {
         }
@@ -26,7 +27,7 @@ namespace Tennis.Pages.Articles
         {
             Article newArticle = new Article(ArticleTitle, ArticleContent);
             _articleService.CreateArticle(newArticle);
-            return RedirectToPage("/Index");
+            return RedirectToPage("/Articles/Index");
         }
     }
 }

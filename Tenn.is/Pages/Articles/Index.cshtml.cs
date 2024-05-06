@@ -8,6 +8,8 @@ namespace Tennis.Pages.Articles
 {
     public class IndexModel : PageModel
     {
+        [BindProperty] public string SearchInput { get; set; }
+
         public bool IsLoggedIn = false;
         public bool IsAdmin = false;
         public string Username = string.Empty;
@@ -37,6 +39,11 @@ namespace Tennis.Pages.Articles
         //        else { IsAdmin = false; }
         //    } 
         //    else { IsLoggedIn = false; }
+        }
+        public IActionResult OnPost(int id)
+        {
+            _articleService.DeleteArticle(id);
+            return RedirectToPage("Index");
         }
     }
 }
