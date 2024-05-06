@@ -25,5 +25,7 @@ namespace Tennis.Interfaces
         public List<User> GetUsersOnConditions(List<Predicate<User>> conditions, List<User> users);
 
         public bool ValidatePhoneLength(string phoneLength);
+
+        public List<UserLaneBooking> GetAllLaneBookingsWithUserId(int userId);
     }
 }

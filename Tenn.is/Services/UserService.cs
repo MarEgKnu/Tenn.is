@@ -13,6 +13,8 @@ namespace Tennis.Services
         private string insertSQL = "INSERT INTO Users VALUES (@UID, @UNAME, @FNAME, @LNAME, @PWORD, @EMAIL, @PHONE, @ADMIN, @RWORD)";
         private string deleteSQL = "DELETE FROM Users WHERE UserID = @UID";
         private string editSQL = "UPDATE Users SET UserName = @UNAME, FirstName = @FNAME, LastName = @LNAME, Password = @PWORD, Phone = @PHONE, Email = @EMAIL, Administrator = @ADMIN, RandomPassword = @RWORD WHERE UserID = @UID";
+        private string getAllLaneBookingsWithUserIdSQL = "";
+
         public UserService()
         {
             connectionString = Secret.ConnectionString;
@@ -28,6 +30,45 @@ namespace Tennis.Services
                 connectionString = Secret.ConnectionString;
             }
         }
+        public List<UserLaneBooking> GetAllLaneBookingsWithUserId(int userId)
+        {
+            List<UserLaneBooking> userLaneBooking = new List<UserLaneBooking>();
+            using (SqlConnection conn = new SqlConnection(connectionString))
+            {
+                try
+                {
+                    SqlCommand command = new SqlCommand(getAllSQL, conn);
+                    command.Connection.Open();
+                    SqlDataReader reader = command.ExecuteReader();
+                    while (reader.Read())
+                    {
+                        int userID = reader.GetInt32("LaneNumber");
+                        string username = reader.GetString("Cancelled");
+                        string firstname = reader.GetString("DateStart");
+                        string lastname = reader.GetString("UserID");
+                        string password = reader.GetString("MateID");
+                        //userLaneBooking.Add(new UserLaneBooking(userID,));
+                    }
+                    reader.Close();
+                }
+                catch (SqlException sqlExp)
+                {
+                    Console.WriteLine("Database error" + sqlExp.Message);
+                    throw sqlExp;
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine("General error" + ex.Message);
+                    throw ex;
+                }
+            }
+            return userLaneBooking;
+
+
+
+        }
+
+
         public bool CreateUser(User user)
         {
             if (user.UserId < 1)
@@ -299,5 +340,7 @@ namespace Tennis.Services
 
             return trimmed.Length == 8;
         }
+
+
     }
 }
