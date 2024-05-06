@@ -11,17 +11,10 @@ namespace Tennis.Models
 
         public LaneBooking(int lanenumber, TimeBetween timeBetween, int bookingID, bool cancelled)
         {
-            bookingID++;
-            //BookingID ++;
+            BookingID = bookingID;
             LaneNumber = lanenumber;
-            cancelled = false;
-            //Cancelled = cancelled;
+            Cancelled = cancelled;
             _timeBetween = timeBetween;
-        }
-
-        public LaneBooking()
-        {
-
         }
 
         public override string ToString()
