@@ -26,11 +26,10 @@ namespace TennisTest
 
         void CreateLaneBooking()
         {
-            TimeBetween timeBetween = new TimeBetween(DateTime.Now.AddHours(2), DateTime.Now.AddHours(3));
             laneService.CreateLane(new Lane(1, true, false));
             userService.CreateUser(new User(201, "test2", "Test", "Testson", "test", "testestest", "1234", false, false));
             userService.CreateUser(new User(101, "test1", "Test", "Testson", "test", "testestest", "1234", false, false));
-            laneBookingService.CreateLaneBooking(new UserLaneBooking(1, 1, timeBetween, 201, 101, false));
+            laneBookingService.CreateLaneBooking(new UserLaneBooking(1, 1, DateTime.Now.AddHours(2), 201, 101, false));
         }
         void CleanTest()
         {
@@ -44,11 +43,10 @@ namespace TennisTest
         public void CreateLaneBookingUserTestAcceptable()
         {
             TestSetUp();
-            TimeBetween timeBetween = new TimeBetween(DateTime.Now.AddHours(2), DateTime.Now.AddHours(3));
             laneService.CreateLane(new Lane(1, true, false));
             userService.CreateUser(new User(201, "test2", "Test", "Testson", "test", "testestest", "1234", false, false));
             userService.CreateUser(new User(101, "test1", "Test", "Testson", "test", "testestest", "1234", false, false));
-            bool Testresult = laneBookingService.CreateLaneBooking(new UserLaneBooking(1, 1, timeBetween, 201, 101, false));
+            bool Testresult = laneBookingService.CreateLaneBooking(new UserLaneBooking(1, 1, DateTime.Now.AddHours(2), 201, 101, false));
             CleanTest();
             Assert.IsTrue(Testresult);
         }
@@ -57,10 +55,9 @@ namespace TennisTest
         public void CreateLaneBookingUserTestUnaccesptableValues()
         {
             TestSetUp();
-            TimeBetween timeBetween = new TimeBetween(DateTime.Now.AddHours(2), DateTime.Now.AddHours(3));
             laneService.CreateLane(new Lane(1, true, false));
             userService.CreateUser(new User(101, "test1", "Test", "Testson", "test", "testestest", "1234", false, false));
-            bool Testresult = laneBookingService.CreateLaneBooking(new UserLaneBooking(1,1,  timeBetween, 101, 101, false));
+            bool Testresult = laneBookingService.CreateLaneBooking(new UserLaneBooking(1,1,  DateTime.Now.AddHours(2), 101, 101, false));
             CleanTest();
             Assert.IsFalse(Testresult);
         }
@@ -70,12 +67,11 @@ namespace TennisTest
         public void CreateLaneBookingUserTest2TimesTheSame()
         {
             TestSetUp();
-            TimeBetween timeBetween = new TimeBetween(DateTime.Now.AddHours(2), DateTime.Now.AddHours(3));
             laneService.CreateLane(new Lane(1, true, false));
             userService.CreateUser(new User(201, "test2", "Test", "Testson", "test", "testestest", "1234", false, false));
             userService.CreateUser(new User(101, "test1", "Test", "Testson", "test", "testestest", "1234", false, false));
-            laneBookingService.CreateLaneBooking(new UserLaneBooking(1, 1, timeBetween, 201, 101, false));
-            bool Testresult = laneBookingService.CreateLaneBooking(new UserLaneBooking(1, 1, timeBetween, 201, 101, false));
+            laneBookingService.CreateLaneBooking(new UserLaneBooking(1, 1, DateTime.Now.AddHours(2), 201, 101, false));
+            bool Testresult = laneBookingService.CreateLaneBooking(new UserLaneBooking(1, 1, DateTime.Now.AddHours(2), 201, 101, false));
             CleanTest();
             Assert.IsFalse(Testresult);
         }
@@ -84,11 +80,10 @@ namespace TennisTest
         public void DeleteLaneBookingTestExisting()
         {
             TestSetUp();
-            TimeBetween timeBetween = new TimeBetween(DateTime.Now.AddHours(2), DateTime.Now.AddHours(3));
             laneService.CreateLane(new Lane(1, true, false));
             userService.CreateUser(new User(201, "test2", "Test", "Testson", "test", "testestest", "1234", false, false));
             userService.CreateUser(new User(101, "test1", "Test", "Testson", "test", "testestest", "1234", false, false));
-            laneBookingService.CreateLaneBooking(new UserLaneBooking(1, 1, timeBetween, 201, 101, false));
+            laneBookingService.CreateLaneBooking(new UserLaneBooking(1, 1, DateTime.Now.AddHours(2), 201, 101, false));
             int Id = laneBookingService.GetAllLaneBookings<UserLaneBooking>().First().BookingID;
             bool Testresult = laneBookingService.DeleteLaneBooking(Id);
             CleanTest();
@@ -108,12 +103,11 @@ namespace TennisTest
         {
             TestSetUp();
 
-            TimeBetween timeBetween = new TimeBetween(DateTime.Now.AddHours(2), DateTime.Now.AddHours(3));
             laneService.CreateLane(new Lane(1, true, false));
             userService.CreateUser(new User(201, "test2", "Test", "Testson", "test", "testestest", "1234", false, false));
             userService.CreateUser(new User(101, "test1", "Test", "Testson", "test", "testestest", "1234", false, false));
-            laneBookingService.CreateLaneBooking(new UserLaneBooking(1, 1, timeBetween, 201, 101, false));
-            bool Testresult = laneBookingService.EditLaneBooking(new UserLaneBooking(1, 1, timeBetween, 201, 101, false), 1);
+            laneBookingService.CreateLaneBooking(new UserLaneBooking(1, 1, DateTime.Now.AddHours(2), 201, 101, false));
+            bool Testresult = laneBookingService.EditLaneBooking(new UserLaneBooking(1, 1, DateTime.Now.AddHours(2), 201, 101, false), 1);
             CleanTest();
         }
 
@@ -121,8 +115,7 @@ namespace TennisTest
         public void EditLaneBookingTestInexistingBooking()
         {
             TestSetUp();
-            TimeBetween timeBetween = new TimeBetween(DateTime.Now.AddHours(2), DateTime.Now.AddHours(3));
-            bool Testresult = laneBookingService.EditLaneBooking(new UserLaneBooking(1, 1, timeBetween, 201, 101, false), 1);
+            bool Testresult = laneBookingService.EditLaneBooking(new UserLaneBooking(1, 1, DateTime.Now.AddHours(2), 201, 101, false), 1);
             Assert.IsFalse(Testresult);
         }
 
@@ -131,13 +124,12 @@ namespace TennisTest
         public void EditLaneBookingTestExistingAndUnacceptableValues()
         {
             TestSetUp();
-            TimeBetween timeBetween = new TimeBetween(DateTime.Now.AddHours(2), DateTime.Now.AddHours(3));
             laneService.CreateLane(new Lane(1, true, false));
             userService.CreateUser(new User(201, "test2", "Test", "Testson", "test", "testestest", "1234", false, false));
             userService.CreateUser(new User(101, "test1", "Test", "Testson", "test", "testestest", "1234", false, false));
-            laneBookingService.CreateLaneBooking(new UserLaneBooking(1, 1, timeBetween, 201, 101,  false));
-            laneBookingService.CreateLaneBooking(new UserLaneBooking(1, 2, timeBetween, 201, 101, false));
-            bool Testresult = laneBookingService.EditLaneBooking(new UserLaneBooking(1, 2, timeBetween, 101, 101, false), 2);
+            laneBookingService.CreateLaneBooking(new UserLaneBooking(1, 1, DateTime.Now.AddHours(2), 201, 101,  false));
+            laneBookingService.CreateLaneBooking(new UserLaneBooking(1, 2, DateTime.Now.AddHours(2), 201, 101, false));
+            bool Testresult = laneBookingService.EditLaneBooking(new UserLaneBooking(1, 2, DateTime.Now.AddHours(2), 101, 101, false), 2);
             laneBookingService.DeleteLaneBooking(2);
             CleanTest();
             Assert.IsFalse(Testresult);

@@ -5,7 +5,7 @@ namespace Tennis.Models
     public class TrainingLaneBooking : LaneBooking
     {
         public TrainingTeam  trainingTeam { get; set; }
-        public TrainingLaneBooking(int lanenumber, TimeBetween timeBetween, int bookingID, bool cancelled, TrainingTeam trainingTeam) : base(lanenumber, timeBetween, bookingID, cancelled)
+        public TrainingLaneBooking(int lanenumber, DateTime DateStart, int bookingID, bool cancelled, TrainingTeam trainingTeam) : base(lanenumber, DateStart, bookingID, cancelled)
         {
             this.trainingTeam = trainingTeam;
         }

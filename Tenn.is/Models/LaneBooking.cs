@@ -7,14 +7,15 @@ namespace Tennis.Models
         public int BookingID { get; set; }
         public int LaneNumber { get; set; }
         public bool Cancelled { get; set; }
-        public TimeBetween _timeBetween { get; set; }
 
-        public LaneBooking(int lanenumber, TimeBetween timeBetween, int bookingID, bool cancelled)
+        public DateTime DateStart { get; set; }
+
+        public LaneBooking(int lanenumber, DateTime dateStart, int bookingID, bool cancelled)
         {
             BookingID = bookingID;
             LaneNumber = lanenumber;
             Cancelled = cancelled;
-            _timeBetween = timeBetween;
+            DateStart = dateStart;
         }
 
         public LaneBooking() 

@@ -13,7 +13,7 @@ namespace Tennis.Services
         private string insertSQL = "INSERT INTO Users VALUES (@UID, @UNAME, @FNAME, @LNAME, @PWORD, @EMAIL, @PHONE, @ADMIN, @RWORD)";
         private string deleteSQL = "DELETE FROM Users WHERE UserID = @UID";
         private string editSQL = "UPDATE Users SET UserName = @UNAME, FirstName = @FNAME, LastName = @LNAME, Password = @PWORD, Phone = @PHONE, Email = @EMAIL, Administrator = @ADMIN, RandomPassword = @RWORD WHERE UserID = @UID";
-        private string getAllLaneBookingsWithUserIdSQL = "";
+        private string getAllLaneBookingsWithUserIdSQL = "Select * FROM lANEBOOKINGS WHERE UserID = @UID OR MateID = @UID";
 
         public UserService()
         {
@@ -37,17 +37,19 @@ namespace Tennis.Services
             {
                 try
                 {
-                    SqlCommand command = new SqlCommand(getAllSQL, conn);
+                    SqlCommand command = new SqlCommand(getAllLaneBookingsWithUserIdSQL, conn);
+                    command.Parameters.AddWithValue("@UID", userId);
                     command.Connection.Open();
                     SqlDataReader reader = command.ExecuteReader();
                     while (reader.Read())
                     {
-                        int userID = reader.GetInt32("LaneNumber");
-                        string username = reader.GetString("Cancelled");
-                        string firstname = reader.GetString("DateStart");
-                        string lastname = reader.GetString("UserID");
-                        string password = reader.GetString("MateID");
-                        //userLaneBooking.Add(new UserLaneBooking(userID,));
+                        int BookingID = reader.GetInt32("BookingID");
+                        int LaneNumber = reader.GetInt32("LaneNumber");
+                        bool Cancelled = reader.GetBoolean("Cancelled");
+                        DateTime DateStart = reader.GetDateTime("DateStart");
+                        int UserID = reader.GetInt32("UserID");
+                        int MateID = reader.GetInt32("MateID");
+                        userLaneBooking.Add(new UserLaneBooking(BookingID, LaneNumber,  DateStart, UserID, MateID, Cancelled));
                     }
                     reader.Close();
                 }

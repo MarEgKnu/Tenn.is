@@ -323,5 +323,20 @@ namespace Tennis.Services.Tests
 
             Assert.IsFalse(valid);
         }
+
+        [TestMethod()]
+        public void GetAllLaneBookingsWithUserId_Valide()
+        {
+            UserService users = new UserService(true);
+            User user = new User(103, "test7", "Test", "Testson", "test", "testestest", "1234", false, false);
+            LaneBookingService laneBookingService = new LaneBookingService();
+            LaneService laneService = new LaneService();
+            laneService.CreateLane(new Lane(250, true, true));
+
+            //laneBookingService.CreateLaneBooking(new LaneBooking());
+            users.GetAllLaneBookingsWithUserId(103);
+            laneBookingService.CreateLaneBooking(new UserLaneBooking(1, 1, DateTime.Now.AddHours(2), 201, 101, false));
+
+        }
     }
 }

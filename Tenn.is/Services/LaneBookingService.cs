@@ -96,8 +96,7 @@ namespace Tennis.Services
                     SqlDataReader reader = command.ExecuteReader();
                     if (reader.Read())
                     {
-                        TimeBetween timeBetween = new TimeBetween(reader.GetDateTime("DateStart"), reader.GetDateTime("DateEnd"));
-                        return new UserLaneBooking(reader.GetInt32("BookingID"), reader.GetInt32("LaneNumber"), timeBetween, reader.GetInt32("UserID"), reader.GetInt32("MateID"), reader.GetBoolean("Cancelled"));
+                        return new UserLaneBooking(reader.GetInt32("BookingID"), reader.GetInt32("LaneNumber"), reader.GetDateTime("DateStart"), reader.GetInt32("UserID"), reader.GetInt32("MateID"), reader.GetBoolean("Cancelled"));
 
                     }
                 }
@@ -180,8 +179,7 @@ namespace Tennis.Services
                 {
                     SqlCommand command = new SqlCommand(CreateLaneBookingSQL, connection);
                     command.Parameters.AddWithValue("@LaneNumber", laneBooking.LaneNumber);
-                    command.Parameters.AddWithValue("@DateStart", laneBooking._timeBetween.StartTime);
-                    command.Parameters.AddWithValue("@DateEnd", laneBooking._timeBetween.EndTime);
+                    command.Parameters.AddWithValue("@DateStart", laneBooking.DateStart);
                     command.Parameters.AddWithValue("@UserID", laneBooking.UserID);
                     command.Parameters.AddWithValue("@MateID", laneBooking.MateID);
                     command.Parameters.AddWithValue("@cancelled", laneBooking.Cancelled); 
@@ -212,18 +210,18 @@ namespace Tennis.Services
             List<UserLaneBooking> userLaneBookingList = GetAllLaneBookings<UserLaneBooking>();
             if (laneBooking.MateID == laneBooking.UserID)
                 return false;
-            IEnumerable<UserLaneBooking> UserAlredyBooked = from b in userLaneBookingList where laneBooking._timeBetween.StartTime == b._timeBetween.StartTime && laneBooking.UserID == b.UserID select b ;
+            IEnumerable<UserLaneBooking> UserAlredyBooked = from b in userLaneBookingList where laneBooking.DateStart == b.DateStart && laneBooking.UserID == b.UserID select b ;
             if (UserAlredyBooked.Count() > 0)
                 return false;
             if (laneBooking.MateID > 0)
             {
-                IEnumerable<UserLaneBooking> MateAlredyBooked = from b in userLaneBookingList where laneBooking._timeBetween.StartTime == b._timeBetween.StartTime && laneBooking.MateID == b.MateID select b;
+                IEnumerable<UserLaneBooking> MateAlredyBooked = from b in userLaneBookingList where laneBooking.DateStart == b.DateStart && laneBooking.MateID == b.MateID select b;
                 if (UserAlredyBooked.Count() > 0)
                     return false;
 
                 Mate4HoursRule(laneBooking, userLaneBookingList);
             }
-            IEnumerable<UserLaneBooking> AlreadyBooked = from b in userLaneBookingList where laneBooking._timeBetween.StartTime == b._timeBetween.StartTime && laneBooking.LaneNumber == b.LaneNumber select b;
+            IEnumerable<UserLaneBooking> AlreadyBooked = from b in userLaneBookingList where laneBooking.DateStart == b.DateStart && laneBooking.LaneNumber == b.LaneNumber select b;
             if (AlreadyBooked.Count() > 0)
                 return false;
 
@@ -234,11 +232,11 @@ namespace Tennis.Services
 
         public bool User4HoursRule(UserLaneBooking laneBooking, List<UserLaneBooking> userLaneBookingList )
         {
-            IEnumerable<UserLaneBooking> fourthMostRecentBookingUser = from b in userLaneBookingList where laneBooking._timeBetween.StartTime.Value.AddDays(-14) <= b._timeBetween.StartTime && laneBooking._timeBetween.StartTime.Value.AddDays(14) >= b._timeBetween.StartTime && laneBooking.UserID == b.UserID orderby b._timeBetween.StartTime select b;
+            IEnumerable<UserLaneBooking> fourthMostRecentBookingUser = from b in userLaneBookingList where laneBooking.DateStart.AddDays(-14) <= b.DateStart && laneBooking.DateStart.AddDays(14) >= b.DateStart && laneBooking.UserID == b.UserID orderby b.DateStart select b;
             List<UserLaneBooking> fourthMostRecentBookingUserList = fourthMostRecentBookingUser.ToList();
             for (int i = 0; i < fourthMostRecentBookingUser.Count() - 3; i++)
             {
-                if (fourthMostRecentBookingUserList[i]._timeBetween.StartTime.Value.AddDays(14) > fourthMostRecentBookingUserList[i + 3]._timeBetween.StartTime)
+                if (fourthMostRecentBookingUserList[i].DateStart.AddDays(14) > fourthMostRecentBookingUserList[i + 3].DateStart)
                     return false;
             }
             return true;
@@ -246,11 +244,11 @@ namespace Tennis.Services
 
         public bool Mate4HoursRule(UserLaneBooking laneBooking, List<UserLaneBooking> userLaneBookingList)
         {
-            IEnumerable<UserLaneBooking> fourthMostRecentBookingMate = from b in userLaneBookingList where laneBooking._timeBetween.StartTime.Value.AddDays(-14) <= b._timeBetween.StartTime && laneBooking._timeBetween.StartTime.Value.AddDays(14) >= b._timeBetween.StartTime && laneBooking.MateID == b.MateID orderby b._timeBetween.StartTime select b;
+            IEnumerable<UserLaneBooking> fourthMostRecentBookingMate = from b in userLaneBookingList where laneBooking.DateStart.AddDays(-14) <= b.DateStart && laneBooking.DateStart.AddDays(14) >= b.DateStart && laneBooking.MateID == b.MateID orderby b.DateStart select b;
             List<UserLaneBooking> fourthMostRecentBookingMateList = fourthMostRecentBookingMate.ToList();
             for (int i = 0; i < fourthMostRecentBookingMateList.Count() - 3; i++)
             {
-                if (fourthMostRecentBookingMateList[i]._timeBetween.StartTime.Value.AddDays(14) > fourthMostRecentBookingMateList[i + 3]._timeBetween.StartTime)
+                if (fourthMostRecentBookingMateList[i].DateStart.AddDays(14) > fourthMostRecentBookingMateList[i + 3].DateStart)
                     return false;
             }
             return true;
@@ -293,8 +291,8 @@ namespace Tennis.Services
                 {
                     SqlCommand command = new SqlCommand(UpdateLaneBookingSQL, connection);
                     command.Parameters.AddWithValue("@LaneNumber", laneBooking.LaneNumber);
-                    command.Parameters.AddWithValue("@DateStart", laneBooking._timeBetween.StartTime);
-                    command.Parameters.AddWithValue("@DateEnd", laneBooking._timeBetween.EndTime); 
+                    command.Parameters.AddWithValue("@DateStart", laneBooking.DateStart);
+                    command.Parameters.AddWithValue("@DateEnd", laneBooking.DateStart); 
                     command.Parameters.AddWithValue("@ID", laneBooking.Cancelled);
                     command.Connection.Open();
                     int noOfRows = command.ExecuteNonQuery();
