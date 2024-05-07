@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using System.Globalization;
+using Tennis.Helpers;
 using Tennis.Interfaces;
 using Tennis.Models;
 
@@ -169,12 +170,36 @@ namespace Tennis.Pages.Lanes
                 _displayedMonth = new DateTime(DateTime.Now.Year, SelectedMonth, 1);
             }
             Bookings = new List<LaneBooking>();
+            FilterBookings();
             DatesOfTheMonth = new List<DateTime>();
             for(int i = 1; i <= Calendar.GetDaysInMonth(_displayedMonth.Year, _displayedMonth.Month); i++)
             {
                 DatesOfTheMonth.Add(new DateTime(_displayedMonth.Year, _displayedMonth.Month, i));
             }
             FirstOfTheWeek = (int)Calendar.GetDayOfWeek(new DateTime(_displayedMonth.Year, _displayedMonth.Month, 1));
+        }
+
+        public void FilterBookings()
+        {
+            List<Predicate<LaneBooking>> conditions = new List<Predicate<LaneBooking>>();
+            conditions.Add(b => b.DateStart.Hour >= StartFilter && b.DateStart.Hour < EndFilter);
+            if (!TennisFilter)
+            {
+                conditions.Add(b => Lanes.Where(l => l.Id == b.LaneNumber && l.PadelTennis).Count() < 0);
+            }
+            if (!PadelFilter)
+            {
+                conditions.Add(b => Lanes.Where(l => l.Id == b.LaneNumber && !l.PadelTennis).Count() < 0);
+            }
+            if (!InsideFilter)
+            {
+                conditions.Add(b => Lanes.Where(l => l.Id == b.LaneNumber && !l.OutDoor).Count() < 0);
+            }
+            if (!OutsideFilter)
+            {
+                conditions.Add(b => Lanes.Where(l => l.Id == b.LaneNumber && l.OutDoor).Count() < 0);
+            }
+            Bookings = FilterHelpers.GetItemsOnConditions(conditions, Bookings);
         }
     }
 }

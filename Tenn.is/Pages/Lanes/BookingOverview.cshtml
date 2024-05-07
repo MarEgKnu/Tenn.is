@@ -100,8 +100,15 @@
                                             @foreach (var item in @Model.Lanes)
                                             {
                                                             if (((item.PadelTennis && Model.PadelFilter) || (!item.PadelTennis && Model.TennisFilter)) && ((item.OutDoor && Model.OutsideFilter) || (!item.OutDoor && Model.InsideFilter))) {
-                                                                if(Model.Bookings.Where(b => b.LaneNumber == item.Id).Where(b => b.DateStart == new DateTime(DateTime.Now.Year,Model.SelectedMonth, actualDate)).Count() == 0) {
-                                                                    <span style="font-size: 30%; letter-spacing: -2px;">&#129001;</span>
+                                                                int existingbookings = Model.Bookings.Where(b => b.LaneNumber == item.Id).Where(b => b.DateStart == new DateTime(DateTime.Now.Year, Model.SelectedMonth, actualDate)).Count();
+                                                                int possiblebookings = Model.EndFilter - Model.StartFilter;
+                                                                if(Model.StartFilter < Model.EndFilter && existingbookings < possiblebookings) {
+                                                                    if (possiblebookings - existingbookings > 1) {
+                                                                        <span style="font-size: 30%; letter-spacing: -2px;">&#129001;</span>
+                                                                    } else
+                                                                    {
+                                                                        <span style="font-size: 30%; letter-spacing: -2px;">&#129000;</span>
+                                                                    }
                                                                 } else
                                                                 {
                                                                     <span style="font-size: 30%; letter-spacing: -2px;">&#128997;</span>
@@ -164,9 +171,19 @@
                             </td>
                             @foreach(var item in Model.Lanes)
                             {
-                                <td>
+                                    bool foundBooking = Model.Bookings.Where(b => b.DateStart == new DateTime(DateOnly.FromDateTime(Model.SelectedDay.Value), new TimeOnly(hour, 0, 0)) && b.LaneNumber == item.Id).Count() < 0;
+                                    if(foundBooking)
+                                    {
+                                        <td>
+
+                                            <span style="color: red; font-weight:600">Booket</span>
+                                        </td>
+                                    } else {
+                                    <td>
+
                                     <span style="color: green; font-weight:600">Ledig</span>
                                 </td>
+                                    }
                             }
                         </tr>
                     }
