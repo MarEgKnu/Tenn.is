@@ -59,12 +59,12 @@
             </tr>
         </thead>
         <tbody class="">
-            @for(int week=1; week<=6; week++)
+            @for(int week=0; week<6; week++)
             {
                 <tr>
                     @for(int weekday=1; weekday<=7; weekday++)
                     {
-                    int totalIteration = (weekday + ((week - 1) * 7));
+                    int totalIteration = (weekday + (week * 7));
 
                                     @if (Model.FirstOfTheWeek < totalIteration && totalIteration < (Model.DatesOfTheMonth.Count + 1 + Model.FirstOfTheWeek))
                                     {
