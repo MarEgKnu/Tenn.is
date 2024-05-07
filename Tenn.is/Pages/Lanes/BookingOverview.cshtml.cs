@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using System.Globalization;
+using System.Reflection;
 using Tennis.Helpers;
 using Tennis.Interfaces;
 using Tennis.Models;
@@ -185,25 +186,12 @@ namespace Tennis.Pages.Lanes
 
         public void FilterBookings()
         {
-            List<Predicate<UserLaneBooking>> conditions = new List<Predicate<UserLaneBooking>>();
-            conditions.Add(b => b.DateStart.Hour >= StartFilter && b.DateStart.Hour < EndFilter);
-            if (!TennisFilter)
-            {
-                conditions.Add(b => Lanes.Where(l => l.Id == b.LaneNumber && l.PadelTennis).Count() > 0);
-            }
-            if (!PadelFilter)
-            {
-                conditions.Add(b => Lanes.Where(l => l.Id == b.LaneNumber && !l.PadelTennis).Count() > 0);
-            }
-            if (!InsideFilter)
-            {
-                conditions.Add(b => Lanes.Where(l => l.Id == b.LaneNumber && l.OutDoor).Count() > 0);
-            }
-            if (!OutsideFilter)
-            {
-                conditions.Add(b => Lanes.Where(l => l.Id == b.LaneNumber && !l.OutDoor).Count() > 0);
-            }
-            Bookings = FilterHelpers.GetItemsOnConditions(conditions, Bookings);
+            Bookings = Bookings.Where(b => b.DateStart.Hour >= StartFilter && b.DateStart.Hour < EndFilter).ToList();
+        }
+
+        public bool CheckFilters(Lane currentLane)
+        {
+            return ((currentLane.PadelTennis && PadelFilter) || (!currentLane.PadelTennis && TennisFilter)) && ((currentLane.OutDoor && OutsideFilter) || (!currentLane.OutDoor && InsideFilter));
         }
     }
 }

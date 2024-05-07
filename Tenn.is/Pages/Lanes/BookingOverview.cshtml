@@ -82,7 +82,7 @@
                                                     <div style="word-spacing: -2px">
                                                         @foreach (var item in @Model.Lanes)
                                                         {
-                                                            if (((item.PadelTennis && Model.PadelFilter) || (!item.PadelTennis && Model.TennisFilter)) && ((item.OutDoor && Model.OutsideFilter) || (!item.OutDoor && Model.InsideFilter)))
+                                                            if (Model.CheckFilters(item))
                                                             {
                                                                 int existingbookings = Model.Bookings.Where(b => b.LaneNumber == item.Id && b.DateStart.Day == actualDate).Count();
                                                                 int possiblebookings = Model.EndFilter - Model.StartFilter;
@@ -118,7 +118,8 @@
                                                     <div style="word-spacing: -2px">
                                             @foreach (var item in @Model.Lanes)
                                             {
-                                                            if (((item.PadelTennis && Model.PadelFilter) || (!item.PadelTennis && Model.TennisFilter)) && ((item.OutDoor && Model.OutsideFilter) || (!item.OutDoor && Model.InsideFilter))) {
+                                                            if (Model.CheckFilters(item))
+                                                            {
                                                                 int existingbookings = Model.Bookings.Where(b => b.LaneNumber == item.Id && b.DateStart.Day == actualDate).Count();
                                                                 int possiblebookings = Model.EndFilter - Model.StartFilter;
                                                                 if(Model.StartFilter < Model.EndFilter && existingbookings < possiblebookings) {
