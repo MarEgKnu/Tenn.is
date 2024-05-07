@@ -11,6 +11,8 @@ namespace Tennis.Pages.Lanes
     {
         private ILaneService _laneService;
         private DateTime _displayedMonth;
+
+
         public List<DateTime> DatesOfTheMonth { get; set; }
         public int FirstOfTheWeek { get; set; }
         public List<LaneBooking> Bookings { get; set; }
@@ -26,6 +28,15 @@ namespace Tennis.Pages.Lanes
         public int StartFilter {  get; set; }
         [BindProperty(SupportsGet = true)]
         public int EndFilter { get; set; }
+
+        [BindProperty(SupportsGet = true)]
+        public bool TennisFilter { get; set; }
+        [BindProperty(SupportsGet = true)]
+        public bool PadelFilter { get; set; }
+        [BindProperty(SupportsGet = true)]
+        public bool InsideFilter { get; set; }
+        [BindProperty(SupportsGet = true)]
+        public bool OutsideFilter { get; set; }
 
         [BindProperty(SupportsGet = true)]
         public int SelectedMonth { get; set; }
@@ -140,6 +151,10 @@ namespace Tennis.Pages.Lanes
             ToOptions = new SelectList(hourOptions,"Value","Key");
             StartFilter = 8;
             EndFilter = 22;
+            TennisFilter = true;
+            PadelFilter = true;
+            InsideFilter = true;
+            OutsideFilter = true;
         }
         public void OnGet()
         {

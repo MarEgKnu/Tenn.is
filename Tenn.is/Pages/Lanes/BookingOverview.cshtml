@@ -4,10 +4,27 @@
     ViewData["Title"] = "Book en bane";
 }
 <form method="get" class="container">
-<div class="container">
-    <p>Filter:</p>
-    <select asp-for="@Model.StartFilter" asp-items="@Model.FromOptions" onchange="this.form.submit()"></select>
-        <select asp-for="@Model.EndFilter" asp-items="@Model.ToOptions" onchange="this.form.submit()"></select>
+<div class="container-fluid row">
+        <p>Filter:</p>
+        <br />
+    <div class="col">
+
+    <span>Fra </span><select asp-for="@Model.StartFilter" asp-items="@Model.FromOptions" onchange="this.form.submit()"></select>
+    <br />
+        <span>Til </span><select asp-for="@Model.EndFilter" asp-items="@Model.ToOptions" onchange="this.form.submit()"></select>
+        </div>
+        <div class="col">
+            <input asp-for="TennisFilter" onclick="this.form.submit()" />
+            <label for="TennisFilter">Tennis</label><br>
+            <input asp-for="PadelFilter" onclick="this.form.submit()" />
+            <label for="PadelFilter">Padel</label>
+        </div>
+        <div class="col">
+            <input asp-for="InsideFilter" onclick="this.form.submit()" />
+            <label for="InsideFilter">Indendørs</label><br>
+            <input asp-for="OutsideFilter" onclick="this.form.submit()" />
+            <label for="OutsideFilter">Udendørs</label>
+        </div>
 </div>
 <div class="d-flex row justify-content-start" style="height: 500px">
 <div class="col-md-6">
@@ -82,8 +99,15 @@
                                                     <div style="word-spacing: -2px">
                                             @foreach (var item in @Model.Lanes)
                                             {
-                                                        <span style="font-size: 30%; letter-spacing: -2px;">&#129001;</span>
-                                            }
+                                                            if (((item.PadelTennis && Model.PadelFilter) || (!item.PadelTennis && Model.TennisFilter)) && ((item.OutDoor && Model.OutsideFilter) || (!item.OutDoor && Model.InsideFilter))) {
+                                                                if(Model.Bookings.Where(b => b.LaneNumber == item.Id).Where(b => b.DateStart == new DateTime(DateTime.Now.Year,Model.SelectedMonth, actualDate)).Count() == 0) {
+                                                                    <span style="font-size: 30%; letter-spacing: -2px;">&#129001;</span>
+                                                                } else
+                                                                {
+                                                                    <span style="font-size: 30%; letter-spacing: -2px;">&#128997;</span>
+                                                                }
+                                                            }
+                                                        }
                                             </div>
                                         </button>
                                                 </td>
@@ -113,9 +137,20 @@
                         @foreach(var item in Model.Lanes)
                         {
                             <th>
-                                <p>Bane 
-                                    <span>@item.Id</span>
-                                </p>
+                                <span>Bane 
+                                    <span>@item.Id</span><br />
+                                        @if (item.OutDoor)
+                                        {
+                                            <span>Udendørs</span>
+                                        } else
+                                        {
+                                            <span>Indendørs</span>
+                                        }
+                                        @if(item.PadelTennis)
+                                        {
+                                            <span>(P)</span>
+                                        }
+                                    </span>
                             </th>
                         }
                     </tr>
