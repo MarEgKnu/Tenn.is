@@ -69,77 +69,54 @@
                                     @if (Model.FirstOfTheWeek < totalIteration && totalIteration < (Model.DatesOfTheMonth.Count + 1 + Model.FirstOfTheWeek))
                                     {
                                         int actualDate = Model.DatesOfTheMonth[totalIteration - Model.FirstOfTheWeek - 1].Day;
-                                            if (Model.SelectedDay != null && Model.SelectedDay.Value.Day == actualDate)
-                                            {
-                                            <td class="table-warning border" align="center">
+                                        if (Model.SelectedDay != null && Model.SelectedDay.Value.Day == actualDate)
+                                        {
+                                            @:<td class="table-warning border" align="center">
+                                        }
+                                        else
+                                        {
+                                            @:<td class="border" align="center">
+                                        }
                                                 <button class="w-100" type="submit"
-                                                        value="@Model.DatesOfTheMonth[totalIteration-Model.FirstOfTheWeek-1].ToString()"
-                                                        name="DateString"
-                                                        style="border: none; margin:auto; padding: 0px; background-color: transparent;">
+                                                value="@Model.DatesOfTheMonth[totalIteration-Model.FirstOfTheWeek-1].ToString()"
+                                                name="DateString"
+                                                style="border: none; margin:auto; padding: 0px; background-color: transparent;">
                                                     <div class="m-auto w-100">
                                                         <span class="text-black-50">@actualDate</span>
                                                     </div>
-                                                    <div style="word-spacing: -2px">
+                                                    <div style="font-size: 40%; word-spacing: -1px">
                                                         @foreach (var item in @Model.Lanes)
                                                         {
                                                             if (Model.CheckFilters(item))
                                                             {
-                                                                int existingbookings = Model.Bookings.Where(b => b.LaneNumber == item.Id && b.DateStart.Day == actualDate).Count();
+                                                                int existingbookings = Model.Bookings.Where(b => 
+                                                                b.LaneNumber == item.Id && 
+                                                                b.DateStart.Day == actualDate && 
+                                                                b.DateStart.Month == Model.SelectedMonth).
+                                                                Count();
                                                                 int possiblebookings = Model.EndFilter - Model.StartFilter;
                                                                 if (Model.StartFilter < Model.EndFilter && existingbookings < possiblebookings)
                                                                 {
                                                                     if (possiblebookings - existingbookings > 1)
                                                                     {
-                                                                        <span style="font-size: 30%; letter-spacing: -2px;">&#129001;</span>
+                                                                        <span>&#129001;</span>
                                                                     }
                                                                     else
                                                                     {
-                                                                        <span style="font-size: 30%; letter-spacing: -2px;">&#129000;</span>
+                                                                        <span>&#129000;</span>
                                                                     }
                                                                 }
                                                                 else
                                                                 {
-                                                                    <span style="font-size: 30%; letter-spacing: -2px;">&#128997;</span>
+                                                                    <span>&#128997;</span>
                                                                 }
                                                             }
                                                         }
                                                     </div>
                                                 </button>
-                                                </td>
-                                        } else { 
-                                            <td class="border" align="center">
-                                        <button class="w-100" type="submit" 
-                                        value="@Model.DatesOfTheMonth[totalIteration-Model.FirstOfTheWeek-1].ToString()" 
-                                        name="DateString" 
-                                        style="border: none; margin:auto; padding: 0px; background-color: transparent;">
-                                            <div class="m-auto w-100">
-                                                <span class="text-black-50">@actualDate</span>
-                                            </div>
-                                                    <div style="word-spacing: -2px">
-                                            @foreach (var item in @Model.Lanes)
-                                            {
-                                                            if (Model.CheckFilters(item))
-                                                            {
-                                                                int existingbookings = Model.Bookings.Where(b => b.LaneNumber == item.Id && b.DateStart.Day == actualDate).Count();
-                                                                int possiblebookings = Model.EndFilter - Model.StartFilter;
-                                                                if(Model.StartFilter < Model.EndFilter && existingbookings < possiblebookings) {
-                                                                    if (possiblebookings - existingbookings > 1) {
-                                                                        <span style="font-size: 30%; letter-spacing: -2px;">&#129001;</span>
-                                                                    } else
-                                                                    {
-                                                                        <span style="font-size: 30%; letter-spacing: -2px;">&#129000;</span>
-                                                                    }
-                                                                } else
-                                                                {
-                                                                    <span style="font-size: 30%; letter-spacing: -2px;">&#128997;</span>
-                                                                }
-                                                            }
-                                                        }
-                                            </div>
-                                        </button>
-                                                </td>
-                                            }
-                                        } else
+                                            @:</td>
+                                    } 
+                                    else
                                         {
                                             <td></td>
                                         }
@@ -191,16 +168,17 @@
                             </td>
                             @foreach(var item in Model.Lanes)
                             {
-                                    bool foundBooking = Model.UnfilteredBookings.Where(b => b.DateStart == new DateTime(DateOnly.FromDateTime(Model.SelectedDay.Value), new TimeOnly(hour, 0, 0)) && b.LaneNumber == item.Id).Count() > 0;
+                                    DateOnly currentDay = DateOnly.FromDateTime(Model.SelectedDay.Value);
+                                    TimeOnly currentTime = new TimeOnly(hour, 0);
+                                    DateTime currentDayAndTime = new DateTime(currentDay, currentTime);
+                                    bool foundBooking = Model.UnfilteredBookings.Where(b => b.DateStart == currentDayAndTime && b.LaneNumber == item.Id).Count() > 0;
                                     if(foundBooking)
                                     {
                                         <td>
-
                                             <span style="color: red; font-weight:600">Booket</span>
                                         </td>
                                     } else {
                                     <td>
-
                                     <span style="color: green; font-weight:600">Ledig</span>
                                 </td>
                                     }

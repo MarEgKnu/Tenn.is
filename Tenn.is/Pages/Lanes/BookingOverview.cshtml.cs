@@ -103,54 +103,11 @@ namespace Tennis.Pages.Lanes
                 },
             };
             SelectOptions = new SelectList(options, "Value", "Key");
-            Dictionary<string, int> hourOptions = new Dictionary<string, int>()
+            Dictionary<string, int> hourOptions = new Dictionary<string, int>();
+            for (int i = 8; i <= 22; i++)
             {
-                {
-                    "8:00",8
-                },
-                {
-                    "9:00",9
-                },
-                {
-                    "10:00",10
-                },
-                {
-                    "11:00",11
-                },
-                {
-                    "12:00",12
-                },
-                {
-                    "13:00",13
-                },
-                {
-                    "14:00",14
-                },
-                {
-                    "15:00",15
-                },
-                {
-                    "16:00",16
-                },
-                {
-                    "17:00",17
-                },
-                {
-                    "18:00",18
-                },
-                {
-                    "19:00",19
-                },
-                {
-                    "20:00",20
-                },
-                {
-                    "21:00",21
-                },
-                {
-                    "22:00",22
-                }
-            };
+                hourOptions.Add($"{i}:00",i);
+            }
             FromOptions = new SelectList(hourOptions, "Value", "Key");
             ToOptions = new SelectList(hourOptions, "Value", "Key");
             StartFilter = 8;
