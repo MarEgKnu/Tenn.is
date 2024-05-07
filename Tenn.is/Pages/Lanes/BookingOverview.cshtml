@@ -58,7 +58,7 @@
                 </th>
             </tr>
         </thead>
-        <tbody class="">
+        <tbody>
             @for(int week=0; week<6; week++)
             {
                 <tr>
@@ -81,10 +81,10 @@
                                                 value="@Model.DatesOfTheMonth[totalIteration-Model.FirstOfTheWeek-1].ToString()"
                                                 name="DateString"
                                                 style="border: none; margin:auto; padding: 0px; background-color: transparent;">
-                                                    <div class="m-auto w-100">
+                                                    <div class="w-100">
                                                         <span class="text-black-50">@actualDate</span>
                                                     </div>
-                                                    <div style="font-size: 40%; word-spacing: -1px">
+                                                    <div class="w-100" style="font-size: 40%; word-spacing: -1px">
                                                         @foreach (var item in @Model.Lanes)
                                                         {
                                                             if (Model.CheckFilters(item))
