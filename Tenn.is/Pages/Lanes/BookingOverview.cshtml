@@ -73,17 +73,36 @@
                                             {
                                             <td class="table-warning border" align="center">
                                                 <button class="w-100" type="submit"
-                                                value="@Model.DatesOfTheMonth[totalIteration-Model.FirstOfTheWeek-1].ToString()"
-                                                name="DateString"
-                                                style="border: none; margin:auto; padding: 0px; background-color: transparent;">
+                                                        value="@Model.DatesOfTheMonth[totalIteration-Model.FirstOfTheWeek-1].ToString()"
+                                                        name="DateString"
+                                                        style="border: none; margin:auto; padding: 0px; background-color: transparent;">
                                                     <div class="m-auto w-100">
                                                         <span class="text-black-50">@actualDate</span>
                                                     </div>
                                                     <div style="word-spacing: -2px">
-                                                    @foreach (var item in @Model.Lanes)
-                                                    {
-                                                        <span style="font-size: 30%; letter-spacing: -2px;">&#129001;</span>
-                                                    }
+                                                        @foreach (var item in @Model.Lanes)
+                                                        {
+                                                            if (((item.PadelTennis && Model.PadelFilter) || (!item.PadelTennis && Model.TennisFilter)) && ((item.OutDoor && Model.OutsideFilter) || (!item.OutDoor && Model.InsideFilter)))
+                                                            {
+                                                                int existingbookings = Model.Bookings.Where(b => b.LaneNumber == item.Id && b.DateStart.Day == actualDate).Count();
+                                                                int possiblebookings = Model.EndFilter - Model.StartFilter;
+                                                                if (Model.StartFilter < Model.EndFilter && existingbookings < possiblebookings)
+                                                                {
+                                                                    if (possiblebookings - existingbookings > 1)
+                                                                    {
+                                                                        <span style="font-size: 30%; letter-spacing: -2px;">&#129001;</span>
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        <span style="font-size: 30%; letter-spacing: -2px;">&#129000;</span>
+                                                                    }
+                                                                }
+                                                                else
+                                                                {
+                                                                    <span style="font-size: 30%; letter-spacing: -2px;">&#128997;</span>
+                                                                }
+                                                            }
+                                                        }
                                                     </div>
                                                 </button>
                                                 </td>
@@ -100,7 +119,7 @@
                                             @foreach (var item in @Model.Lanes)
                                             {
                                                             if (((item.PadelTennis && Model.PadelFilter) || (!item.PadelTennis && Model.TennisFilter)) && ((item.OutDoor && Model.OutsideFilter) || (!item.OutDoor && Model.InsideFilter))) {
-                                                                int existingbookings = Model.Bookings.Where(b => b.LaneNumber == item.Id).Where(b => b.DateStart == new DateTime(DateTime.Now.Year, Model.SelectedMonth, actualDate)).Count();
+                                                                int existingbookings = Model.Bookings.Where(b => b.LaneNumber == item.Id && b.DateStart.Day == actualDate).Count();
                                                                 int possiblebookings = Model.EndFilter - Model.StartFilter;
                                                                 if(Model.StartFilter < Model.EndFilter && existingbookings < possiblebookings) {
                                                                     if (possiblebookings - existingbookings > 1) {
@@ -171,7 +190,7 @@
                             </td>
                             @foreach(var item in Model.Lanes)
                             {
-                                    bool foundBooking = Model.Bookings.Where(b => b.DateStart == new DateTime(DateOnly.FromDateTime(Model.SelectedDay.Value), new TimeOnly(hour, 0, 0)) && b.LaneNumber == item.Id).Count() < 0;
+                                    bool foundBooking = Model.UnfilteredBookings.Where(b => b.DateStart == new DateTime(DateOnly.FromDateTime(Model.SelectedDay.Value), new TimeOnly(hour, 0, 0)) && b.LaneNumber == item.Id).Count() > 0;
                                     if(foundBooking)
                                     {
                                         <td>

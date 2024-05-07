@@ -11,12 +11,14 @@ namespace Tennis.Pages.Lanes
     public class BookingOverviewModel : PageModel
     {
         private ILaneService _laneService;
+        private ILaneBookingService _laneBookingService;
         private DateTime _displayedMonth;
 
 
         public List<DateTime> DatesOfTheMonth { get; set; }
         public int FirstOfTheWeek { get; set; }
-        public List<LaneBooking> Bookings { get; set; }
+        public List<UserLaneBooking> Bookings { get; set; }
+        public List<UserLaneBooking> UnfilteredBookings { get; set; }
         public List<Lane> Lanes { get; set; }
         public Calendar Calendar { get; set; }
 
@@ -56,7 +58,7 @@ namespace Tennis.Pages.Lanes
                     return null;
                 }
             } }
-        public BookingOverviewModel(ILaneService laneService)
+        public BookingOverviewModel(ILaneService laneService, ILaneBookingService laneBookingService)
         {
             _laneService = laneService;
             Calendar = new GregorianCalendar();
@@ -148,14 +150,15 @@ namespace Tennis.Pages.Lanes
                     "22:00",22
                 }
             };
-            FromOptions = new SelectList(hourOptions,"Value","Key");
-            ToOptions = new SelectList(hourOptions,"Value","Key");
+            FromOptions = new SelectList(hourOptions, "Value", "Key");
+            ToOptions = new SelectList(hourOptions, "Value", "Key");
             StartFilter = 8;
             EndFilter = 22;
             TennisFilter = true;
             PadelFilter = true;
             InsideFilter = true;
             OutsideFilter = true;
+            _laneBookingService = laneBookingService;
         }
         public void OnGet()
         {
@@ -169,7 +172,8 @@ namespace Tennis.Pages.Lanes
             {
                 _displayedMonth = new DateTime(DateTime.Now.Year, SelectedMonth, 1);
             }
-            Bookings = new List<LaneBooking>();
+            Bookings = _laneBookingService.GetAllLaneBookings<UserLaneBooking>();
+            UnfilteredBookings = _laneBookingService.GetAllLaneBookings<UserLaneBooking>();
             FilterBookings();
             DatesOfTheMonth = new List<DateTime>();
             for(int i = 1; i <= Calendar.GetDaysInMonth(_displayedMonth.Year, _displayedMonth.Month); i++)
@@ -181,23 +185,23 @@ namespace Tennis.Pages.Lanes
 
         public void FilterBookings()
         {
-            List<Predicate<LaneBooking>> conditions = new List<Predicate<LaneBooking>>();
+            List<Predicate<UserLaneBooking>> conditions = new List<Predicate<UserLaneBooking>>();
             conditions.Add(b => b.DateStart.Hour >= StartFilter && b.DateStart.Hour < EndFilter);
             if (!TennisFilter)
             {
-                conditions.Add(b => Lanes.Where(l => l.Id == b.LaneNumber && l.PadelTennis).Count() < 0);
+                conditions.Add(b => Lanes.Where(l => l.Id == b.LaneNumber && l.PadelTennis).Count() > 0);
             }
             if (!PadelFilter)
             {
-                conditions.Add(b => Lanes.Where(l => l.Id == b.LaneNumber && !l.PadelTennis).Count() < 0);
+                conditions.Add(b => Lanes.Where(l => l.Id == b.LaneNumber && !l.PadelTennis).Count() > 0);
             }
             if (!InsideFilter)
             {
-                conditions.Add(b => Lanes.Where(l => l.Id == b.LaneNumber && !l.OutDoor).Count() < 0);
+                conditions.Add(b => Lanes.Where(l => l.Id == b.LaneNumber && l.OutDoor).Count() > 0);
             }
             if (!OutsideFilter)
             {
-                conditions.Add(b => Lanes.Where(l => l.Id == b.LaneNumber && l.OutDoor).Count() < 0);
+                conditions.Add(b => Lanes.Where(l => l.Id == b.LaneNumber && !l.OutDoor).Count() > 0);
             }
             Bookings = FilterHelpers.GetItemsOnConditions(conditions, Bookings);
         }
