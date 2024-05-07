@@ -27,9 +27,9 @@ namespace Tennis.Services
 
         string GetAllLaneBookingSQL = "SELECT * FROM LANEBOOKINGS";
         string GetLaneBookingByIdSQL = "SELECT * FROM LANEBOOKINGS WHERE BOOKINGID = @BookingID";
-        string CreateLaneBookingSQL = "INSERT INTO LANEBOOKINGS ( LaneNumber, Cancelled, DateStart, DateEnd, UserID,  MateID , TrainingTeamID) VALUES ( @LaneNumber, @cancelled, @DateStart, @DateEnd, @UserID,  @MateID, @TrainingTeamID ) ";
+        string CreateLaneBookingSQL = "INSERT INTO LANEBOOKINGS ( LaneNumber, Cancelled, DateStart, UserID,  MateID , TrainingTeamID) VALUES ( @LaneNumber, @cancelled, @DateStart, @UserID,  @MateID, @TrainingTeamID ) ";
         string DeleteLaneBookingSQL = "DELETE FROM LANEBOOKINGS WHERE BOOKINGID = @BookingID";
-        string UpdateLaneBookingSQL = "UPDATE LANEBOOKINGS SET LaneNumber = @LaneNumber, DateStart = @DateStart, DateEnd = @DateEnd WHERE @ID = BOOKINGID";
+        string UpdateLaneBookingSQL = "UPDATE LANEBOOKINGS SET LaneNumber = @LaneNumber, DateStart = @DateStart WHERE @ID = BOOKINGID";
         string CancelLaneBookingSQL = "UPDATE LANEBOOKINGS SET Cancelled = 'TRUE' WHERE BOOKINGID = @BookingID";
 
 
@@ -53,11 +53,9 @@ namespace Tennis.Services
                     SqlDataReader reader = command.ExecuteReader();
                     while (reader.Read())
                     {
-                        
-                        TimeBetween timeBetween = new TimeBetween(reader.GetDateTime("DateStart"), reader.GetDateTime("DateEnd"));
                         if (typeof(UserLaneBooking) == typeof(T))
                         {
-                            object[] userLaneBooking = new object[] { reader.GetInt32("BookingID"), reader.GetInt32("LaneNumber"), timeBetween, reader.GetInt32("UserID"), reader.GetInt32("MateID"), reader.GetBoolean("Cancelled") };
+                            object[] userLaneBooking = new object[] { reader.GetInt32("BookingID"), reader.GetInt32("LaneNumber"), reader.GetDateTime("DateStart"), reader.GetInt32("UserID"), reader.GetInt32("MateID"), reader.GetBoolean("Cancelled") };
                             LaneBookingList.Add((T)Activator.CreateInstance(typeof(T), userLaneBooking));
                         }
                         else if (typeof(TrainingLaneBooking) == typeof(T))
@@ -121,7 +119,6 @@ namespace Tennis.Services
                     command.Parameters.AddWithValue("@BookingID", id);
                     command.Connection.Open();
                     SqlDataReader reader = command.ExecuteReader();
-                    TimeBetween timeBetween = new TimeBetween(reader.GetDateTime("DateStart"), reader.GetDateTime("DateEnd"));
                     if (reader.Read())
                     {
                         //TrainingTeam trainingTeam = trainingTeamservice.GetTrainingTeamByID(reader.GetInt32("TrainingTeamID"));
@@ -286,13 +283,14 @@ namespace Tennis.Services
         {
             if (GetUserLaneBookingById(id) is null)
                 return false;
+            if (VerifyNewBooking(laneBooking) == false)
+                return false;
             using (SqlConnection connection = new SqlConnection(connectionString))
                 try
                 {
                     SqlCommand command = new SqlCommand(UpdateLaneBookingSQL, connection);
                     command.Parameters.AddWithValue("@LaneNumber", laneBooking.LaneNumber);
                     command.Parameters.AddWithValue("@DateStart", laneBooking.DateStart);
-                    command.Parameters.AddWithValue("@DateEnd", laneBooking.DateStart); 
                     command.Parameters.AddWithValue("@ID", laneBooking.Cancelled);
                     command.Connection.Open();
                     int noOfRows = command.ExecuteNonQuery();

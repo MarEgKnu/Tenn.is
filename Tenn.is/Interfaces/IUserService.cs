@@ -27,5 +27,7 @@ namespace Tennis.Interfaces
         public bool ValidatePhoneLength(string phoneLength);
 
         public List<UserLaneBooking> GetAllLaneBookingsWithUserId(int userId);
+
+        public List<Event> GetAllEventBookingWithUserId(int userId);
     }
 }
