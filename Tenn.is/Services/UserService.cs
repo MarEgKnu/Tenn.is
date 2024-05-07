@@ -1,5 +1,6 @@
 ﻿using System.Data;
 using Microsoft.Data.SqlClient;
+using Tennis.Helpers;
 using Tennis.Interfaces;
 using Tennis.Models;
 
@@ -14,6 +15,7 @@ namespace Tennis.Services
         private string deleteSQL = "DELETE FROM Users WHERE UserID = @UID";
         private string editSQL = "UPDATE Users SET UserName = @UNAME, FirstName = @FNAME, LastName = @LNAME, Password = @PWORD, Phone = @PHONE, Email = @EMAIL, Administrator = @ADMIN, RandomPassword = @RWORD WHERE UserID = @UID";
         private string getAllLaneBookingsWithUserIdSQL = "Select * FROM lANEBOOKINGS WHERE UserID = @UID OR MateID = @UID";
+        private string getAllEventsWithUserIdSQL = "SELECT EVENTS.EventID, EVENTS.Title, EVENTS.Description, EVENTS.Cancelled, EVENTS.DateStart, EVENTS.DateEnd, EVENTS.CancellationThreshold FROM EVENTS INNER JOIN EVENTBOOKINGS ON EVENTS.EventID = EVENTBOOKINGS.EventID WHERE EVENTBOOKINGS.UserID = @UserID";
 
         public UserService()
         {
@@ -341,6 +343,39 @@ namespace Tennis.Services
             string trimmed = phoneLength.Replace(" ", "");
 
             return trimmed.Length == 8;
+        }
+
+        public List<Event> GetAllEventBookingWithUserId(int userId)
+        {
+            List<Event> events = new List<Event>();
+            using (SqlConnection connection = new SqlConnection(connectionString))
+            {
+                try
+                {
+                    SqlCommand command = new SqlCommand(getAllEventsWithUserIdSQL, connection);
+                    command.Connection.Open();
+                    command.Parameters.AddWithValue("@UserID", userId);
+                    SqlDataReader reader = command.ExecuteReader();
+                    if (reader.HasRows && reader.Read())
+                    {
+                        int eventID = reader.GetInt32("EventID");
+                        string title = reader.GetString("Title");
+                        string description = reader.GetString("Description");
+                        bool cancelled = reader.GetBoolean("Cancelled");
+                        TimeBetween eventTime = new TimeBetween(reader.GetDateTime("DateStart"), reader.GetDateTime("DateEnd"));
+                        int cancellationThreshold = reader.GetInt32("CancellationThreshold");
+                        Event @event = new Event(eventID, title, cancellationThreshold, description, eventTime, cancelled);
+                        events.Add(@event);
+                    }
+                }
+
+                catch (Exception ex)
+                {
+
+
+                }
+                return events;
+            }
         }
 
 

@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using System.Data.SqlClient;
 using Tennis.Interfaces;
 using Microsoft.Data.SqlClient;
+using Tennis.Helpers;
 
 namespace Tennis.Services.Tests
 {
@@ -325,18 +326,122 @@ namespace Tennis.Services.Tests
         }
 
         [TestMethod()]
-        public void GetAllLaneBookingsWithUserId_Valide()
+        public void GetAllLaneBookingsWithUserId_Valid()
         {
             UserService users = new UserService(true);
             User user = new User(103, "test7", "Test", "Testson", "test", "testestest", "1234", false, false);
+            User originaluser = new User(102, "test5", "Test", "Testson", "test", "testestest", "1234", false, false);
+
             LaneBookingService laneBookingService = new LaneBookingService();
             LaneService laneService = new LaneService();
             laneService.CreateLane(new Lane(250, true, true));
+            users.CreateUser(user);
+            users.CreateUser(originaluser);
+            
 
-            //laneBookingService.CreateLaneBooking(new LaneBooking());
-            users.GetAllLaneBookingsWithUserId(103);
-            laneBookingService.CreateLaneBooking(new UserLaneBooking(1, 1, DateTime.Now.AddHours(2), 201, 101, false));
+            int numberBefore = users.GetAllLaneBookingsWithUserId(103).Count();
+            laneBookingService.CreateLaneBooking(new UserLaneBooking(1, 250, DateTime.Now.AddHours(2), 103, 102, false));
+            int numberAfter = users.GetAllLaneBookingsWithUserId(103).Count();
 
+            laneBookingService.DeleteLaneBooking(1);
+            laneService.DeleteLane(250);
+            users.DeleteUser(103);
+            users.DeleteUser(102);
+            Assert.AreEqual(numberBefore, numberAfter -1);
         }
+
+        [TestMethod()]
+        public void GetAllLaneBookingsWithUserId_Invalid()
+        {
+            UserService users = new UserService(true);
+            LaneBookingService laneBookingService = new LaneBookingService();
+            LaneService laneService = new LaneService();
+
+            User user = new User(103, "test7", "Test", "Testson", "test", "testestest", "1234", false, false);
+            User originaluser = new User(102, "test5", "Test", "Testson", "test", "testestest", "1234", false, false);
+            laneService.CreateLane(new Lane(250, true, true));
+
+            int numberBefore = users.GetAllLaneBookingsWithUserId(7654).Count();
+            laneBookingService.CreateLaneBooking(new UserLaneBooking(1, 250, DateTime.Now.AddHours(2), 103, 102, false));
+            int numberAfter = users.GetAllLaneBookingsWithUserId(7654).Count();
+
+            laneBookingService.DeleteLaneBooking(1);
+            laneService.DeleteLane(250);
+            users.DeleteUser(103);
+            users.DeleteUser(102);
+            Assert.AreEqual(numberBefore, numberAfter );
+        }
+
+        [TestMethod]
+        public void GetAllEventBookingWithUserId_Valid()
+        {
+            UserService users = new UserService(true);
+            EventService eventService = new();
+            EventBookingService eventBookingService = new EventBookingService(eventService, users);
+
+            using (SqlConnection conn = new SqlConnection(Secret.ConnectionStringTest))
+            {
+                conn.Open();
+                SqlCommand cmd = new SqlCommand("DELETE FROM EventBookings", conn);
+                SqlCommand cmd2 = new SqlCommand("DELETE FROM Events", conn);
+                SqlCommand cmd3 = new SqlCommand("DELETE FROM Users", conn);
+
+                cmd.ExecuteNonQuery();
+                cmd2.ExecuteNonQuery();
+                cmd3.ExecuteNonQuery();
+            }
+
+            TimeBetween time = new TimeBetween(new DateTime(2040, 10, 20), new DateTime(2040, 10, 30));
+            bool sucess = eventService.CreateEvent(new Event(1, "big event", 0, "meget stor event", time));
+            Event evt = eventService.GetAllEvents().Last();
+
+            users.CreateUser(new User(1, "KlausXxX", "Klaus", "Nielsen", "xxxx@gmail.com", "ZxKjdJF!!!45", "12345678", false, false));
+            User user = users.GetAllUsers().First();
+
+            int numberBefore = users.GetAllEventBookingWithUserId(1).Count();
+
+            eventBookingService.CreateEventBooking(new EventBooking(evt, user, "Ingen cola"));
+
+            int numberAfter = users.GetAllEventBookingWithUserId(1).Count();
+
+            Assert.AreEqual(numberBefore + 1, numberAfter);
+        }
+
+
+        [TestMethod]
+        public void GetAllEventBookingWithUserId_Invalid()
+        {
+            UserService users = new UserService(true);
+            EventService eventService = new();
+            EventBookingService eventBookingService = new EventBookingService(eventService, users);
+
+            using (SqlConnection conn = new SqlConnection(Secret.ConnectionStringTest))
+            {
+                conn.Open();
+                SqlCommand cmd = new SqlCommand("DELETE FROM EventBookings", conn);
+                SqlCommand cmd2 = new SqlCommand("DELETE FROM Events", conn);
+                SqlCommand cmd3 = new SqlCommand("DELETE FROM Users", conn);
+
+                cmd.ExecuteNonQuery();
+                cmd2.ExecuteNonQuery();
+                cmd3.ExecuteNonQuery();
+            }
+
+            TimeBetween time = new TimeBetween(new DateTime(2040, 10, 20), new DateTime(2040, 10, 30));
+            bool sucess = eventService.CreateEvent(new Event(1, "big event", 0, "meget stor event", time));
+            Event evt = eventService.GetAllEvents().Last();
+
+            users.CreateUser(new User(1, "KlausXxX", "Klaus", "Nielsen", "xxxx@gmail.com", "ZxKjdJF!!!45", "12345678", false, false));
+            User user = users.GetAllUsers().First();
+
+            int numberBefore = users.GetAllEventBookingWithUserId(77).Count();
+
+            eventBookingService.CreateEventBooking(new EventBooking(evt, user, "Ingen cola"));
+
+            int numberAfter = users.GetAllEventBookingWithUserId(77).Count();
+
+            Assert.AreEqual(numberBefore, numberAfter);
+        }
+
     }
 }
