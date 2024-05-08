@@ -1,10 +1,10 @@
 ﻿@page
 @model Tennis.Pages.Lanes.BookingOverviewModel
 @{
-    ViewData["Title"] = "Book en bane";
+    ViewData["Title"] = "Baner";
 }
-<form method="get" class="container">
-<div class="container-fluid row">
+<form method="get" class="container row justify-content-start">
+<div class="container col-md-6 row">
         <p>Filter:</p>
         <br />
     <div class="col">
@@ -26,8 +26,11 @@
             <label for="OutsideFilter">Udendørs</label>
         </div>
 </div>
+</form>
 <div class="d-flex row justify-content-start" style="height: 500px">
+
 <div class="col-md-6">
+        <form method="get" class="container">
         <div align="center">
         <select asp-for="@Model.SelectedMonth" asp-items="@Model.SelectOptions" onchange="this.form.submit()"></select>
     </div>
@@ -126,6 +129,7 @@
         </tbody>
     </table>
             </div>
+            </form>
 </div>
 
     @if(Model.SelectedDay != null)
@@ -135,7 +139,7 @@
             <table class="table table-bordered table-hover">
                 <thead>
                     <tr>
-                        <th>
+                        <th style="width:20%">
                             <p>Tider:</p>
                         </th>
                         @foreach(var item in Model.Lanes)
@@ -175,11 +179,11 @@
                                     if(foundBooking)
                                     {
                                         <td>
-                                            <span style="color: red; font-weight:600">Booket</span>
+                                            <span class="btn btn-outline-danger disabled w-100 border-0" style="font-weight:600">Booket</span>
                                         </td>
                                     } else {
                                     <td>
-                                    <span style="color: green; font-weight:600">Ledig</span>
+                                    <a asp-page="BookingCreate" asp-route-laneid="@item.Id" asp-route-datetime="@currentDayAndTime.ToString()" class="btn btn-outline-success w-100 border-0" style="font-weight:600">Ledig</a>
                                 </td>
                                     }
                             }
@@ -190,4 +194,3 @@
             </div>
     }
 </div>
-</form>

@@ -1,0 +1,32 @@
+﻿@page
+@model Tennis.Pages.Lanes.BookingCreateModel
+@{
+    ViewData["Title"] = "Book en bane";
+}
+<div class="d-flex row">
+    <form method="post" class="col-md-6">
+        <h4>Din booking:</h4>
+        <input type="hidden" asp-for="@Model.CurrentBooking.LaneNumber" />
+        <input type="hidden" asp-for="@Model.CurrentBooking.BookingID" />
+        <input type="hidden" asp-for="@Model.CurrentBooking.UserID" />
+        <input type="hidden" asp-for="@Model.CurrentBooking.DateStart" />
+        <input type="hidden" asp-for="@Model.CurrentBooking.Cancelled" />
+        <p>Bane @Model.LaneInfo.Id :
+            @if(Model.LaneInfo.OutDoor)
+            {
+                <span>Udendørs </span>
+            } else
+            {
+                <span>Indendørs </span>
+            }
+            @if(Model.LaneInfo.PadelTennis)
+            {
+                <span>padeltennis</span>
+            } else
+            {
+                <span>tennis</span>
+            }
+        </p>
+
+    </form>
+</div>
