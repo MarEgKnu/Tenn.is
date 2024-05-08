@@ -49,5 +49,18 @@ namespace Tennis.Models
         {
 
         }
+        public override bool Equals(object? obj)
+        {
+            User user = obj as User;
+            return user.UserId == UserId &&
+                   user.Username == Username &&
+                   user.FirstName == FirstName &&
+                   user.LastName == LastName &&
+                   user.Email == Email &&
+                   user.Password == Password &&
+                   user.Phone == Phone &&
+                   user.Administrator == Administrator &&
+                   user.RandomPassword == RandomPassword;
+        }
     }
 }

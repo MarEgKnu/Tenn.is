@@ -1,0 +1,45 @@
+﻿@page
+@model Tennis.Pages.TrainingTeams.CreateTrainingTeamModel
+@{
+    ViewData["Title"] = "Opret træningshold";
+}
+
+<h1>Opret Træningshold</h1>
+<p style="color:red">@ViewData["ErrorMessage"]</p>
+
+<form method="post">
+    <div class="form-group">
+        <label asp-for="@Model.Team.Title" class="control-label">Navn</label>
+        <input asp-for="@Model.Team.Title" class="form-control" />
+        <span asp-validation-for="@Model.Team.Title" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="@Model.Team.MaxTrainees" class="control-label">Maks antal medlemmer</label>
+        <input asp-for="@Model.Team.MaxTrainees" class="form-control"></textarea>
+        <span asp-validation-for="@Model.Team.MaxTrainees" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="@Model.Team.Description" class="control-label">Beskrivelse</label>
+        <textarea asp-for="@Model.Team.Description" class="form-control" ></textarea>
+        <span asp-validation-for="@Model.Team.Description" class=" text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="Team.weeklyTimeBetween.StartDay" class="control-label">Ugelig træningsdag</label>
+        <select asp-for="Team.weeklyTimeBetween.StartDay" asp-items="Model.DayOptions">
+        </select>
+        <span asp-validation-for="Team.weeklyTimeBetween.StartDay" class=" text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="Team.weeklyTimeBetween.StartTime" class="control-label">Ugelig træningsstart på træningsdag</label>
+        <input type="time" asp-for="Team.weeklyTimeBetween.StartTime" class="form-control" />
+        <span asp-validation-for="Team.weeklyTimeBetween.StartTime" class=" text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="Team.weeklyTimeBetween.EndTime" class="control-label">Ugelig træningsslut på træningsdag</label>
+        <input type="time" asp-for="Team.weeklyTimeBetween.EndTime" class="form-control" />
+        <span asp-validation-for="Team.weeklyTimeBetween.EndTime" class=" text-danger"></span>
+    </div>
+    <div class="form-group">
+        <input type="submit" value="Opret event" class="btn btn-primary" />
+    </div>
+</form>
