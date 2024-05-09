@@ -67,13 +67,14 @@
         <label asp-for="@Model.SelectedTrainerIDs" class="control-label">Tilføj trænere</label>
         <select asp-for="@Model.SelectedTrainerIDs" size="10"  asp-items="Model.SelectUser" multiple>
         </select>
+        <span asp-validation-for="@Model.SelectedTrainerIDs" class=" text-danger"></span>
         <details>
          <summary>Trænere på holdet</summary>
         @for (int i = 0; i < Model.ExistingTrainerIDs.Count; i++) 
         {
 
 
-                <p>@Model.ValidUsers[Model.ExistingTrainerIDs[i]].Username &emsp; @Model.ValidUsers[Model.ExistingTrainerIDs[i]].FirstName @Model.ValidUsers[Model.ExistingTrainerIDs[i]].LastName</p>
+                <p>@Model.ValidUsers[Model.ExistingTrainerIDs[i]].Username : @Model.ValidUsers[Model.ExistingTrainerIDs[i]].FirstName @Model.ValidUsers[Model.ExistingTrainerIDs[i]].LastName <button type="submit" name="id" value="@Model.ExistingTrainerIDs[i]" asp-page-handler="DeleteTrainer" >Fjern</button></p>
                 
                 
             
@@ -90,28 +91,29 @@
         <label asp-for="@Model.SelectedTraineeIDs" class="control-label">Tilføj medlem</label>
         <select asp-for="@Model.SelectedTraineeIDs" size="10" asp-items="Model.SelectUser" multiple>
         </select>
+        <span asp-validation-for="@Model.SelectedTraineeIDs" class=" text-danger"></span>
         <details>
             <summary>Medlemmer på holdet</summary>
             @for (int i = 0; i < Model.ExistingTraineeIDs.Count; i++)
             {
 
 
-                <p>@Model.ValidUsers[Model.ExistingTraineeIDs[i]].Username &emsp; @Model.ValidUsers[Model.ExistingTraineeIDs[i]].FirstName @Model.ValidUsers[Model.ExistingTraineeIDs[i]].LastName</p>
+                <p>@Model.ValidUsers[Model.ExistingTraineeIDs[i]].Username &emsp; @Model.ValidUsers[Model.ExistingTraineeIDs[i]].FirstName @Model.ValidUsers[Model.ExistingTraineeIDs[i]].LastName <button type="submit" name="id" value="@Model.ExistingTraineeIDs[i]" asp-page-handler="DeleteTrainee">Fjern</button></p>
 
 
 
 
-                <input type="hidden" asp-for="ExistingTrainerIDs[i]" />
+                <input type="hidden" asp-for="ExistingTraineeIDs[i]" />
                 <br />
 
             }
         </details>
 
-        <input type="submit" value="Tilføj medlem" asp-page-handler="AddTrainer" class="btn btn-primary" />
+        <input type="submit" value="Tilføj medlem" asp-page-handler="AddTrainee" class="btn btn-primary" />
 
     </div>
         <div class="form-group">
-            <input type="submit" value="Opret træningshold" class="btn btn-primary" />
+            <input type="submit" value="Opret træningshold" asp-page-handler="" class="btn btn-primary" />
         </div>
-    </form>
+</form>
 

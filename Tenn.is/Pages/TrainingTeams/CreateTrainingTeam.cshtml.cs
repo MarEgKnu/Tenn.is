@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.Data.SqlClient;
 using Microsoft.IdentityModel.Tokens;
 using System.Text.Json.Serialization;
 using Tennis.Helpers;
@@ -33,7 +34,7 @@ namespace Tennis.Pages.TrainingTeams
 
 
         [BindProperty(SupportsGet = true)]
-        public string MemberFilter { get; set; }
+        public string? MemberFilter { get; set; }
 
         public List<SelectListItem> SelectUser { get; set; }
 
@@ -68,6 +69,26 @@ namespace Tennis.Pages.TrainingTeams
             return Page();
             
         }
+        public IActionResult OnPostDeleteTrainer(int id)
+        {
+            if (!_userService.AdminVerify(HttpContext.Session.GetString("Username"), HttpContext.Session.GetString("Password")))
+            {
+                return RedirectToPage("/Users/Login", "Redirect", new { message = "Du har ikke tilladelse til at se denne side. Log venligst ind som admin" });
+            }
+            FilterMembers();
+            ExistingTrainerIDs.Remove(id);
+            return Page();
+        }
+        public IActionResult OnPostDeleteTrainee(int id)
+        {
+            if (!_userService.AdminVerify(HttpContext.Session.GetString("Username"), HttpContext.Session.GetString("Password")))
+            {
+                return RedirectToPage("/Users/Login", "Redirect", new { message = "Du har ikke tilladelse til at se denne side. Log venligst ind som admin" });
+            }
+            FilterMembers();
+            ExistingTraineeIDs.Remove(id);
+            return Page();
+        }
         public IActionResult OnPost()
         {
             if (!_userService.AdminVerify(HttpContext.Session.GetString("Username"), HttpContext.Session.GetString("Password")))
@@ -92,29 +113,75 @@ namespace Tennis.Pages.TrainingTeams
             {
                 return Page();
             }
-            return Page();
+            try
+            {
+                foreach(var item in ExistingTraineeIDs)
+                {
+                    Team.AddTrainee(ValidUsers[item]);
+                }
+                foreach(var item in ExistingTrainerIDs)
+                {
+                    Team.AddTrainer(ValidUsers[item]);
+                }
+                _teamService.CreateTrainingTeam(Team);
+            }
+            catch (SqlException sqlEx)
+            {
+                ViewData["ErrorMessage"] = "Database fejl. Fejlbesked:\n " + sqlEx.Message;
+                return Page();
+            }
+            catch (Exception ex)
+            {
+                ViewData["ErrorMessage"] = "Generel fejl. Fejlbesked:\n " + ex.Message;
+                return Page();
+            }
+            return RedirectToPage("TrainingTeamIndex");
         }
         public IActionResult OnPostAddTrainer()
         {
-            //if (!_userService.AdminVerify(HttpContext.Session.GetString("Username"), HttpContext.Session.GetString("Password")))
-            //{
-            //    return RedirectToPage("/Users/Login", "Redirect", new { message = "Du har ikke tilladelse til at se denne side. Log venligst ind som admin" });
-            //}
-            //User user = _userService.GetUserByUserName(TrainerUserName);
-            //if (user == null)
-            //{
-            //    ViewData["ErrorMessage"] = "Ukendt bruger, vælg venlist en bruger i listen";
-            //    return Page();
-            //}
-            //TrainerIDs.Add(user.UserId);
-            OnGet();
+            if (!_userService.AdminVerify(HttpContext.Session.GetString("Username"), HttpContext.Session.GetString("Password")))
+            {
+                return RedirectToPage("/Users/Login", "Redirect", new { message = "Du har ikke tilladelse til at se denne side. Log venligst ind som admin" });
+            }
+            FilterMembers();
             foreach (var id in SelectedTrainerIDs)
             {
-                if (!ExistingTrainerIDs.Contains(id))
+                if (!ExistingTrainerIDs.Contains(id) && !ExistingTraineeIDs.Contains(id))
                 {
                     ExistingTrainerIDs.Add(id);
                 }
+                else
+                {
+                    ModelState.AddModelError("SelectedTrainerIDs", "Du kan ikke tilføje det samme medlem flere gange");
+                }
                 
+            }
+            return Page();
+        }
+        public IActionResult OnPostAddTrainee()
+        {
+            if (!_userService.AdminVerify(HttpContext.Session.GetString("Username"), HttpContext.Session.GetString("Password")))
+            {
+                return RedirectToPage("/Users/Login", "Redirect", new { message = "Du har ikke tilladelse til at se denne side. Log venligst ind som admin" });
+            }
+            FilterMembers();
+            if (ExistingTraineeIDs.Count + 1 >= Team.MaxTrainees)
+            {
+                ModelState.AddModelError("SelectedTraineeIDs", "Du kan ikke tilføje flere medlemmer, da maksimum er nået");
+               
+                return Page();
+            }
+            foreach (var id in SelectedTraineeIDs)
+            {
+                if (!ExistingTraineeIDs.Contains(id) && !ExistingTrainerIDs.Contains(id))
+                {
+                    ExistingTraineeIDs.Add(id);
+                }
+                else
+                {
+                    ModelState.AddModelError("SelectedTraineeIDs", "Du kan ikke tilføje det samme medlem flere gange");
+                }
+
             }
             return Page();
         }
@@ -122,10 +189,7 @@ namespace Tennis.Pages.TrainingTeams
         {
             if (!MemberFilter.IsNullOrEmpty())
             {
-                foreach (var item in ValidUsers.Where(kvp => !kvp.Value.Username.Contains(MemberFilter)))
-                {
-                    ValidUsers.Remove(item.Key);
-                }
+                SelectUser = SelectUser.Where(listItem => listItem.Text.ToLower().Contains(MemberFilter.ToLower())).ToList();
             
             }
         }
