@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Tennis.Exceptions;
 using Tennis.Helpers;
 using Tennis.Interfaces;
 using Tennis.Models;
@@ -64,7 +65,7 @@ namespace TennisTest
             Assert.AreEqual(1, trainingTeamService.GetAllTrainingTeams().Count);
             Assert.AreEqual("Jeff's træningshold", trainingTeam.Title);
             Assert.AreEqual(5, trainingTeam.MaxTrainees);
-            Assert.AreEqual(5, trainingTeam.weeklyTimeBetween.StartTime.Hour);
+            Assert.AreEqual(5, trainingTeam.weeklyTimeBetween.StartTime.Value.Hour);
             Assert.AreEqual(0, trainingTeam.Trainees.Count);
             Assert.AreEqual(0, trainingTeam.Trainers.Count);
         }
@@ -81,11 +82,11 @@ namespace TennisTest
             Assert.AreEqual(1, trainingTeamService.GetAllTrainingTeams().Count);
             Assert.AreEqual("Jeff's træningshold", trainingTeam.Title);
             Assert.AreEqual(5, trainingTeam.MaxTrainees);
-            Assert.AreEqual(5, trainingTeam.weeklyTimeBetween.StartTime.Hour);
+            Assert.AreEqual(5, trainingTeam.weeklyTimeBetween.StartTime.Value.Hour);
             Assert.IsTrue(users[0].Equals( trainingTeam.Trainers.First()));
             Assert.IsTrue(users[1].Equals(trainingTeam.Trainees.First()));
         }
-        [ExpectedException(typeof(SqlException))]
+        [ExpectedException(typeof(DuplicateUserException))]
         [TestMethod]
         public void CreateTrainingTeam_Failure_full_1Trainer_1Trainee_SameID()
         {
@@ -99,7 +100,7 @@ namespace TennisTest
             Assert.AreEqual(1, trainingTeamService.GetAllTrainingTeams().Count);
             Assert.AreEqual("Jeff's træningshold", trainingTeam.Title);
             Assert.AreEqual(5, trainingTeam.MaxTrainees);
-            Assert.AreEqual(5, trainingTeam.weeklyTimeBetween.StartTime.Hour);
+            Assert.AreEqual(5, trainingTeam.weeklyTimeBetween.StartTime.Value.Hour);
             Assert.IsTrue(users[0].Equals(trainingTeam.Trainers.First()));
             Assert.IsTrue(users[1].Equals(trainingTeam.Trainees.First()));
         }

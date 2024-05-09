@@ -68,20 +68,28 @@ namespace Tennis.Services
                     }
                     int primaryKey = (int)command.ExecuteScalar();
                     
-                    foreach (User trainer in trainingTeam.Trainers)
+                    //foreach (User trainer in trainingTeam.Trainers)
+                    //{
+                    //    SqlCommand addMembersCommand = new SqlCommand(insertMembersString, connection, transaction);
+                    //    addMembersCommand.Parameters.AddWithValue("@TrainingTeamID", primaryKey);
+                    //    addMembersCommand.Parameters.AddWithValue("@UserID", trainer.UserId);
+                    //    addMembersCommand.Parameters.AddWithValue("@IsTrainer", true);
+                    //    addMembersCommand.ExecuteNonQuery();
+                    //}
+                    //foreach (User trainee in trainingTeam.Trainees)
+                    //{
+                    //    SqlCommand addMembersCommand = new SqlCommand(insertMembersString, connection, transaction);
+                    //    addMembersCommand.Parameters.AddWithValue("@TrainingTeamID", primaryKey);
+                    //    addMembersCommand.Parameters.AddWithValue("@UserID", trainee.UserId);
+                    //    addMembersCommand.Parameters.AddWithValue("@IsTrainer", false);
+                    //    addMembersCommand.ExecuteNonQuery();
+                    //}
+                    foreach (var kvp in trainingTeam.Members)
                     {
                         SqlCommand addMembersCommand = new SqlCommand(insertMembersString, connection, transaction);
                         addMembersCommand.Parameters.AddWithValue("@TrainingTeamID", primaryKey);
-                        addMembersCommand.Parameters.AddWithValue("@UserID", trainer.UserId);
-                        addMembersCommand.Parameters.AddWithValue("@IsTrainer", true);
-                        addMembersCommand.ExecuteNonQuery();
-                    }
-                    foreach (User trainee in trainingTeam.Trainees)
-                    {
-                        SqlCommand addMembersCommand = new SqlCommand(insertMembersString, connection, transaction);
-                        addMembersCommand.Parameters.AddWithValue("@TrainingTeamID", primaryKey);
-                        addMembersCommand.Parameters.AddWithValue("@UserID", trainee.UserId);
-                        addMembersCommand.Parameters.AddWithValue("@IsTrainer", false);
+                        addMembersCommand.Parameters.AddWithValue("@UserID", kvp.Value.Item1.UserId);
+                        addMembersCommand.Parameters.AddWithValue("@IsTrainer", kvp.Value.Item2);
                         addMembersCommand.ExecuteNonQuery();
                     }
 
@@ -178,11 +186,11 @@ namespace Tennis.Services
                     User member = _userService.GetUserById((int)userID);
                     if (reader.GetBoolean("IsTrainer"))
                     {
-                        trainingTeams[ID].Trainers.Add(member);
+                        trainingTeams[ID].AddTrainer(member);
                     }
                     else
                     {
-                        trainingTeams[ID].Trainees.Add(member);
+                        trainingTeams[ID].AddTrainee(member);
                     }
                 }
             }

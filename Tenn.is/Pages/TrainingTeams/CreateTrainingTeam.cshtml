@@ -1,4 +1,6 @@
 ﻿@page
+@using Tennis.Helpers
+@using Tennis.Models
 @model Tennis.Pages.TrainingTeams.CreateTrainingTeamModel
 @{
     ViewData["Title"] = "Opret træningshold";
@@ -7,6 +9,8 @@
 <h1>Opret Træningshold</h1>
 <p style="color:red">@ViewData["ErrorMessage"]</p>
 
+
+<h3>Generel information</h3>
 <form method="post">
     <div class="form-group">
         <label asp-for="@Model.Team.Title" class="control-label">Navn</label>
@@ -15,7 +19,7 @@
     </div>
     <div class="form-group">
         <label asp-for="@Model.Team.MaxTrainees" class="control-label">Maks antal medlemmer</label>
-        <input asp-for="@Model.Team.MaxTrainees" class="form-control"></textarea>
+        <input asp-for="@Model.Team.MaxTrainees" class="form-control" />
         <span asp-validation-for="@Model.Team.MaxTrainees" class="text-danger"></span>
     </div>
     <div class="form-group">
@@ -23,23 +27,91 @@
         <textarea asp-for="@Model.Team.Description" class="form-control" ></textarea>
         <span asp-validation-for="@Model.Team.Description" class=" text-danger"></span>
     </div>
+    <h3>Ugelig træningstidspunkt</h3>
     <div class="form-group">
         <label asp-for="Team.weeklyTimeBetween.StartDay" class="control-label">Ugelig træningsdag</label>
         <select asp-for="Team.weeklyTimeBetween.StartDay" asp-items="Model.DayOptions">
+            <option value="">Ingen dag</option>
         </select>
         <span asp-validation-for="Team.weeklyTimeBetween.StartDay" class=" text-danger"></span>
     </div>
     <div class="form-group">
         <label asp-for="Team.weeklyTimeBetween.StartTime" class="control-label">Ugelig træningsstart på træningsdag</label>
-        <input type="time" asp-for="Team.weeklyTimeBetween.StartTime" class="form-control" />
+        <input type="time" step="3600" min="@LaneBookingHelpers.HourOptions.First().Value" max="@LaneBookingHelpers.HourOptions.Last().Value" asp-for="Team.weeklyTimeBetween.StartTime" class="form-control" />
         <span asp-validation-for="Team.weeklyTimeBetween.StartTime" class=" text-danger"></span>
     </div>
     <div class="form-group">
         <label asp-for="Team.weeklyTimeBetween.EndTime" class="control-label">Ugelig træningsslut på træningsdag</label>
-        <input type="time" asp-for="Team.weeklyTimeBetween.EndTime" class="form-control" />
+        <input type="time" step="3600" min="@LaneBookingHelpers.HourOptions.First().Value" max="@LaneBookingHelpers.HourOptions.Last().Value" asp-for="Team.weeklyTimeBetween.EndTime" class="form-control" />
         <span asp-validation-for="Team.weeklyTimeBetween.EndTime" class=" text-danger"></span>
     </div>
+    
+    <h3>Træningshold medlemmer</h3>
     <div class="form-group">
-        <input type="submit" value="Opret event" class="btn btn-primary" />
+        @* <label asp-for="TrainerUserName" class="control-label">Maks antal medlemmer</label>
+        <input asp-for="TrainerUserName" list="datalisttrainers" />
+        <datalist id="datalisttrainers">
+            @foreach (User user in Model.ValidUsers)
+            {
+                <option>@user.Username</option>
+            }
+        </datalist>
+        <input type="hidden" name="Team.Members" value="@Model.Team.Members" />
+        @foreach (var kvp in Model.TrainerIDs)
+        {
+            @kvp;
+        } *@
+        <input type="search" asp-for="MemberFilter"  />  
+        <input type="submit" formmethod="get" value="Søg medlemmer" />
+
+        <label asp-for="@Model.SelectedTrainerIDs" class="control-label">Tilføj trænere</label>
+        <select asp-for="@Model.SelectedTrainerIDs" size="10"  asp-items="Model.SelectUser" multiple>
+        </select>
+        <details>
+         <summary>Trænere på holdet</summary>
+        @for (int i = 0; i < Model.ExistingTrainerIDs.Count; i++) 
+        {
+
+
+                <p>@Model.ValidUsers[Model.ExistingTrainerIDs[i]].Username &emsp; @Model.ValidUsers[Model.ExistingTrainerIDs[i]].FirstName @Model.ValidUsers[Model.ExistingTrainerIDs[i]].LastName</p>
+                
+                
+            
+            
+            <input type="hidden" asp-for="ExistingTrainerIDs[i]" />
+            <br />
+            
+        }
+        </details>
+       
+        <input type="submit" value="Tilføj træner" asp-page-handler="AddTrainer" class="btn btn-primary" />
+
+
+        <label asp-for="@Model.SelectedTraineeIDs" class="control-label">Tilføj medlem</label>
+        <select asp-for="@Model.SelectedTraineeIDs" size="10" asp-items="Model.SelectUser" multiple>
+        </select>
+        <details>
+            <summary>Medlemmer på holdet</summary>
+            @for (int i = 0; i < Model.ExistingTraineeIDs.Count; i++)
+            {
+
+
+                <p>@Model.ValidUsers[Model.ExistingTraineeIDs[i]].Username &emsp; @Model.ValidUsers[Model.ExistingTraineeIDs[i]].FirstName @Model.ValidUsers[Model.ExistingTraineeIDs[i]].LastName</p>
+
+
+
+
+                <input type="hidden" asp-for="ExistingTrainerIDs[i]" />
+                <br />
+
+            }
+        </details>
+
+        <input type="submit" value="Tilføj medlem" asp-page-handler="AddTrainer" class="btn btn-primary" />
+
     </div>
-</form>
+        <div class="form-group">
+            <input type="submit" value="Opret træningshold" class="btn btn-primary" />
+        </div>
+    </form>
+

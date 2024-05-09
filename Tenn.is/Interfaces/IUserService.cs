@@ -4,6 +4,7 @@ namespace Tennis.Interfaces
 {
     public interface IUserService
     {
+        User GetUserByUserName(string userName);
         bool CreateUser(User user);
 
         bool DeleteUser(int id);
