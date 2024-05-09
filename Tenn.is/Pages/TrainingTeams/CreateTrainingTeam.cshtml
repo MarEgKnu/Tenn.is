@@ -47,24 +47,9 @@
     </div>
     
     <h3>Træningshold medlemmer</h3>
-    <div class="form-group">
-        @* <label asp-for="TrainerUserName" class="control-label">Maks antal medlemmer</label>
-        <input asp-for="TrainerUserName" list="datalisttrainers" />
-        <datalist id="datalisttrainers">
-            @foreach (User user in Model.ValidUsers)
-            {
-                <option>@user.Username</option>
-            }
-        </datalist>
-        <input type="hidden" name="Team.Members" value="@Model.Team.Members" />
-        @foreach (var kvp in Model.TrainerIDs)
-        {
-            @kvp;
-        } *@
-        <input type="search" asp-for="MemberFilter"  />  
-        <input type="submit" formmethod="get" value="Søg medlemmer" />
-
-        <label asp-for="@Model.SelectedTrainerIDs" class="control-label">Tilføj trænere</label>
+    <input type="search" asp-for="MemberFilter" />
+    <input type="submit" formmethod="get" value="Søg medlemmer" />
+    <div class="form-group" style="display:flex;justify-content:space-between">
         <select asp-for="@Model.SelectedTrainerIDs" size="10"  asp-items="Model.SelectUser" multiple>
         </select>
         <span asp-validation-for="@Model.SelectedTrainerIDs" class=" text-danger"></span>
@@ -86,9 +71,9 @@
         </details>
        
         <input type="submit" value="Tilføj træner" asp-page-handler="AddTrainer" class="btn btn-primary" />
-
-
-        <label asp-for="@Model.SelectedTraineeIDs" class="control-label">Tilføj medlem</label>
+    </div>
+    <div class="form-group" style="display:flex;justify-content:space-between">
+        
         <select asp-for="@Model.SelectedTraineeIDs" size="10" asp-items="Model.SelectUser" multiple>
         </select>
         <span asp-validation-for="@Model.SelectedTraineeIDs" class=" text-danger"></span>
