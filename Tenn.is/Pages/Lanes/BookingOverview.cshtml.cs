@@ -35,10 +35,13 @@ namespace Tennis.Pages.Lanes
 
         [BindProperty(SupportsGet = true)]
         public bool TennisFilter { get; set; }
+
         [BindProperty(SupportsGet = true)]
         public bool PadelFilter { get; set; }
+
         [BindProperty(SupportsGet = true)]
         public bool InsideFilter { get; set; }
+
         [BindProperty(SupportsGet = true)]
         public bool OutsideFilter { get; set; }
 
@@ -48,6 +51,7 @@ namespace Tennis.Pages.Lanes
         [BindProperty(SupportsGet = true)]
         public string DateString { get; set; }
 
+        [BindProperty(SupportsGet = true)]
         public DateTime? SelectedDay { get {
                 bool succeeded = DateTime.TryParse(DateString, out DateTime result);
                 if (succeeded)
@@ -112,10 +116,10 @@ namespace Tennis.Pages.Lanes
             ToOptions = new SelectList(hourOptions, "Value", "Key");
             StartFilter = 8;
             EndFilter = 22;
-            TennisFilter = true;
-            PadelFilter = true;
-            InsideFilter = true;
-            OutsideFilter = true;
+            //TennisFilter = true;
+            //PadelFilter = true;
+            //InsideFilter = true;
+            //OutsideFilter = true;
             _laneBookingService = laneBookingService;
         }
         public void OnGet()
@@ -139,6 +143,15 @@ namespace Tennis.Pages.Lanes
                 DatesOfTheMonth.Add(new DateTime(_displayedMonth.Year, _displayedMonth.Month, i));
             }
             FirstOfTheWeek = (int)Calendar.GetDayOfWeek(new DateTime(_displayedMonth.Year, _displayedMonth.Month, 1));
+        }
+
+        public void OnGetFirstClick()
+        {
+            TennisFilter = true;
+            PadelFilter = true;
+            InsideFilter = true;
+            OutsideFilter = true;
+            OnGet();
         }
 
         public void FilterBookings()

@@ -4,8 +4,9 @@
     ViewData["Title"] = "Book en bane";
 }
 <div class="d-flex row">
-    <form method="post" class="col-md-6">
-        <h4>Din booking:</h4>
+    <h3>Din booking:</h3>
+    <form method="post" class="container row">
+        <div class="col-md-6 card">
         <input type="hidden" asp-for="@Model.CurrentBooking.LaneNumber" />
         <input type="hidden" asp-for="@Model.CurrentBooking.BookingID" />
         <input type="hidden" asp-for="@Model.CurrentBooking.UserID" />
@@ -27,6 +28,56 @@
                 <span>tennis</span>
             }
         </p>
-
+        <p>
+            Tidspunkt: @Model.CurrentBooking.DateStart
+        </p>
+            @if(Model.CheckMaximum(Model.CurrentUser))
+            {
+                <span class="text-danger">Du har allerede 4 bookinger i de næste 14 dage. For at lave nye bookinger, skal du enten aflyse en nuværende booking, eller vente til en af dine bookinger er overstået.</span>
+            }
+            <br />
+        </div>
+        <div class="col-md-6 card">
+        <div style="overflow-y:scroll">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <td>
+                                <h4>Vælg venligst tennismakker</h4>
+                        </td>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var user in Model.AvailableUsers)
+                    {
+                            if (!Model.CheckMaximum(Model.CurrentUser) && !Model.CheckMaximum(user))
+                            {
+                                <tr>
+                                    <td>
+                                        <input type="submit" asp-page-handler="Book" asp-route-partnerid="@user.UserId" value="@user.FirstName @user.LastName" class="btn btn-outline-success w-100 border-0" />
+                                    </td>
+                                </tr>
+                            } else
+                            {
+                                <tr class="table-secondary">
+                                    <td>
+                                        <input type="submit" asp-page-handler="Book" asp-route-partnerid="@user.UserId" value="@user.FirstName @user.LastName" class="btn btn-outline-danger w-100 border-0 disabled" />
+                                    </td>
+                                </tr>
+                            }
+                        }
+                </tbody>
+            </table>
+        </div>
+        </div>
+        <br />
     </form>
+@*     <form method="get" class="container col-md-6 card">
+        <input type="hidden" asp-for="@Model.SelectedDay" />
+        <input type="hidden" asp-for="@Model.Partner.UserId" />
+        <div class="form-group">
+        <input asp-for="@Model.Partner.Username" type="text" class="form-control" placeholder="Vælg en makker nedenunder" readonly />
+        </div>
+       
+    </form> *@
 </div>

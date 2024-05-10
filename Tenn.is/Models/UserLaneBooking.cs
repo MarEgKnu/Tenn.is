@@ -12,5 +12,7 @@ namespace Tennis.Models
             MateID = mateID;
         }
 
+        public UserLaneBooking() { }
+
     }
 }
