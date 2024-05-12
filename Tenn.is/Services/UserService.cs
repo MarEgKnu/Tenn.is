@@ -15,6 +15,10 @@ namespace Tennis.Services
         private string editSQL = "UPDATE Users SET UserName = @UNAME, FirstName = @FNAME, LastName = @LNAME, Password = @PWORD, Phone = @PHONE, Email = @EMAIL, Administrator = @ADMIN, RandomPassword = @RWORD WHERE UserID = @UID";
         private string getAllLaneBookingsWithUserIdSQL = "Select * FROM lANEBOOKINGS WHERE UserID = @UID OR MateID = @UID";
         private string getByUserNameSQL = "SELECT * FROM Users WHERE UserName = @UserName";
+        private string getUtilUsers = "SELECT * FROM Users\n" +
+                                      "WHERE UserID < 1";
+        private string getNonUtilUsers = "SELECT * FROM Users\n" +
+                                         "WHERE UserID > 0";
         public UserService()
         {
             connectionString = Secret.ConnectionString;
@@ -226,6 +230,56 @@ namespace Tennis.Services
             }
             return users;
         }
+
+
+
+        public List<User> GetAllUsers(bool isUtilityUser)
+        {
+            List<User> users = new List<User>();
+            using (SqlConnection conn = new SqlConnection(connectionString))
+            {
+                try
+                {
+                    SqlCommand command;
+                    if (isUtilityUser)
+                    {
+                        command = new SqlCommand(getUtilUsers, conn);
+                    }
+                    else
+                    {
+                        command = new SqlCommand(getNonUtilUsers, conn);
+                    }
+                    command.Connection.Open();
+                    SqlDataReader reader = command.ExecuteReader();
+                    while (reader.Read())
+                    {
+                        int userID = reader.GetInt32("UserID");
+                        string username = reader.GetString("UserName");
+                        string firstname = reader.GetString("FirstName");
+                        string lastname = reader.GetString("LastName");
+                        string password = reader.GetString("Password");
+                        string email = reader.GetString("Email");
+                        string phone = reader.GetString("Phone");
+                        bool admin = reader.GetBoolean("Administrator");
+                        bool randompassword = reader.GetBoolean("RandomPassword");
+                        users.Add(new User(userID, username, firstname, lastname, email, password, phone, admin, randompassword));
+                    }
+                    reader.Close();
+                }
+                catch (SqlException sqlExp)
+                {
+                    Console.WriteLine("Database error" + sqlExp.Message);
+                    throw sqlExp;
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine("General error" + ex.Message);
+                    throw ex;
+                }
+            }
+            return users;
+        }
+
 
         public User GetUserById(int id)
         {

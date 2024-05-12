@@ -18,7 +18,16 @@ namespace Tennis.Services
                                           "VALUES (@Title, @MaxTrainees, @SessionDay, @WeeklySessionStart, @WeeklySessionEnd, @Description)";
         private string insertMembersString = "INSERT INTO UsersAndTeams (TrainingTeamID, UserID, IsTrainer)\n" +
                                              "VALUES (@TrainingTeamID, @UserID, @IsTrainer)";
+        private string updateTeamString = "UPDATE TrainingTeams\n" +
+                                          "SET Title = @Title, MaxTrainees = @MaxTrainees, SessionDay = @SessionDay, WeeklySessionStart = @WeeklySessionStart, WeeklySessionEnd = @WeeklySessionEnd, Description = @Description\n" +
+                                          "WHERE TrainingTeamID = @TrainingTeamID";
+        private string deleteMembersString = "DELETE FROM UsersAndTeams\n" +
+                                             "WHERE TrainingTeamID = @TrainingTeamID";
+        private string getTeamByID = "SELECT * FROM TrainingTeams\n" +
+                                     "LEFT JOIN UsersAndTeams ON TrainingTeams.TrainingTeamID=UsersAndTeams.TrainingTeamID\n" +
+                                     "WHERE TrainingTeams.TrainingTeamID = @TrainingTeamID";
 
+        public event Action<TrainingTeam> OnWeeklySessionEdit;
         public TrainingTeamService(IUserService userService)
         {
             connectionString = Secret.ConnectionString;
@@ -41,7 +50,10 @@ namespace Tennis.Services
             
             using (SqlConnection connection = new SqlConnection(connectionString))
             {
-                
+                if (trainingTeam == null)
+                {
+                    return false;
+                }
 
                 try
                 {
@@ -119,7 +131,75 @@ namespace Tennis.Services
 
         public bool EditTrainingTeam(TrainingTeam trainingTeam, int id)
         {
-            throw new NotImplementedException();
+            using (SqlConnection connection = new SqlConnection(connectionString))
+            {
+
+                if (trainingTeam == null)
+                {
+                    return false;
+                }
+                try
+                {
+                    TrainingTeam beforeEdit = GetTrainingTeamById(id);
+                    connection.Open();
+                    SqlTransaction transaction = connection.BeginTransaction();
+                    SqlCommand command = new SqlCommand(updateTeamString, connection, transaction);
+
+                    command.Parameters.AddWithValue("@TrainingTeamID", id);
+                    command.Parameters.AddWithValue("@Title", trainingTeam.Title);
+                    command.Parameters.AddWithValue("@MaxTrainees", trainingTeam.MaxTrainees);
+                    command.Parameters.AddWithValueOrNull("@Description", trainingTeam.Description);
+                    if (trainingTeam.weeklyTimeBetween != null)
+                    {
+                        command.Parameters.AddWithValue("@SessionDay", (int)trainingTeam.weeklyTimeBetween.StartDay);
+                        command.Parameters.AddWithValue("@WeeklySessionStart", trainingTeam.weeklyTimeBetween.StartTime);
+                        command.Parameters.AddWithValue("@WeeklySessionEnd", trainingTeam.weeklyTimeBetween.EndTime);
+                    }
+                    else
+                    {
+                        command.Parameters.AddWithValue("@SessionDay", DBNull.Value);
+                        command.Parameters.AddWithValue("@WeeklySessionStart", DBNull.Value);
+                        command.Parameters.AddWithValue("@WeeklySessionEnd", DBNull.Value);
+                    }
+                    
+                    int rowsAffected = command.ExecuteNonQuery();
+                    if (rowsAffected != 1)
+                    {
+                        return false;
+                    }
+                    SqlCommand deleteMembersCommand = new SqlCommand(deleteMembersString, connection, transaction);
+                    deleteMembersCommand.Parameters.AddWithValue("@TrainingTeamID", id);
+                    deleteMembersCommand.ExecuteNonQuery();
+                    foreach (var kvp in trainingTeam.Members)
+                    {
+                        SqlCommand addMembersCommand = new SqlCommand(insertMembersString, connection, transaction);
+                        addMembersCommand.Parameters.AddWithValue("@TrainingTeamID", id);
+                        addMembersCommand.Parameters.AddWithValue("@UserID", kvp.Value.Item1.UserId);
+                        addMembersCommand.Parameters.AddWithValue("@IsTrainer", kvp.Value.Item2);
+                        addMembersCommand.ExecuteNonQuery();
+                    }
+
+                    //_ = (eventBooking.Comment.IsNullOrEmpty()) ? command.Parameters.AddWithValue("@Comment", DBNull.Value) : command.Parameters.AddWithValue("@Comment", eventBooking.Comment);
+                    ////command.Parameters.AddWithValue("@Comment", eventBooking.Comment);
+
+                    //OnCreate?.Invoke(GetEventBookingById(primaryKey));
+                    transaction.Commit();
+                    if (beforeEdit.weeklyTimeBetween != (trainingTeam.weeklyTimeBetween))
+                    {
+                        OnWeeklySessionEdit?.Invoke(GetTrainingTeamById(id));
+                    }
+                    return true;
+
+                }
+                catch (SqlException ex)
+                {
+                    throw;
+                }
+                catch (Exception ex)
+                {
+                    throw;
+                }
+            }
         }
 
         public List<TrainingTeam> GetAllTrainingTeams()
@@ -147,7 +227,26 @@ namespace Tennis.Services
 
         public TrainingTeam GetTrainingTeamById(int id)
         {
-            throw new NotImplementedException();
+            List<TrainingTeam> trainingTeams = new List<TrainingTeam>();
+            using (SqlConnection connection = new SqlConnection(connectionString))
+            {
+                try
+                {
+                    SqlCommand command = new SqlCommand(getTeamByID, connection);
+                    command.Connection.Open();
+                    command.Parameters.AddWithValue("@TrainingTeamID", id);
+                    trainingTeams = ProcessReader(command);
+                }
+                catch (SqlException ex)
+                {
+                    throw;
+                }
+                catch (Exception ex)
+                {
+                    throw;
+                }
+            }
+            return trainingTeams.FirstOrDefault();
         }
         private List<TrainingTeam> ProcessReader(SqlCommand command)
         {

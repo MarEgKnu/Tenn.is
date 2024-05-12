@@ -46,7 +46,6 @@ namespace Tennis.Models
         public Dictionary<int, Tuple<User, bool>> Members
         {
             get { return _members; }
-            set { _members = value; }
         }
 
 
@@ -127,6 +126,14 @@ namespace Tennis.Models
             {
                 return true;
             }
+        }
+        public void ClearMembers()
+        {
+            _members.Clear();
+        }
+        public bool IsTrainer(User user)
+        {
+            return Trainers.Contains(user);
         }
     }
 }

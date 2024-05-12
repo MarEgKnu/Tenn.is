@@ -1,8 +1,9 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.Reflection.Metadata.Ecma335;
 
 namespace Tennis.Helpers
 {
-    public class WeeklyTimeBetween
+    public class WeeklyTimeBetween : IComparable
     {
         public WeeklyTimeBetween(TimeOnly startTime, TimeOnly endTime, DayOfWeek dayOfWeek)
         {
@@ -69,5 +70,60 @@ namespace Tennis.Helpers
                 }
 
             } }
+        public override string ToString()
+        {
+            string dayString = LaneBookingHelpers.DayOptions[StartDay.Value] ?? "Ukendt dag";
+            return $"{dayString} {StartTime.Value}-{EndTime.Value}";
+        }
+        public override bool Equals(object? obj)
+        {
+            WeeklyTimeBetween? timeBetween = obj as WeeklyTimeBetween;
+            if (timeBetween == null)
+            {
+                return false;
+            }
+            return StartTime == timeBetween.StartTime &&
+                   EndTime == timeBetween.EndTime &&
+                   StartDay == timeBetween.StartDay;
+        }
+        public static bool operator ==(WeeklyTimeBetween a, WeeklyTimeBetween b)
+        {
+            if ((object)a == null)
+            {
+                return (object)b == null;
+            }
+            return a.Equals(b);
+        }
+        public static bool operator !=(WeeklyTimeBetween a, WeeklyTimeBetween b)
+        {
+            return !(a == b);
+        }
+        public int CompareTo(object? obj)
+        {
+            if (obj == null)
+            {
+                return 1;
+            }
+            else if (StartDay == null || StartTime == null || EndTime == null)
+            {
+                return -1;
+            }
+            WeeklyTimeBetween otherTimeBetween = obj as WeeklyTimeBetween;
+            if (StartDay.Value.CompareTo(otherTimeBetween.StartDay.Value) == 0)
+            {
+                if (StartTime.Value.CompareTo(otherTimeBetween.StartTime.Value) == 0)
+                {
+                    return EndTime.Value.CompareTo(otherTimeBetween.EndTime.Value);
+                }
+                else
+                {
+                    return StartTime.Value.CompareTo(otherTimeBetween.StartTime.Value);
+                }
+            }
+            else
+            {
+                return StartDay.Value.CompareTo(otherTimeBetween.StartDay.Value);
+            }
+        }
     }
 }

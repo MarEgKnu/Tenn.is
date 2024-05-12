@@ -3,21 +3,20 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.Data.SqlClient;
 using Microsoft.IdentityModel.Tokens;
-using System.Text.Json.Serialization;
 using Tennis.Helpers;
 using Tennis.Interfaces;
 using Tennis.Models;
 
 namespace Tennis.Pages.TrainingTeams
 {
-    public class CreateTrainingTeamModel : PageModel
+    public class EditTrainingTeamModel : PageModel
     {
-        [BindProperty(SupportsGet =true)]
+        [BindProperty(SupportsGet = true)]
         public TrainingTeam Team { get; set; }
         public SelectList DayOptions { get; set; }
-
         public Dictionary<int, User> ValidUsers { get; set; }
-        [BindProperty(SupportsGet =true)]
+
+        [BindProperty(SupportsGet = true)]
         public List<int> SelectedTrainerIDs { get; set; }
         [BindProperty(SupportsGet = true)]
         public List<int> SelectedTraineeIDs { get; set; }
@@ -34,15 +33,13 @@ namespace Tennis.Pages.TrainingTeams
 
         public List<SelectListItem> SelectUser { get; set; }
 
-
-
-
-        private ITrainingTeamService _teamService;
         private IUserService _userService;
-
-        public CreateTrainingTeamModel(ITrainingTeamService teamService, IUserService userService)
+        private ITrainingTeamService _teamService;
+        private ILaneBookingService _laneBookingService;
+        public EditTrainingTeamModel(IUserService userService, ITrainingTeamService teamService, ILaneBookingService laneBookingService)
         {
             _teamService = teamService;
+            _laneBookingService = laneBookingService;
             DayOptions = new SelectList(LaneBookingHelpers.DayOptions, "Key", "Value");
             _userService = userService;
             ValidUsers = _userService.GetAllUsers(false).ToDictionary(user => user.UserId, user => user);
@@ -53,17 +50,32 @@ namespace Tennis.Pages.TrainingTeams
             ExistingTraineeIDs = new List<int>();
             SelectUser = ValidUsers.Select(kvp => new SelectListItem($"{kvp.Value.Username} : {kvp.Value.FirstName} {kvp.Value.LastName}", kvp.Value.UserId.ToString())).ToList();
 
-            Team = new TrainingTeam(0,"",null,null,null,new WeeklyTimeBetween(),0);
+       
         }
-        public IActionResult OnGet()
+        public IActionResult OnGet(int trainingTeamID)
         {
             if (!_userService.AdminVerify(HttpContext.Session.GetString("Username"), HttpContext.Session.GetString("Password")))
             {
                 return RedirectToPage("/Users/Login", "Redirect", new { message = "Du har ikke tilladelse til at se denne side. Log venligst ind som admin" });
             }
+            try
+            {
+                if (!ProcessTeamInputData(trainingTeamID))
+                {
+                    ViewData["ErrorMessage"] = "Fejl, kunne ikke finde træningshold i database";
+                }
+            }
+            catch (SqlException sqlEx)
+            {
+                ViewData["ErrorMessage"] = "Database fejl. Fejlbesked:\n " + sqlEx.Message;
+            }
+            catch (Exception ex)
+            {
+                ViewData["ErrorMessage"] = "Generel fejl. Fejlbesked:\n " + ex.Message;
+            }
             FilterMembers();
             return Page();
-            
+
         }
         public IActionResult OnPostDeleteTrainer(int id)
         {
@@ -85,7 +97,7 @@ namespace Tennis.Pages.TrainingTeams
             ExistingTraineeIDs.Remove(id);
             return Page();
         }
-        public IActionResult OnPost()
+        public IActionResult OnPost(int trainingTeamID)
         {
             if (!_userService.AdminVerify(HttpContext.Session.GetString("Username"), HttpContext.Session.GetString("Password")))
             {
@@ -111,15 +123,15 @@ namespace Tennis.Pages.TrainingTeams
             }
             try
             {
-                foreach(var item in ExistingTraineeIDs)
+                foreach (var item in ExistingTraineeIDs)
                 {
                     Team.AddTrainee(ValidUsers[item]);
                 }
-                foreach(var item in ExistingTrainerIDs)
+                foreach (var item in ExistingTrainerIDs)
                 {
                     Team.AddTrainer(ValidUsers[item]);
                 }
-                _teamService.CreateTrainingTeam(Team);
+                _teamService.EditTrainingTeam(Team, trainingTeamID);
             }
             catch (SqlException sqlEx)
             {
@@ -150,7 +162,7 @@ namespace Tennis.Pages.TrainingTeams
                 {
                     ModelState.AddModelError("SelectedTrainerIDs", "Du kan ikke tilføje det samme medlem flere gange");
                 }
-                
+
             }
             return Page();
         }
@@ -164,7 +176,7 @@ namespace Tennis.Pages.TrainingTeams
             if (ExistingTraineeIDs.Count + SelectedTraineeIDs.Count > Team.MaxTrainees)
             {
                 ModelState.AddModelError("SelectedTraineeIDs", "Du kan ikke tilføje flere medlemmer, da maksimum er nået");
-               
+
                 return Page();
             }
             foreach (var id in SelectedTraineeIDs)
@@ -181,12 +193,34 @@ namespace Tennis.Pages.TrainingTeams
             }
             return Page();
         }
+
+
+        private bool ProcessTeamInputData(int trainingTeamID)
+        {
+            Team = _teamService.GetTrainingTeamById(trainingTeamID);
+            if (Team == null)
+            {
+                return false;
+            }
+            foreach (var kvp in Team.Members)
+            {
+                if (kvp.Value.Item2)
+                {
+                    ExistingTrainerIDs.Add(kvp.Value.Item1.UserId);
+                }
+                else
+                {
+                    ExistingTraineeIDs.Add(kvp.Value.Item1.UserId);
+                }
+            }
+            return true;
+        }
         private void FilterMembers()
         {
             if (!MemberFilter.IsNullOrEmpty())
             {
                 SelectUser = SelectUser.Where(listItem => listItem.Text.ToLower().Contains(MemberFilter.ToLower())).ToList();
-            
+
             }
         }
     }

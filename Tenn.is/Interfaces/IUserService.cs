@@ -13,6 +13,8 @@ namespace Tennis.Interfaces
 
         List<User> GetAllUsers();
 
+        List<User> GetAllUsers(bool isUtilityUser);
+
         User GetUserById(int id);
 
         User? VerifyUser(string UserName, string Password);
