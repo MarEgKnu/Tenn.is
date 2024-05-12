@@ -51,6 +51,10 @@ namespace Tennis.Models
         }
         public override bool Equals(object? obj)
         {
+            if (obj == null || GetType() != obj.GetType()) 
+            {
+                return false;
+            }
             User user = obj as User;
             return user.UserId == UserId &&
                    user.Username == Username &&

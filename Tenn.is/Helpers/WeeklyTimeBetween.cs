@@ -78,7 +78,7 @@ namespace Tennis.Helpers
         public override bool Equals(object? obj)
         {
             WeeklyTimeBetween? timeBetween = obj as WeeklyTimeBetween;
-            if (timeBetween == null)
+            if (obj == null || GetType() != obj.GetType())
             {
                 return false;
             }
