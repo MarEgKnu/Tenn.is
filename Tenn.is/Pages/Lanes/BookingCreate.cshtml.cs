@@ -93,7 +93,11 @@ namespace Tennis.Pages.Lanes
         {
             CurrentBooking.MateID = partnerid;
             try { 
-                _bookingService.CreateLaneBooking(CurrentBooking);
+                if (_bookingService.CreateLaneBooking(CurrentBooking))
+                {
+                    return RedirectToPage("Login");
+                }
+
         }
             catch (SqlException sqlExp)
             {

@@ -238,26 +238,16 @@ namespace Tennis.Services
 
         public bool User4HoursRule(UserLaneBooking laneBooking, List<UserLaneBooking> userLaneBookingList )
         {
-            IEnumerable<UserLaneBooking> fourthMostRecentBookingUser = from b in userLaneBookingList where laneBooking.DateStart.AddDays(-14) <= b.DateStart && laneBooking.DateStart.AddDays(14) >= b.DateStart && laneBooking.UserID == b.UserID orderby b.DateStart select b;
+            IEnumerable<UserLaneBooking> fourthMostRecentBookingUser = from b in userLaneBookingList where DateTime.Now <= b.DateStart && DateTime.Now.AddDays(14) >= b.DateStart && laneBooking.UserID == b.UserID orderby b.DateStart select b;
             List<UserLaneBooking> fourthMostRecentBookingUserList = fourthMostRecentBookingUser.ToList();
-            for (int i = 0; i < fourthMostRecentBookingUser.Count() - 3; i++)
-            {
-                if (fourthMostRecentBookingUserList[i].DateStart.AddDays(14) > fourthMostRecentBookingUserList[i + 3].DateStart)
-                    return false;
-            }
-            return true;
+            return !(fourthMostRecentBookingUserList.Count >= 4);
         }
 
         public bool Mate4HoursRule(UserLaneBooking laneBooking, List<UserLaneBooking> userLaneBookingList)
         {
-            IEnumerable<UserLaneBooking> fourthMostRecentBookingMate = from b in userLaneBookingList where laneBooking.DateStart.AddDays(-14) <= b.DateStart && laneBooking.DateStart.AddDays(14) >= b.DateStart && laneBooking.MateID == b.MateID orderby b.DateStart select b;
+            IEnumerable<UserLaneBooking> fourthMostRecentBookingMate = from b in userLaneBookingList where DateTime.Now <= b.DateStart && DateTime.Now.AddDays(14) >= b.DateStart && laneBooking.MateID == b.MateID orderby b.DateStart select b;
             List<UserLaneBooking> fourthMostRecentBookingMateList = fourthMostRecentBookingMate.ToList();
-            for (int i = 0; i < fourthMostRecentBookingMateList.Count() - 3; i++)
-            {
-                if (fourthMostRecentBookingMateList[i].DateStart.AddDays(14) > fourthMostRecentBookingMateList[i + 3].DateStart)
-                    return false;
-            }
-            return true;
+            return !(fourthMostRecentBookingMateList.Count >= 4);
         }
 
 
