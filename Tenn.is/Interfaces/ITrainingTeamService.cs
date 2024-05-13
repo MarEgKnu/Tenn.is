@@ -4,6 +4,7 @@ namespace Tennis.Interfaces
 {
     public interface ITrainingTeamService
     {
+        public event Action<TrainingTeam> OnWeeklySessionEdit;
         bool CreateTrainingTeam(TrainingTeam trainingTeam);
 
         bool DeleteTrainingTeam(int id);

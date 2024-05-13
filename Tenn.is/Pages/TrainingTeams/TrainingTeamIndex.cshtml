@@ -1,0 +1,151 @@
+﻿@page
+@using Tennis.Models
+@model Tennis.Pages.TrainingTeams.TrainingTeamIndexModel
+@{
+    ViewData["Title"] = "Træningshold kontrolpanel";
+}
+<p style="color:red">@ViewData["ErrorMessage"]</p>
+<form method="get">
+
+    <input asp-for="AdvancedSearch" onclick="this.form.submit()" />
+    <label for="AdvancedSearch">Advanceret søgning</label><br>
+
+    @if (!Model.AdvancedSearch)
+    {
+        <p>
+            Søg Træningshold: <input type="text" asp-for="@Model.GenericFilter" onchange="this.form.submit()" /> 
+        </p>
+    }
+    else
+    {
+        <p>
+            Søg ID: <input type="text" asp-for="@Model.IDFilter" onchange="this.form.submit()" />
+            Søg Navn:<input type="text" asp-for="@Model.TitleFilter" onchange="this.form.submit()" />
+            Søg Beskrivelse: <input asp-for="@Model.DescriptionFilter" onchange="this.form.submit()" />
+           
+        </p>
+    }
+
+
+
+    <input type="hidden" asp-for="@Model.Descending" value="@Model.Descending" />
+    <input type="hidden" asp-for="@Model.PrevSortBy" value="@Model.PrevSortBy" />
+    <p>
+        @if (Model.LoggedInUser.Administrator)
+        {
+            <a asp-page="/Events/CreateEvent">Opret Nyt Træningshold</a>
+        }
+    </p>
+
+    <h4 style="color:aquamarine"> Liste af træningshold</h4>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>
+                    ID<br />
+                    <input type="radio" asp-for="@Model.SortBy" value="EventID" onclick="this.form.submit()" />
+                <th>
+                    Navn<br />
+                    <input type="radio" asp-for="@Model.SortBy" value="Title" onclick="this.form.submit()" />
+                </th>
+                <th>
+                    Beskrivelse<br />
+                    <input type="radio" asp-for="@Model.SortBy" value="Description" onclick="this.form.submit()" />
+                </th>
+                <th>
+                    Max medlemmer<br />
+                    <input type="radio" asp-for="@Model.SortBy" value="Cancelled" onclick="this.form.submit()" />
+                </th>
+                <th>
+                    Ugelig træningstid<br />
+                    <input type="radio" asp-for="@Model.SortBy" value="StartTime" onclick="this.form.submit()" />
+                </th>
+                <th>
+                    Trænere<br />
+                    <input type="radio" asp-for="@Model.SortBy" value="EndTime" onclick="this.form.submit()" />
+                </th>
+                <th>
+                    Medlemmer<br />
+                    <input type="radio" asp-for="@Model.SortBy" value="EventState" onclick="this.form.submit()" />
+                </th>
+                <th>
+                    Funktioner
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (Model.Teams.Count() != 0)
+            {
+                @foreach (var item in Model.Teams)
+                {
+                    if (Model.LoggedInUser.Administrator || item.IsTrainer(Model.LoggedInUser))
+                    {
+                        <tr>
+                            <td>
+                                @item.TrainingTeamID
+                            </td>
+                            <td>
+                                @item.Title
+                            </td>
+                            <td>
+                                <p style="max-width:fit-content; white-space:pre-wrap">@item.Description</p>
+                            </td>
+                            <td>
+                                @item.MaxTrainees
+                            </td>
+                            <td>
+                                @if (item.weeklyTimeBetween == null)
+                                {
+                                    <p>Ingen ugelig træningstid</p>
+                                } 
+                                else
+                                {
+                                    <p>@item.weeklyTimeBetween.ToString()</p>
+                                }
+                            </td>
+                            <td>
+                                <details>
+                                    <summary>@item.Trainers.Count Trænere</summary>
+                                    @foreach (User trainer in item.Trainers)
+                                    {
+                                        <p>@trainer.Username : @trainer.FirstName @trainer.LastName</p>
+                                    }
+                                </details>
+                            </td>
+                            <td>
+                                <details>
+                                    <summary>@item.Trainees.Count Medlemmer</summary>
+                                    @foreach (User trainee in item.Trainees)
+                                    {
+                                        <p>@trainee.Username : @trainee.FirstName @trainee.LastName</p>
+                                    }
+                                </details>
+                            </td>
+                            <td>
+                                <p>
+                                    @if (Model.LoggedInUser.Administrator)
+                                    {
+                                        <a asp-page="/TrainingTeams/DeleteTrainingTeam" asp-route-trainingTeamID="@item.TrainingTeamID" class="btn btn-outline-warning btn-sm w-100" style="margin-top: 5px">Slet</a>
+                                        <a asp-page="/TrainingTeams/EditTrainingTeam" asp-route-trainingTeamID="@item.TrainingTeamID" class="btn btn-outline-success btn-sm w-100">Rediger</a>
+                                        <a asp-page="/TrainingTeams/BookLane" asp-route-trainingTeamID="@item.TrainingTeamID" class="btn btn-outline-success btn-sm w-100">Book bane</a>
+
+                                    }
+                                    else
+                                    {
+                                        <button class="btn btn-outline-secondary disabled btn-sm w-100" style="margin-top: 5px">Fjern</button>
+                                        <button class="btn btn-outline-secondary disabled btn-sm w-100">Rediger</button>
+                                        <a asp-page="/TrainingTeams/BookLane" asp-route-eventID="@item.TrainingTeamID" class="btn btn-outline-success btn-sm w-100">Book bane</a>
+                                    }
+
+                                </p>
+                            </td>
+                        </tr>
+                    }
+                    
+                }
+            }
+        </tbody>
+    </table>
+</form>
+

@@ -16,10 +16,10 @@ Søg events: <input asp-for="StringFilter" onchange="this.form.submit()" />
 @foreach (var evt in Model.Events)
 {
         @* checks if the user is logged in and dosent already have a booking for this event *@
-        EventBooking booking = null;
+        EventBooking userHasBooking = null;
         if (Model.LoggedInUser != null)
         {
-            booking = bookingService.AlreadyHasEventBooking(Model.LoggedInUser.UserId, evt.EventID);
+            userHasBooking = bookingService.AlreadyHasEventBooking(Model.LoggedInUser.UserId, evt.EventID);
         }
 
 
@@ -73,9 +73,18 @@ Søg events: <input asp-for="StringFilter" onchange="this.form.submit()" />
                 <h6 class="card-subtitle mb-2 text-muted">
                     Du kan seneste afmelde @evt.CancellationThresholdMinutes minutter før start
                 </h6>
-
                 <p class="card-text" style="max-width:fit-content; white-space:pre-wrap">
-                    @evt.Description
+                    <details>
+                        <summary>Beskrivelse</summary>
+                        @evt.Description
+                    </details>
+                    <details>
+                        <summary>Tilmeldte medlemmer</summary>
+                            @foreach (var booking in bookingService.GetAllBookingsByEventID(evt.EventID))
+                            {
+                                <p>@booking.User.Username</p><br />
+                            }
+                    </details>
                 </p>
 
             </div>
@@ -94,9 +103,9 @@ Søg events: <input asp-for="StringFilter" onchange="this.form.submit()" />
                 </span>
                 <span>
 
-                        @if (booking != null && booking.CanBeCancelled)
+                        @if (userHasBooking != null && userHasBooking.CanBeCancelled)
                         {
-                            <a asp-page="CancelEventBooking" asp-route-bookingID="@booking.BookingID" class="btn btn-outline-warning btn-sm w-100" style="margin-top: 5px">Afmeld</a>
+                            <a asp-page="CancelEventBooking" asp-route-bookingID="@userHasBooking.BookingID" class="btn btn-outline-warning btn-sm w-100" style="margin-top: 5px">Afmeld</a>
                         }
                         else
                         {
