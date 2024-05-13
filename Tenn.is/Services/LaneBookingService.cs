@@ -64,8 +64,18 @@ namespace Tennis.Services
                             //object[] userLaneBooking = new object[] { reader.GetInt32("LaneNumber"), timeBetween, reader.GetInt32("BookingID"), reader.GetBoolean("Cancelled"), trainingTeam };
                             //LaneBookingList.Add((T)Activator.CreateInstance(typeof(T), userLaneBooking));
                         }
+                        else if (typeof(LaneBooking) == typeof(T))
+                        {
+                            if (reader.GetInt32("UserID") != null)
+                            {
+                                LaneBooking v = new UserLaneBooking(reader.GetInt32("BookingID"), reader.GetInt32("LaneNumber"), reader.GetDateTime("DateStart"), reader.GetInt32("UserID"), reader.GetInt32("MateID"), reader.GetBoolean("Cancelled"));
+                                LaneBookingList.Add((T)v);
+                            }
+                            else
+                            {
 
-
+                            }
+                        }
                     }
                 }
                 catch (SqlException sqlExp)
@@ -76,7 +86,6 @@ namespace Tennis.Services
                 {
                     Console.WriteLine(ex.Message);
                 }
-
 
             return LaneBookingList;
         }

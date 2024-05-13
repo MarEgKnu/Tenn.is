@@ -139,9 +139,9 @@ namespace TennisTest
         public void GetAllLaneBookingsTest()
         {
             TestSetUp();
-            int NumberBefore = laneBookingService.GetAllLaneBookings<UserLaneBooking>().Count;
+            int NumberBefore = laneBookingService.GetAllLaneBookings<LaneBooking>().Count;
             CreateLaneBooking();
-            int NumberAfter = laneBookingService.GetAllLaneBookings<UserLaneBooking>().Count;
+            int NumberAfter = laneBookingService.GetAllLaneBookings<LaneBooking>().Count;
             CleanTest();
             Assert.AreEqual(NumberBefore +1, NumberAfter);
         }
