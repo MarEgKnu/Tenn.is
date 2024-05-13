@@ -72,8 +72,8 @@
 
                                     @if (Model.FirstOfTheWeek < totalIteration && totalIteration < (Model.DatesOfTheMonth.Count + 1 + Model.FirstOfTheWeek))
                                     {
-                                        int actualDate = Model.DatesOfTheMonth[totalIteration - Model.FirstOfTheWeek - 1].Day;
-                                        if (Model.SelectedDay != null && Model.SelectedDay.Value.Day == actualDate)
+                                        DateTime actualDate = Model.DatesOfTheMonth[totalIteration - Model.FirstOfTheWeek - 1];
+                                        if (Model.SelectedDay != null && Model.SelectedDay.Value.Day == actualDate.Day)
                                         {
                                             @:<td class="table-warning border" align="center">
                                         }
@@ -82,11 +82,11 @@
                                             @:<td class="border" align="center">
                                         }
                                                 <button class="w-100" type="submit"
-                                                value="@Model.DatesOfTheMonth[totalIteration-Model.FirstOfTheWeek-1].ToString()"
+                                                value="@actualDate.ToString()"
                                                 name="DateString"
                                                 style="border: none; margin:auto; padding: 0px; background-color: transparent;">
                                                     <div class="w-100">
-                                                        <span class="text-black-50">@actualDate</span>
+                                                        <span class="text-black-50">@actualDate.Day</span>
                                                     </div>
                                                     <div class="w-100 py-2" style="font-size: 35%; word-spacing: -1px">
                                                         @foreach (var item in @Model.Lanes)
@@ -95,7 +95,7 @@
                                                             {
                                                                 int existingbookings = Model.Bookings.Where(b => 
                                                                 b.LaneNumber == item.Id && 
-                                                                b.DateStart.Day == actualDate && 
+                                                                b.DateStart.Day == actualDate.Day && 
                                                                 b.DateStart.Month == Model.SelectedMonth).
                                                                 Count();
                                                                 int possiblebookings = Model.EndFilter - Model.StartFilter;
@@ -184,7 +184,9 @@
                                         </td>
                                     } else {
                                     <td>
-                                    <a asp-page="BookingCreate" asp-route-laneid="@item.Id" asp-route-datetime="@currentDayAndTime.ToString()" class="btn btn-outline-success w-100 border-0" style="font-weight:600">Ledig</a>
+                                    <a asp-page="BookingCreate" 
+                                    asp-route-laneid="@item.Id"
+                                    asp-route-datetime="@currentDayAndTime.ToString()" class="btn btn-outline-success w-100 border-0" style="font-weight:600">Ledig</a>
                                 </td>
                                     }
                             }

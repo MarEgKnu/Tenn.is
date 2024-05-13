@@ -359,7 +359,7 @@ namespace Tennis.Services
             string validChars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
             for (int i = 0; i < 8; i++)
             {
-                password += validChars[random.Next(0, validChars.Length)];
+                password += validChars[random.Next(0, validChars.Length-1)];
             }
             return password;
         }
