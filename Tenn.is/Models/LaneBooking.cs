@@ -7,7 +7,6 @@ namespace Tennis.Models
         public int BookingID { get; set; }
         public int LaneNumber { get; set; }
         public bool Cancelled { get; set; }
-
         public DateTime DateStart { get; set; }
 
         public LaneBooking(int lanenumber, DateTime dateStart, int bookingID, bool cancelled)
@@ -22,6 +21,8 @@ namespace Tennis.Models
         {
 
         }
+
+
         public override string ToString()
         {
             return $"";

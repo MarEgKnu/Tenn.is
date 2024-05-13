@@ -332,7 +332,7 @@ namespace Tennis.Services.Tests
             User user = new User(103, "test7", "Test", "Testson", "test", "testestest", "1234", false, false);
             User originaluser = new User(102, "test5", "Test", "Testson", "test", "testestest", "1234", false, false);
 
-            LaneBookingService laneBookingService = new LaneBookingService();
+            LaneBookingService laneBookingService = new LaneBookingService(true, new TrainingTeamService(true, users));
             LaneService laneService = new LaneService();
             laneService.CreateLane(new Lane(250, true, true));
             users.CreateUser(user);
@@ -354,7 +354,7 @@ namespace Tennis.Services.Tests
         public void GetAllLaneBookingsWithUserId_Invalid()
         {
             UserService users = new UserService(true);
-            LaneBookingService laneBookingService = new LaneBookingService();
+            LaneBookingService laneBookingService = new LaneBookingService(true, new TrainingTeamService(true, users));
             LaneService laneService = new LaneService();
 
             User user = new User(103, "test7", "Test", "Testson", "test", "testestest", "1234", false, false);

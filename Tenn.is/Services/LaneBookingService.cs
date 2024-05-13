@@ -8,12 +8,16 @@ namespace Tennis.Services
 {
     public class LaneBookingService : Connection, ILaneBookingService
     {
-        public LaneBookingService()
+        public ITrainingTeamService trainingTeamService { get; set; }
+        public LaneBookingService(ITrainingTeamService trainingTeamService)
         {
             connectionString = Secret.ConnectionString;
+            this.trainingTeamService = trainingTeamService;
+
         }
-        public LaneBookingService(bool test)
+        public LaneBookingService(bool test, ITrainingTeamService trainingTeamService)
         {
+            this.trainingTeamService = trainingTeamService;
             if (test)
             {
                 connectionString = Secret.ConnectionStringTest;
@@ -60,19 +64,21 @@ namespace Tennis.Services
                         }
                         else if (typeof(TrainingLaneBooking) == typeof(T))
                         {
-                            //TrainingTeam trainingTeam = trainingTeamservice.GetTrainingTeamByID(reader.GetInt32("TrainingTeamID"));
-                            //object[] userLaneBooking = new object[] { reader.GetInt32("LaneNumber"), timeBetween, reader.GetInt32("BookingID"), reader.GetBoolean("Cancelled"), trainingTeam };
-                            //LaneBookingList.Add((T)Activator.CreateInstance(typeof(T), userLaneBooking));
+                            object[] TrainingLaneBooking = new object[] { reader.GetInt32("LaneNumber"), reader.GetDateTime("DateStart"), reader.GetInt32("BookingID"), reader.GetBoolean("Cancelled"), trainingTeamService.GetTrainingTeamById(reader.GetInt32("TrainingTeamID")) };
+                            LaneBookingList.Add((T)Activator.CreateInstance(typeof(T), TrainingLaneBooking));
+
                         }
                         else if (typeof(LaneBooking) == typeof(T))
                         {
                             if (reader.GetInt32("UserID") != null)
                             {
-                                LaneBooking v = new UserLaneBooking(reader.GetInt32("BookingID"), reader.GetInt32("LaneNumber"), reader.GetDateTime("DateStart"), reader.GetInt32("UserID"), reader.GetInt32("MateID"), reader.GetBoolean("Cancelled"));
-                                LaneBookingList.Add((T)v);
+                                LaneBooking laneBooking = new UserLaneBooking(reader.GetInt32("BookingID"), reader.GetInt32("LaneNumber"), reader.GetDateTime("DateStart"), reader.GetInt32("UserID"), reader.GetInt32("MateID"), reader.GetBoolean("Cancelled"));
+                                LaneBookingList.Add((T)laneBooking);
                             }
                             else
                             {
+                                LaneBooking laneBooking = new TrainingLaneBooking(reader.GetInt32("LaneNumber"), reader.GetDateTime("DateStart"), reader.GetInt32("BookingID"), reader.GetBoolean("Cancelled"), trainingTeamService.GetTrainingTeamById(reader.GetInt32("TrainingTeamID")), reader.GetBoolean("Automatic"));
+                                LaneBookingList.Add((T)laneBooking);
 
                             }
                         }

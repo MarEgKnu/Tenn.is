@@ -18,9 +18,10 @@ namespace TennisTest
 
         void TestSetUp()
         {
-            laneBookingService = new LaneBookingService(true);
-            laneService = new LaneService(true);
             userService = new UserService(true);
+            laneBookingService = new LaneBookingService(true,new TrainingTeamService(true, userService));
+            laneService = new LaneService(true);
+            
             CleanTest();
         }
 
