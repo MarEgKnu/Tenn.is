@@ -29,18 +29,18 @@ else if (Model.CurrentUser.Administrator)
     @foreach (var booking in Model.MyBookings)
     {
         <!-- ONE ARTICLE CARD -->
-        if (booking.EventState != RelativeTime.Past)
+        if (booking.Event.EventState != RelativeTime.Past)
         {
             <p class="align-items-md-center">
                 <div class="card" style="width: 45rem;">
                     <div class="card-body">
                         <h5 class="card-title">
                             <strong>
-                                Tilmelding til @booking.Title
+                                Tilmelding til @booking.Event.Title
                             </strong>
                         </h5>
 
-                        @if (booking.Cancelled)
+                        @if (booking.Event.Cancelled)
                         {
                             <h6 class="card-subtitle mb-2 text-muted">
                                 &#128997; Aflyst
@@ -49,16 +49,16 @@ else if (Model.CurrentUser.Administrator)
                         else
                         {
                             <h6 class="card-subtitle mb-2 text-muted">
-                                @RelativeTimeHelpers.TimeDisplay[booking.EventState]<br />
-                                @booking.TimeTillStartDisplay
+                                @RelativeTimeHelpers.TimeDisplay[booking.Event.EventState]<br />
+                                @booking.Event.TimeTillStartDisplay
                             </h6>
                         }
                         <h6 class="card-subtitle mb-2 text-muted">
-                            @booking.EventTime.StartTime.Value.ToString("dd/MM/yyyy HH:mm") til @booking.EventTime.EndTime.Value.ToString("dd/MM/yyyy HH:mm")
+                            @booking.Event.EventTime.StartTime.Value.ToString("dd/MM/yyyy HH:mm") til @booking.Event.EventTime.EndTime.Value.ToString("dd/MM/yyyy HH:mm")
                         </h6>
 
                         <h6 class="card-subtitle mb-2 text-muted">
-                            Du kan senest afmelde @booking.CancellationThresholdMinutes minutter før start
+                            Du kan senest afmelde @booking.Event.CancellationThresholdMinutes minutter før start
                         </h6>
                     </div>
                     <footer>
@@ -70,7 +70,7 @@ else if (Model.CurrentUser.Administrator)
 
                             @if (booking.CanBeCancelled)
                             {
-                                <a asp-page="CancelEventBooking" asp-route-bookingID="@booking.BookingID" class="btn btn-outline-warning btn-sm w-100" style="margin-top: 5px">Afmeld</a>
+                                <a asp-page="/Events/CancelEventBooking" asp-route-bookingID="@booking.BookingID" class="btn btn-outline-warning btn-sm w-100" style="margin-top: 5px">Afmeld</a>
                             }
                             else
                             {

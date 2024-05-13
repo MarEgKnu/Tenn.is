@@ -32,7 +32,7 @@ namespace Tennis.Pages.Users
 
         public User CurrentUser { get; set; }
 
-        public List<Event> MyBookings { get; set; }
+        public List<EventBooking> MyBookings { get; set; }
 
         public List<LaneBooking> MyLaneBookings { get; set; }
 
@@ -45,7 +45,8 @@ namespace Tennis.Pages.Users
                 {
                     CurrentUser = _userService.VerifyUser(HttpContext.Session.GetString("Username"), HttpContext.Session.GetString("Password"));
                 if (CurrentUser != null) {
-                        MyBookings = _userService.GetAllEventBookingWithUserId(CurrentUser.UserId);
+                        //MyBookings = _userService.GetAllEventBookingWithUserId(CurrentUser.UserId);
+                        MyBookings = _eventBookingService.GetEventBookingsByUser(CurrentUser.UserId);
                         return Page();
                 }
                 else 
