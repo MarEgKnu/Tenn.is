@@ -60,6 +60,7 @@ namespace Tennis.Pages.TrainingTeams
             }
             try
             {
+
                 if (!ProcessTeamInputData(trainingTeamID))
                 {
                     ViewData["ErrorMessage"] = "Fejl, kunne ikke finde træningshold i database";
@@ -204,11 +205,11 @@ namespace Tennis.Pages.TrainingTeams
             }
             foreach (var kvp in Team.Members)
             {
-                if (kvp.Value.Item2)
+                if (kvp.Value.Item2 && !ExistingTrainerIDs.Contains(kvp.Value.Item1.UserId))
                 {
                     ExistingTrainerIDs.Add(kvp.Value.Item1.UserId);
                 }
-                else
+                else if (!kvp.Value.Item2 && !ExistingTraineeIDs.Contains(kvp.Value.Item1.UserId))
                 {
                     ExistingTraineeIDs.Add(kvp.Value.Item1.UserId);
                 }
