@@ -95,7 +95,14 @@ namespace Tennis.Pages.Lanes
             try {
                 if (_bookingService.CreateLaneBooking(CurrentBooking))
                 {
-                    return RedirectToPage("BookingSuccess", new { lane = CurrentBooking.LaneNumber, mate = partnerid, date = CurrentBooking.DateStart.ToString() });
+                    //Alt info hentes og formateres her. Der er allerede forbindelse til de nødvendige services i denne side, så det kan lige så godt genbruges her.
+                    LaneInfo = _laneService.GetLaneByNumber(CurrentBooking.LaneNumber);
+                    User partner = _userService.GetUserById(partnerid);
+                    string date = $"den {CurrentBooking.DateStart.Day}/{CurrentBooking.DateStart.Month}, kl. {CurrentBooking.DateStart.Hour}:00 til {CurrentBooking.DateStart.Hour+1}:00";
+                    string lane = LaneInfo.OutDoor ? "udendørs " : "indendørs ";
+                    lane += LaneInfo.PadelTennis ? "padeltennis " : "tennis ";
+                    lane += $"på bane {CurrentBooking.LaneNumber}";
+                    return RedirectToPage("BookingSuccess", new { lane = lane, mate = $"{partner.FirstName} {partner.LastName}", date = date});
                 }
                 else
                 {
