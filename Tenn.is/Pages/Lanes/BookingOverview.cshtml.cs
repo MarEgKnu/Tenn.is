@@ -18,8 +18,8 @@ namespace Tennis.Pages.Lanes
 
         public List<DateTime> DatesOfTheMonth { get; set; }
         public int FirstOfTheWeek { get; set; }
-        public List<UserLaneBooking> Bookings { get; set; }
-        public List<UserLaneBooking> UnfilteredBookings { get; set; }
+        public List<LaneBooking> Bookings { get; set; }
+        public List<LaneBooking> UnfilteredBookings { get; set; }
         public List<Lane> Lanes { get; set; }
         public Calendar Calendar { get; set; }
 
@@ -63,6 +63,10 @@ namespace Tennis.Pages.Lanes
                     return null;
                 }
             } }
+
+        public DateTime CurrentTime { get; set; }
+
+        public string BookingError { get; set; }
         public BookingOverviewModel(ILaneService laneService, ILaneBookingService laneBookingService)
         {
             _laneService = laneService;
@@ -134,8 +138,8 @@ namespace Tennis.Pages.Lanes
             {
                 _displayedMonth = new DateTime(DateTime.Now.Year, SelectedMonth, 1);
             }
-            Bookings = _laneBookingService.GetAllLaneBookings<UserLaneBooking>();
-            UnfilteredBookings = _laneBookingService.GetAllLaneBookings<UserLaneBooking>();
+            Bookings = _laneBookingService.GetAllLaneBookings<LaneBooking>().Where(b => !b.Cancelled).ToList();
+            UnfilteredBookings = _laneBookingService.GetAllLaneBookings<LaneBooking>().Where(b => !b.Cancelled).ToList();
             FilterBookings();
             DatesOfTheMonth = new List<DateTime>();
             for(int i = 1; i <= Calendar.GetDaysInMonth(_displayedMonth.Year, _displayedMonth.Month); i++)
@@ -143,6 +147,8 @@ namespace Tennis.Pages.Lanes
                 DatesOfTheMonth.Add(new DateTime(_displayedMonth.Year, _displayedMonth.Month, i));
             }
             FirstOfTheWeek = (int)Calendar.GetDayOfWeek(new DateTime(_displayedMonth.Year, _displayedMonth.Month, 1));
+
+            CurrentTime = DateTime.Now;
         }
 
         public void OnGetFirstClick()
@@ -152,6 +158,12 @@ namespace Tennis.Pages.Lanes
             InsideFilter = true;
             OutsideFilter = true;
             OnGet();
+        }
+
+        public void OnGetBookingFailed()
+        {
+            BookingError = "Noget gik galt ved booking. Kontakt venligst support hvis dette problem opstår igen.";
+            OnGetFirstClick();
         }
 
         public void FilterBookings()

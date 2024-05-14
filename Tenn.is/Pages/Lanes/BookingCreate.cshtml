@@ -34,6 +34,9 @@
             @if(Model.CheckMaximum(Model.CurrentUser))
             {
                 <span class="text-danger">Du har allerede 4 bookinger i de næste 14 dage. For at lave nye bookinger, skal du enten aflyse en nuværende booking, eller vente til en af dine bookinger er overstået.</span>
+            } else if(Model.AlreadyBooked(Model.CurrentUser))
+            {
+                <span class="text-danger">Du er allerede booket på en anden bane på dette tidspunkt.</span>
             }
             <br />
         </div>
@@ -50,7 +53,7 @@
                 <tbody>
                     @foreach (var user in Model.AvailableUsers)
                     {
-                            if (!Model.CheckMaximum(Model.CurrentUser) && !Model.CheckMaximum(user))
+                            if (!Model.CheckMaximum(Model.CurrentUser) && !Model.CheckMaximum(user) && !Model.AlreadyBooked(user) && !Model.AlreadyBooked(Model.CurrentUser))
                             {
                                 <tr>
                                     <td>

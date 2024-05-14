@@ -66,7 +66,7 @@ namespace Tennis.Pages.Lanes
                     DateString = datetime;
                 }
                 LaneInfo = _laneService.GetLaneByNumber(laneid);
-                ExistingBookings = _bookingService.GetAllLaneBookings<UserLaneBooking>();
+                ExistingBookings = _bookingService.GetAllLaneBookings<UserLaneBooking>().Where(b => !b.Cancelled).ToList();
 
                 if (SelectedDay != null)
                 {
@@ -92,13 +92,17 @@ namespace Tennis.Pages.Lanes
         public IActionResult OnPostBook(int partnerid)
         {
             CurrentBooking.MateID = partnerid;
-            try { 
+            try {
                 if (_bookingService.CreateLaneBooking(CurrentBooking))
                 {
-                    return RedirectToPage("Login");
+                    return RedirectToPage("BookingSuccess", new { lane = CurrentBooking.LaneNumber, mate = partnerid, date = CurrentBooking.DateStart.ToString() });
                 }
+                else
+                {
 
-        }
+                    return RedirectToPage("BookingOverview", "BookingFailed");
+            }
+            }
             catch (SqlException sqlExp)
             {
                 ViewData["ErrorMessage"] = "Databasefejl: " + sqlExp.Message;
@@ -109,13 +113,20 @@ namespace Tennis.Pages.Lanes
                 ViewData["ErrorMessage"] = "Generel fejl: " + ex.Message;
                 return Page();
             }
-            return RedirectToPage("BookingOverview");
+
         }
         public bool CheckMaximum(User user)
         {
             List<UserLaneBooking> bookingsWithin14Days = ExistingBookings.Where(b => b.DateStart >= DateTime.Now && b.DateStart <= DateTime.Now.AddDays(14)).ToList();
             List<UserLaneBooking> bookingsWithThisUser = bookingsWithin14Days.Where(b => (b.UserID == user.UserId && b.MateID > 0) || b.MateID == user.UserId).ToList();
             return bookingsWithThisUser.Count >= 4;
+        }
+
+        public bool AlreadyBooked(User user)
+        {
+            List<UserLaneBooking> atThatTime = ExistingBookings.Where(b => b.DateStart == SelectedDay).ToList();
+            List<UserLaneBooking> bookingsWithThisUser = atThatTime.Where(b => (b.UserID == user.UserId && b.MateID > 0) || b.MateID == user.UserId).ToList();
+            return bookingsWithThisUser.Count > 0;
         }
     }
 }
