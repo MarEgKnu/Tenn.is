@@ -70,6 +70,21 @@ namespace Tennis.Helpers
                 }
 
             } }
+        public RelativeTime TimeStateAt(TimeOnly time)
+        {
+            if (time == null ||time < StartTime)
+            {
+                return RelativeTime.Past;
+            }
+            else if (time >= StartTime && time <= EndTime)
+            {
+                return RelativeTime.Ongoing;
+            }
+            else
+            {
+                return RelativeTime.Future;
+            }
+        }
         public override string ToString()
         {
             string dayString = LaneBookingHelpers.DayOptions[StartDay.Value] ?? "Ukendt dag";

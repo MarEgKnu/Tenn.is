@@ -1,5 +1,6 @@
-﻿@page
+﻿@page "{sorting?}"
 @using Tennis.Models
+@using Tennis.Helpers
 @model Tennis.Pages.TrainingTeams.TrainingTeamIndexModel
 @{
     ViewData["Title"] = "Træningshold kontrolpanel";
@@ -22,11 +23,14 @@
             Søg ID: <input type="text" asp-for="@Model.IDFilter" onchange="this.form.submit()" />
             Søg Navn:<input type="text" asp-for="@Model.TitleFilter" onchange="this.form.submit()" />
             Søg Beskrivelse: <input asp-for="@Model.DescriptionFilter" onchange="this.form.submit()" />
+            Søg Træningsdag:
+            <select asp-for="@Model.DayFilter" asp-items="@Model.DaySearchOptions" onchange="this.form.submit()">
+                <option value="">Alle dage</option>
+            </select><br />
+            Søg Træningstidspunkt : <input type="time" min="@LaneBookingHelpers.HourOptions.First().Value" max="@LaneBookingHelpers.HourOptions.Last().Value" asp-for="@Model.TimeFilter" onchange="this.form.submit()" />
            
         </p>
     }
-
-
 
     <input type="hidden" asp-for="@Model.Descending" value="@Model.Descending" />
     <input type="hidden" asp-for="@Model.PrevSortBy" value="@Model.PrevSortBy" />
@@ -43,31 +47,24 @@
         <thead>
             <tr>
                 <th>
-                    ID<br />
-                    <input type="radio" asp-for="@Model.SortBy" value="EventID" onclick="this.form.submit()" />
+                    <button type="submit" class="btn btn-link" name="SortBy" value="TrainingTeamID" asp-route-sorting="true">ID</button>
                 <th>
-                    Navn<br />
-                    <input type="radio" asp-for="@Model.SortBy" value="Title" onclick="this.form.submit()" />
+                    <button type="submit" class="btn btn-link" name="SortBy" value="Title" asp-route-sorting="true">Navn</button>
                 </th>
                 <th>
-                    Beskrivelse<br />
-                    <input type="radio" asp-for="@Model.SortBy" value="Description" onclick="this.form.submit()" />
+                    <button type="submit" class="btn btn-link" name="SortBy" value="Description" asp-route-sorting="true">Beskrivelse</button>
                 </th>
                 <th>
-                    Max medlemmer<br />
-                    <input type="radio" asp-for="@Model.SortBy" value="Cancelled" onclick="this.form.submit()" />
+                    <button type="submit" class="btn btn-link" name="SortBy" value="MaxTrainees" asp-route-sorting="true">Max deltagere</button>
                 </th>
                 <th>
-                    Ugelig træningstid<br />
-                    <input type="radio" asp-for="@Model.SortBy" value="StartTime" onclick="this.form.submit()" />
+                    <button type="submit" class="btn btn-link" name="SortBy" value="weeklyTimeBetween" asp-route-sorting="true">Ugelig træningstid</button>
                 </th>
                 <th>
-                    Trænere<br />
-                    <input type="radio" asp-for="@Model.SortBy" value="EndTime" onclick="this.form.submit()" />
+                    <button type="submit" class="btn btn-link" name="SortBy" value="Trainers" asp-route-sorting="true">Trænere</button>
                 </th>
                 <th>
-                    Medlemmer<br />
-                    <input type="radio" asp-for="@Model.SortBy" value="EventState" onclick="this.form.submit()" />
+                    <button type="submit" class="btn btn-link" name="SortBy" value="Trainees" asp-route-sorting="true">Deltagere</button>
                 </th>
                 <th>
                     Funktioner
@@ -97,7 +94,7 @@
                             <td>
                                 @if (item.weeklyTimeBetween == null)
                                 {
-                                    <p>Ingen ugelig træningstid</p>
+                                    <p>Ingen træningstid</p>
                                 } 
                                 else
                                 {

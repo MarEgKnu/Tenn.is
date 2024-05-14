@@ -1,4 +1,4 @@
-﻿@page
+﻿@page "{sorting?}"
 @using Tennis.Helpers;
 @model Tennis.Pages.Events.IndexAdminModel
 @{
@@ -48,35 +48,27 @@
         <thead>
             <tr>
                 <th>
-                    EventID<br />
-                    <input type="radio" asp-for="@Model.SortBy" value="EventID" onclick="this.form.submit()"/>
+                    <button type="submit" class="btn btn-link" name="SortBy" value="EventID" asp-route-sorting="true">ID</button>
                 <th>
-                   Titel<br />
-                    <input type="radio" asp-for="@Model.SortBy" value="Title" onclick="this.form.submit()" />
+                    <button type="submit" class="btn btn-link" name="SortBy" value="Title" asp-route-sorting="true">Titel</button>
                 </th>
                 <th>
-                    Beskrivelse<br />
-                    <input type="radio" asp-for="@Model.SortBy" value="Description" onclick="this.form.submit()" />
+                    <button type="submit" class="btn btn-link" name="SortBy" value="Description" asp-route-sorting="true">Beskrivelse</button>
                 </th>
                 <th>
-                    Aflyst<br />
-                    <input type="radio" asp-for="@Model.SortBy" value="Cancelled" onclick="this.form.submit()" />
+                    <button type="submit" class="btn btn-link" name="SortBy" value="Cancelled" asp-route-sorting="true">Aflyst</button>
                 </th>
                 <th>
-                    Starttid<br />
-                    <input type="radio" asp-for="@Model.SortBy" value="StartTime" onclick="this.form.submit()" />
+                    <button type="submit" class="btn btn-link" name="SortBy" value="StartTime" asp-route-sorting="true">Starttid</button>
                 </th>
                 <th>
-                    Sluttid<br />
-                    <input type="radio" asp-for="@Model.SortBy" value="EndTime" onclick="this.form.submit()" />
+                    <button type="submit" class="btn btn-link" name="SortBy" value="EndTime" asp-route-sorting="true">Sluttid</button>
                 </th>
                 <th>
-                    Status<br />
-                    <input type="radio" asp-for="@Model.SortBy" value="EventState" onclick="this.form.submit()" />
+                    <button type="submit" class="btn btn-link" name="SortBy" value="EventState" asp-route-sorting="true">Status</button>
                 </th>
                 <th>
-                    Afmeldningsgrænse<br />
-                    <input type="radio" asp-for="@Model.SortBy" value="CancellationThreshold" onclick="this.form.submit()" />
+                    <button type="submit" class="btn btn-link" name="SortBy" value="CancellationThreshold" asp-route-sorting="true">Afmeldingsgrænse</button>
                 </th>
                 <th>
                     Funktioner
