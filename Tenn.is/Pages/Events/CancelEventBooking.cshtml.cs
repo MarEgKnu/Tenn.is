@@ -98,5 +98,9 @@ namespace Tennis.Pages.Events
 
 
         }
+        public IActionResult OnPostCancel(int bookingID)
+        {
+            return RedirectToPage("IndexUser");
+        }
     }
 }

@@ -6,6 +6,8 @@ namespace Tennis.Interfaces
     {
         bool CancelLaneBonking(int id);
 
+        Lane GetAnyFreeLane(DateTime time);
+
         bool CreateLaneBooking(UserLaneBooking laneBooking);
 
         bool CreateLaneBooking(TrainingLaneBooking laneBooking);
@@ -13,6 +15,8 @@ namespace Tennis.Interfaces
         bool DeleteLaneBooking(int id);
 
         bool EditLaneBooking(UserLaneBooking laneBooking, int id);
+
+        int DeleteAutomaticBookingOnTeam(int teamID);
 
         bool EditLaneBooking(TrainingLaneBooking laneBooking, int id);
 

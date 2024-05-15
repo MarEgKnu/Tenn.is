@@ -106,7 +106,7 @@
                                     <summary>@item.Trainers.Count Trænere</summary>
                                     @foreach (User trainer in item.Trainers)
                                     {
-                                        <p>@trainer.Username : @trainer.FirstName @trainer.LastName</p>
+                                        <p>@trainer.NameDispayForAdmin</p>
                                     }
                                 </details>
                             </td>
@@ -115,7 +115,7 @@
                                     <summary>@item.Trainees.Count Medlemmer</summary>
                                     @foreach (User trainee in item.Trainees)
                                     {
-                                        <p>@trainee.Username : @trainee.FirstName @trainee.LastName</p>
+                                        <p>@trainee.NameDispayForAdmin</p>
                                     }
                                 </details>
                             </td>

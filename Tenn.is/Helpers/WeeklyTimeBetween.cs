@@ -70,6 +70,22 @@ namespace Tennis.Helpers
                 }
 
             } }
+        public DateTime NextStart { get
+            {
+                DateTime now = DateTime.Now;
+                int startDay = (int)StartDay.Value;
+                int today = (int)now.DayOfWeek;
+                
+                DateTime result = now.Date.AddDays(MathExtensions.Modulo(startDay - today, 7)).AddHours(StartTime.Value.Hour).AddMinutes(StartTime.Value.Minute);
+                if (result < now)
+                {
+                    return result.AddDays(7);
+                }
+                else
+                {
+                    return result;
+                }
+            } }
         public RelativeTime TimeStateAt(TimeOnly time)
         {
             if (time == null ||time < StartTime)

@@ -243,6 +243,39 @@ namespace TennisTest
             trainingTeamService.OnWeeklySessionEdit -= function;
             Assert.IsFalse(ranEvent);
         }
+        [TestMethod]
+        public void DeleteTrainingTeam_Sucess()
+        {
+            TestSetUp();
+            userService.CreateUser(new User(1, "john1", "John", "Jensen", "jensen@gmail.com", "xxxjensenxxx", "41414141", false, false));
+            userService.CreateUser(new User(2, "john2", "John", "Jensen", "jensen@gmail.com", "xxxjensenxxx", "41414141", false, false));
+            List<User> users = userService.GetAllUsers();
+            TrainingTeam trainingTeam = new TrainingTeam(1, "Jeff's træningshold", "stort træningshold", new List<User>(), new List<User>() { users[0] }, new WeeklyTimeBetween(new TimeOnly(5, 0), new TimeOnly(6, 0), DayOfWeek.Thursday), 5);
+            trainingTeamService.CreateTrainingTeam(trainingTeam);
+            trainingTeam = trainingTeamService.GetAllTrainingTeams().First();
+            int beforeDelete = trainingTeamService.GetAllTrainingTeams().Count;
+            trainingTeamService.DeleteTrainingTeam(trainingTeam.TrainingTeamID);
+            int afterDelete = trainingTeamService.GetAllTrainingTeams().Count;
+
+            Assert.AreEqual(beforeDelete-1, afterDelete);
+        }
+        [TestMethod]
+        public void DeleteTrainingTeam_Failure_CantFindID()
+        {
+            TestSetUp();
+            userService.CreateUser(new User(1, "john1", "John", "Jensen", "jensen@gmail.com", "xxxjensenxxx", "41414141", false, false));
+            userService.CreateUser(new User(2, "john2", "John", "Jensen", "jensen@gmail.com", "xxxjensenxxx", "41414141", false, false));
+            List<User> users = userService.GetAllUsers();
+            TrainingTeam trainingTeam = new TrainingTeam(1, "Jeff's træningshold", "stort træningshold", new List<User>(), new List<User>() { users[0] }, new WeeklyTimeBetween(new TimeOnly(5, 0), new TimeOnly(6, 0), DayOfWeek.Thursday), 5);
+            trainingTeamService.CreateTrainingTeam(trainingTeam);
+            trainingTeam = trainingTeamService.GetAllTrainingTeams().First();
+            int beforeDelete = trainingTeamService.GetAllTrainingTeams().Count;
+            trainingTeamService.DeleteTrainingTeam(trainingTeam.TrainingTeamID+1);
+            int afterDelete = trainingTeamService.GetAllTrainingTeams().Count;
+            
+            Assert.AreEqual(beforeDelete, afterDelete);
+        }
+        
     }
 }
 

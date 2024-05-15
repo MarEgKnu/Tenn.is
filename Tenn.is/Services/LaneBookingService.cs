@@ -1,5 +1,7 @@
 ﻿using Microsoft.Data.SqlClient;
+using Microsoft.Identity.Client.Extensibility;
 using System.Data;
+using System.Reflection;
 using Tennis.Helpers;
 using Tennis.Interfaces;
 using Tennis.Models;
@@ -9,15 +11,18 @@ namespace Tennis.Services
     public class LaneBookingService : Connection, ILaneBookingService
     {
         public ITrainingTeamService trainingTeamService { get; set; }
+        private ILaneService laneService;
         public LaneBookingService(ITrainingTeamService trainingTeamService)
         {
             connectionString = Secret.ConnectionString;
             this.trainingTeamService = trainingTeamService;
+            this.laneService = new LaneService();
 
         }
         public LaneBookingService(bool test, ITrainingTeamService trainingTeamService)
         {
             this.trainingTeamService = trainingTeamService;
+            this.laneService = new LaneService(test);
             if (test)
             {
                 connectionString = Secret.ConnectionStringTest;
@@ -35,8 +40,10 @@ namespace Tennis.Services
         string DeleteLaneBookingSQL = "DELETE FROM LANEBOOKINGS WHERE BOOKINGID = @BookingID";
         string UpdateLaneBookingSQL = "UPDATE LANEBOOKINGS SET LaneNumber = @LaneNumber, DateStart = @DateStart WHERE @ID = BOOKINGID";
         string CancelLaneBookingSQL = "UPDATE LANEBOOKINGS SET Cancelled = 'TRUE' WHERE BOOKINGID = @BookingID";
-
-
+        string DeleteAutomaticLaneBookings = "DELETE FROM LaneBookings\n" +
+                                              "WHERE TrainingTeamID = @TrainingTeamID AND Automatic = 1";
+        string GetAllOnLaneAndTime = "SELECT * FROM LaneBookings\n" +
+                                      "WHERE LaneNumber = @LaneNumber AND DateStart = @DateStart";
 
 
 
@@ -153,7 +160,28 @@ namespace Tennis.Services
             return null;
         }
 
+        public int DeleteAutomaticBookingOnTeam(int teamID)
+        {
+            using (SqlConnection connection = new SqlConnection(connectionString))
+            {
+                try
+                {
+                    connection.Open();
+                    SqlCommand command = new SqlCommand(DeleteAutomaticLaneBookings, connection);
+                    command.Parameters.AddWithValue("@TrainingTeamID", teamID);
+                    return command.ExecuteNonQuery();
 
+                }
+                catch (SqlException ex)
+                {
+                    throw;
+                }
+                catch (Exception ex)
+                {
+                    throw;
+                }
+            }
+        }
 
 
         public bool CancelLaneBonking(int id)
@@ -216,7 +244,66 @@ namespace Tennis.Services
         {
             throw new NotImplementedException();
         }
-
+        public Lane GetAnyFreeLane(DateTime time)
+        {
+            List<LaneBooking> bookings = GetAllLaneBookings<LaneBooking>();
+            List<Predicate<LaneBooking>> condition = new List<Predicate<LaneBooking>>();
+            condition.Add(b =>
+            {
+                return time == b.DateStart && !b.Cancelled;
+            });
+            bookings = FilterHelpers.GetItemsOnConditions(condition, bookings);
+            HashSet<int> LaneNums = new HashSet<int>();
+            foreach (var booking in bookings)
+            {
+                LaneNums.Add(booking.LaneNumber);
+            }
+            List<Lane> Lanes = laneService.GetAllLanes();
+            Lanes.RemoveAll(lane =>
+            {
+                return LaneNums.Contains(lane.Id);
+            });
+            return Lanes.FirstOrDefault();
+        }
+        public bool IsLaneBooked(int laneID, DateTime time)
+        {
+            List<LaneBooking> bookings = GetAllLaneBookings<LaneBooking>();
+            List<Predicate<LaneBooking>> condition = new List<Predicate<LaneBooking>>();
+            condition.Add(b =>
+            {
+                return laneID == b.LaneNumber && time == b.DateStart && !b.Cancelled;
+                //if (b is TrainingLaneBooking)
+                //{
+                //    TrainingLaneBooking bTraining = b as TrainingLaneBooking;
+                //    if (bTraining.Automatic)
+                //    {
+                //        return time.DayOfWeek == bTraining.DateStart.DayOfWeek &&
+                //        time.Hour == bTraining.DateStart.Hour;
+                //    }
+                //    else
+                //    {
+                //        return time == bTraining.DateStart;
+                //    }
+                //}
+                //else
+                //{
+                //    return time == b.DateStart;
+                //}
+            });
+            bookings = FilterHelpers.GetItemsOnConditions(condition, bookings);
+            return bookings.Count > 0;
+        }
+        public bool IsLaneBooked(List<int> laneIDs, DateTime time)
+        {
+            List<LaneBooking> bookings = GetAllLaneBookings<LaneBooking>();
+            List<Predicate<LaneBooking>> condition = new List<Predicate<LaneBooking>>();
+            condition.Add(b =>
+            {
+                return laneIDs.Contains(b.LaneNumber) && time == b.DateStart && !b.Cancelled;
+            });
+            bookings = FilterHelpers.GetItemsOnConditions(condition, bookings);
+            return bookings.Count > 0;
+        }
         public bool VerifyNewBooking(UserLaneBooking laneBooking)
         {
             List<UserLaneBooking> userLaneBookingList = GetAllLaneBookings<UserLaneBooking>();

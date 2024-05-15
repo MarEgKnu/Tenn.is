@@ -17,6 +17,7 @@
     <p>@Model.Booking.Event.EventTime.StartTime.Value.ToString("dd/MM/yyyy HH:mm") til @Model.Booking.Event.EventTime.EndTime.Value.ToString("dd/MM/yyyy HH:mm")</p>
 
     <form method="post">
-        <input type="submit" value="Slet Event Tilmelding" />
+        <input type="submit" class="btn btn-danger" value="Slet Event Tilmelding" />
+        <input type="submit" asp-page-handler="Cancel" class="btn btn-outline-secondary" value="Fortryd" />
     </form>
 }

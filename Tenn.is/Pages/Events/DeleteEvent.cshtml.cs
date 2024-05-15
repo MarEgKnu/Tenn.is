@@ -75,5 +75,9 @@ namespace Tennis.Pages.Events
                 return Page();
             }
         }
+        public IActionResult OnPostCancel(int eventID)
+        {
+            return RedirectToPage("IndexAdmin");
+        }
     }
 }

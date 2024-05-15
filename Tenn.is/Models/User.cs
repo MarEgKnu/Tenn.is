@@ -26,6 +26,11 @@ namespace Tennis.Models
 
         public bool RandomPassword { get; set; }
 
+        public string NameDispayForAdmin { get
+            {
+                return $"{Username} : {FirstName} {LastName}";
+            } }
+
         public User(int id, string username, string firstname, string lastname, string email, string password, string phone, bool admin, bool randompassword)
         {
             UserId = id;

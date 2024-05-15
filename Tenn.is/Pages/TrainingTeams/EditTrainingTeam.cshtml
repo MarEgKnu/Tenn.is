@@ -59,7 +59,7 @@
                     <summary>Trænere på holdet</summary>
                     @for (int i = 0; i < Model.ExistingTrainerIDs.Count; i++)
                     {
-                        <p>@Model.ValidUsers[Model.ExistingTrainerIDs[i]].Username : @Model.ValidUsers[Model.ExistingTrainerIDs[i]].FirstName @Model.ValidUsers[Model.ExistingTrainerIDs[i]].LastName <button type="submit" name="id" value="@Model.ExistingTrainerIDs[i]" asp-page-handler="DeleteTrainer">Fjern</button></p>
+                        <p>@Model.ValidUsers[Model.ExistingTrainerIDs[i]].NameDispayForAdmin <button type="submit" name="id" value="@Model.ExistingTrainerIDs[i]" asp-page-handler="DeleteTrainer">Fjern</button></p>
                         <input type="hidden" asp-for="ExistingTrainerIDs[i]" />
                     }
                 </details>
@@ -75,7 +75,7 @@
                     <summary>Deltagere på holdet</summary>
                     @for (int i = 0; i < Model.ExistingTraineeIDs.Count; i++)
                     {
-                        <p>@Model.ValidUsers[Model.ExistingTraineeIDs[i]].Username : @Model.ValidUsers[Model.ExistingTraineeIDs[i]].FirstName @Model.ValidUsers[Model.ExistingTraineeIDs[i]].LastName <button type="submit" name="id" value="@Model.ExistingTraineeIDs[i]" asp-page-handler="DeleteTrainee">Fjern</button></p>
+                        <p>@Model.ValidUsers[Model.ExistingTraineeIDs[i]].NameDispayForAdmin <button type="submit" name="id" value="@Model.ExistingTraineeIDs[i]" asp-page-handler="DeleteTrainee">Fjern</button></p>
                         <input type="hidden" asp-for="ExistingTraineeIDs[i]" />
                     }
                 </details>
