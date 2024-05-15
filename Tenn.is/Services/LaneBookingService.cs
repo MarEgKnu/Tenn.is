@@ -242,7 +242,31 @@ namespace Tennis.Services
 
         public bool CreateLaneBooking(TrainingLaneBooking laneBooking)
         {
-            throw new NotImplementedException();
+            if (GetTrainingLaneBookingById(laneBooking.BookingID) == null)
+                return false;
+            using (SqlConnection connection = new SqlConnection(connectionString))
+                try
+                {
+                    SqlCommand command = new SqlCommand(CreateUserLaneBookingSQL, connection);
+                    command.Parameters.AddWithValue("@DateStart", laneBooking.DateStart);
+                    command.Parameters.AddWithValue("@UserID", DBNull.Value);
+                    command.Parameters.AddWithValue("@MateID", DBNull.Value);
+                    command.Parameters.AddWithValue("@cancelled", laneBooking.Cancelled);
+                    command.Parameters.AddWithValue("@TrainingTeamID", laneBooking.trainingTeam);
+                    command.Connection.Open();
+                    int noOfRows = command.ExecuteNonQuery();
+                    return noOfRows == 1;
+                }
+                catch (SqlException sqlExp)
+                {
+                    Console.WriteLine("Database error" + sqlExp.Message);
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine(ex.Message);
+                }
+
+            return false;
         }
         public Lane GetAnyFreeLane(DateTime time)
         {
@@ -272,23 +296,6 @@ namespace Tennis.Services
             condition.Add(b =>
             {
                 return laneID == b.LaneNumber && time == b.DateStart && !b.Cancelled;
-                //if (b is TrainingLaneBooking)
-                //{
-                //    TrainingLaneBooking bTraining = b as TrainingLaneBooking;
-                //    if (bTraining.Automatic)
-                //    {
-                //        return time.DayOfWeek == bTraining.DateStart.DayOfWeek &&
-                //        time.Hour == bTraining.DateStart.Hour;
-                //    }
-                //    else
-                //    {
-                //        return time == bTraining.DateStart;
-                //    }
-                //}
-                //else
-                //{
-                //    return time == b.DateStart;
-                //}
             });
             bookings = FilterHelpers.GetItemsOnConditions(condition, bookings);
             return bookings.Count > 0;
