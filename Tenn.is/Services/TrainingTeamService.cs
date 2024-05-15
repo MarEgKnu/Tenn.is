@@ -116,7 +116,7 @@ namespace Tennis.Services
 
                     //OnCreate?.Invoke(GetEventBookingById(primaryKey));
                     transaction.Commit();
-                    ProcessTrainingTimeChange(primaryKey, overrideBookings);                   
+                    //ProcessTrainingTimeChange(primaryKey, overrideBookings);                   
                     return true;
 
                 }
@@ -167,8 +167,7 @@ namespace Tennis.Services
           
                 using (SqlConnection connection = new SqlConnection(connectionString))
                 {
-                    using (TransactionScope transaction = new TransactionScope())
-                    {
+                    
                         if (trainingTeam == null)
                         {
                             return false;
@@ -202,12 +201,12 @@ namespace Tennis.Services
                             {
                                 return false;
                             }
-                            SqlCommand deleteMembersCommand = new SqlCommand(deleteMembersString, connection, transaction);
+                            SqlCommand deleteMembersCommand = new SqlCommand(deleteMembersString, connection);
                             deleteMembersCommand.Parameters.AddWithValue("@TrainingTeamID", id);
                             deleteMembersCommand.ExecuteNonQuery();
                             foreach (var kvp in trainingTeam.Members)
                             {
-                                SqlCommand addMembersCommand = new SqlCommand(insertMembersString, connection, transaction);
+                                SqlCommand addMembersCommand = new SqlCommand(insertMembersString, connection);
                                 addMembersCommand.Parameters.AddWithValue("@TrainingTeamID", id);
                                 addMembersCommand.Parameters.AddWithValue("@UserID", kvp.Value.Item1.UserId);
                                 addMembersCommand.Parameters.AddWithValue("@IsTrainer", kvp.Value.Item2);
@@ -218,11 +217,10 @@ namespace Tennis.Services
                             ////command.Parameters.AddWithValue("@Comment", eventBooking.Comment);
 
                             //OnCreate?.Invoke(GetEventBookingById(primaryKey));
-                            transaction.Complete();
                             if (beforeEdit.weeklyTimeBetween != (trainingTeam.weeklyTimeBetween))
                             {
                                 OnWeeklySessionEdit?.Invoke(GetTrainingTeamById(id));
-                                ProcessTrainingTimeChange(id, overrideBookings);
+                                //ProcessTrainingTimeChange(id, overrideBookings);
                             }
                             return true;
 
@@ -235,7 +233,7 @@ namespace Tennis.Services
                         {
                             throw;
                         }
-                }
+                
 
                     
                 }
@@ -293,12 +291,13 @@ namespace Tennis.Services
 
             Dictionary<int, TrainingTeam> trainingTeams = new Dictionary<int, TrainingTeam>();
             SqlDataReader reader = command.ExecuteReader();
-            HashSet<int> foundIDs = new HashSet<int>();
+            HashSet<int> foundTeamIDs = new HashSet<int>();
+            List<int?> foundUserIDs = new List<int?>();
             while (reader.Read())
             {
                 
                 int ID = reader.GetInt32("TrainingTeamID");
-                if (foundIDs.Add(ID)) 
+                if (foundTeamIDs.Add(ID)) 
                 {
                     string title = reader.GetString("Title");
                     int maxTrainees = reader.GetInt32("MaxTrainees");
@@ -341,8 +340,8 @@ namespace Tennis.Services
             // if overrideBookings is 0, it will not allow you to change the time if it would override bookings
             // if 1, it will book anything it can that isnt already booked
             //if 2, it will cancel all bookings that conflict
-            using (TransactionScope scope = new TransactionScope())
-            {
+            //using (TransactionScope scope = new TransactionScope())
+            //{
                     _laneBookingService.DeleteAutomaticBookingOnTeam(teamID);
                     TrainingTeam team = GetTrainingTeamById(teamID);
                     if (team.weeklyTimeBetween != null)
@@ -389,11 +388,11 @@ namespace Tennis.Services
                                 }
                             }
                         }
-                        scope.Complete();
+                        //scope.Complete();
 
                     }
                 
-            }
+            //}
             
             
             

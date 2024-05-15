@@ -17,11 +17,13 @@ namespace TennisTest
     {
         private ITrainingTeamService trainingTeamService;
         private IUserService userService;
+        private ILaneBookingService laneBookingService;
 
         void TestSetUp()
         {
             userService = new UserService(true);
             trainingTeamService = new TrainingTeamService(true, userService);
+            laneBookingService = new LaneBookingService(true, trainingTeamService);
           
 
             using (SqlConnection conn = new SqlConnection(Secret.ConnectionStringTest))
@@ -29,10 +31,12 @@ namespace TennisTest
                 conn.Open();
                 SqlCommand cmd = new SqlCommand("DELETE FROM TrainingTeams", conn);
                 SqlCommand cmd2 = new SqlCommand("DELETE FROM Users", conn);
+                SqlCommand cmd3 = new SqlCommand("DELETE FROM LaneBookings", conn);
 
 
                 cmd.ExecuteNonQuery();
                 cmd2.ExecuteNonQuery();
+                cmd3.ExecuteNonQuery();
             }
         }
         [TestMethod]
