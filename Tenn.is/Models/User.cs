@@ -49,7 +49,10 @@ namespace Tennis.Models
             Password = password;
             RandomPassword = true;
         }
-
+        public User(int id)
+        {
+            UserId = id;
+        }
         public User()
         {
 

@@ -116,7 +116,7 @@ namespace Tennis.Services
 
                     //OnCreate?.Invoke(GetEventBookingById(primaryKey));
                     transaction.Commit();
-                    //ProcessTrainingTimeChange(primaryKey, overrideBookings);                   
+                    UpdateAutomaticBookingsInTeam(primaryKey, overrideBookings);                   
                     return true;
 
                 }
@@ -168,71 +168,73 @@ namespace Tennis.Services
                 using (SqlConnection connection = new SqlConnection(connectionString))
                 {
                     
-                        if (trainingTeam == null)
+                    if (trainingTeam == null)
+                    {
+                        return false;
+                    }
+                    try
+                    {
+                        TrainingTeam beforeEdit = GetTrainingTeamById(id);
+                        connection.Open();
+
+                        SqlTransaction transaction = connection.BeginTransaction();
+                        SqlCommand command = new SqlCommand(updateTeamString, connection, transaction);
+
+                        command.Parameters.AddWithValue("@TrainingTeamID", id);
+                        command.Parameters.AddWithValue("@Title", trainingTeam.Title);
+                        command.Parameters.AddWithValue("@MaxTrainees", trainingTeam.MaxTrainees);
+                        command.Parameters.AddWithValueOrNull("@Description", trainingTeam.Description);
+                        if (trainingTeam.weeklyTimeBetween != null)
+                        {
+                            command.Parameters.AddWithValue("@SessionDay", (int)trainingTeam.weeklyTimeBetween.StartDay);
+                            command.Parameters.AddWithValue("@WeeklySessionStart", trainingTeam.weeklyTimeBetween.StartTime);
+                            command.Parameters.AddWithValue("@WeeklySessionEnd", trainingTeam.weeklyTimeBetween.EndTime);
+                        }
+                        else
+                        {
+                            command.Parameters.AddWithValue("@SessionDay", DBNull.Value);
+                            command.Parameters.AddWithValue("@WeeklySessionStart", DBNull.Value);
+                            command.Parameters.AddWithValue("@WeeklySessionEnd", DBNull.Value);
+                        }
+
+                        int rowsAffected = command.ExecuteNonQuery();
+                        if (rowsAffected != 1)
                         {
                             return false;
                         }
-                        try
+                        SqlCommand deleteMembersCommand = new SqlCommand(deleteMembersString, connection, transaction);
+                        deleteMembersCommand.Parameters.AddWithValue("@TrainingTeamID", id);
+                        deleteMembersCommand.ExecuteNonQuery();
+                        foreach (var kvp in trainingTeam.Members)
                         {
-                            TrainingTeam beforeEdit = GetTrainingTeamById(id);
-                            connection.Open();
-                            
-                            SqlCommand command = new SqlCommand(updateTeamString, connection);
-
-                            command.Parameters.AddWithValue("@TrainingTeamID", id);
-                            command.Parameters.AddWithValue("@Title", trainingTeam.Title);
-                            command.Parameters.AddWithValue("@MaxTrainees", trainingTeam.MaxTrainees);
-                            command.Parameters.AddWithValueOrNull("@Description", trainingTeam.Description);
-                            if (trainingTeam.weeklyTimeBetween != null)
-                            {
-                                command.Parameters.AddWithValue("@SessionDay", (int)trainingTeam.weeklyTimeBetween.StartDay);
-                                command.Parameters.AddWithValue("@WeeklySessionStart", trainingTeam.weeklyTimeBetween.StartTime);
-                                command.Parameters.AddWithValue("@WeeklySessionEnd", trainingTeam.weeklyTimeBetween.EndTime);
-                            }
-                            else
-                            {
-                                command.Parameters.AddWithValue("@SessionDay", DBNull.Value);
-                                command.Parameters.AddWithValue("@WeeklySessionStart", DBNull.Value);
-                                command.Parameters.AddWithValue("@WeeklySessionEnd", DBNull.Value);
-                            }
-
-                            int rowsAffected = command.ExecuteNonQuery();
-                            if (rowsAffected != 1)
-                            {
-                                return false;
-                            }
-                            SqlCommand deleteMembersCommand = new SqlCommand(deleteMembersString, connection);
-                            deleteMembersCommand.Parameters.AddWithValue("@TrainingTeamID", id);
-                            deleteMembersCommand.ExecuteNonQuery();
-                            foreach (var kvp in trainingTeam.Members)
-                            {
-                                SqlCommand addMembersCommand = new SqlCommand(insertMembersString, connection);
-                                addMembersCommand.Parameters.AddWithValue("@TrainingTeamID", id);
-                                addMembersCommand.Parameters.AddWithValue("@UserID", kvp.Value.Item1.UserId);
-                                addMembersCommand.Parameters.AddWithValue("@IsTrainer", kvp.Value.Item2);
-                                addMembersCommand.ExecuteNonQuery();
-                            }
-
-                            //_ = (eventBooking.Comment.IsNullOrEmpty()) ? command.Parameters.AddWithValue("@Comment", DBNull.Value) : command.Parameters.AddWithValue("@Comment", eventBooking.Comment);
-                            ////command.Parameters.AddWithValue("@Comment", eventBooking.Comment);
-
-                            //OnCreate?.Invoke(GetEventBookingById(primaryKey));
-                            if (beforeEdit.weeklyTimeBetween != (trainingTeam.weeklyTimeBetween))
-                            {
-                                OnWeeklySessionEdit?.Invoke(GetTrainingTeamById(id));
-                                //ProcessTrainingTimeChange(id, overrideBookings);
-                            }
-                            return true;
-
+                            SqlCommand addMembersCommand = new SqlCommand(insertMembersString, connection, transaction);
+                            addMembersCommand.Parameters.AddWithValue("@TrainingTeamID", id);
+                            addMembersCommand.Parameters.AddWithValue("@UserID", kvp.Value.Item1.UserId);
+                            addMembersCommand.Parameters.AddWithValue("@IsTrainer", kvp.Value.Item2);
+                            addMembersCommand.ExecuteNonQuery();
                         }
-                        catch (SqlException ex)
+
+                        //_ = (eventBooking.Comment.IsNullOrEmpty()) ? command.Parameters.AddWithValue("@Comment", DBNull.Value) : command.Parameters.AddWithValue("@Comment", eventBooking.Comment);
+                        ////command.Parameters.AddWithValue("@Comment", eventBooking.Comment);
+
+                        //OnCreate?.Invoke(GetEventBookingById(primaryKey));
+                        transaction.Commit();
+                        if (beforeEdit.weeklyTimeBetween != (trainingTeam.weeklyTimeBetween))
                         {
-                            throw;
+                            OnWeeklySessionEdit?.Invoke(GetTrainingTeamById(id));
+                            UpdateAutomaticBookingsInTeam(id, overrideBookings);
                         }
-                        catch (Exception ex)
-                        {
-                            throw;
-                        }
+                        return true;
+
+                    }
+                    catch (SqlException ex)
+                    {
+                        throw;
+                    }
+                    catch (Exception ex)
+                    {
+                        throw;
+                    }
                 
 
                     
@@ -292,7 +294,7 @@ namespace Tennis.Services
             Dictionary<int, TrainingTeam> trainingTeams = new Dictionary<int, TrainingTeam>();
             SqlDataReader reader = command.ExecuteReader();
             HashSet<int> foundTeamIDs = new HashSet<int>();
-            List<int?> foundUserIDs = new List<int?>();
+            List<Tuple<int, User, bool>> UserIDsAndTeamIDs = new List<Tuple<int, User, bool>>();
             while (reader.Read())
             {
                 
@@ -321,27 +323,33 @@ namespace Tennis.Services
                 
                 if (userID != null)
                 {
-                    User member = _userService.GetUserById((int)userID);
                     if (reader.GetBoolean("IsTrainer"))
                     {
-                        trainingTeams[ID].AddTrainer(member);
+                        UserIDsAndTeamIDs.Add(new Tuple<int, User, bool>(ID, new User((int)userID), true));
+                        //trainingTeams[ID].AddTrainer(new User((int)userID));
                     }
                     else
                     {
-                        trainingTeams[ID].AddTrainee(member);
+                        UserIDsAndTeamIDs.Add(new Tuple<int, User, bool>(ID, new User((int)userID), false));
+                        //trainingTeams[ID].AddTrainee(new User((int)userID));
                     }
                 }
             }
             reader.Close();
+            foreach (var tuple in UserIDsAndTeamIDs)
+            {
+                trainingTeams[tuple.Item1].AddMember(_userService.GetUserById(tuple.Item2.UserId), tuple.Item3);
+            }
             return trainingTeams.Values.ToList();
         }
-        private void ProcessTrainingTimeChange(int teamID, int overrideBookings)
+        public void UpdateAutomaticBookingsInTeam(int teamID, int overrideBookings)
         {
             // if overrideBookings is 0, it will not allow you to change the time if it would override bookings
             // if 1, it will book anything it can that isnt already booked
             //if 2, it will cancel all bookings that conflict
             //using (TransactionScope scope = new TransactionScope())
             //{
+                
                     _laneBookingService.DeleteAutomaticBookingOnTeam(teamID);
                     TrainingTeam team = GetTrainingTeamById(teamID);
                     if (team.weeklyTimeBetween != null)
@@ -375,7 +383,7 @@ namespace Tennis.Services
                                             });
                                             if (delBooking != null)
                                             {
-                                                _laneBookingService.DeleteLaneBooking(delBooking.BookingID);
+                                                _laneBookingService.CancelLaneBonking(delBooking.BookingID);
                                                 TrainingLaneBooking booking = new TrainingLaneBooking(delBooking.LaneNumber, bookingTime, 0, false, team, true);
                                                 _laneBookingService.CreateLaneBooking(booking);
                                             }
@@ -388,14 +396,9 @@ namespace Tennis.Services
                                 }
                             }
                         }
-                        //scope.Complete();
-
                     }
-                
-            //}
-            
-            
-            
+                    //scope.Complete();
+            //}                                  
         }
     }
 }

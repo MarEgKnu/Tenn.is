@@ -359,6 +359,8 @@ namespace Tennis.Services.Tests
 
             User user = new User(103, "test7", "Test", "Testson", "test", "testestest", "1234", false, false);
             User originaluser = new User(102, "test5", "Test", "Testson", "test", "testestest", "1234", false, false);
+            users.CreateUser(user);
+            users.CreateUser(originaluser);
             laneService.CreateLane(new Lane(250, true, true));
 
             int numberBefore = users.GetAllLaneBookingsWithUserId(7654).Count();

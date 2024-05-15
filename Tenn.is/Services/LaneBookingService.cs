@@ -41,10 +41,10 @@ namespace Tennis.Services
         string UpdateLaneBookingSQL = "UPDATE LANEBOOKINGS SET LaneNumber = @LaneNumber, DateStart = @DateStart WHERE @ID = BOOKINGID";
         string CancelLaneBookingSQL = "UPDATE LANEBOOKINGS SET Cancelled = 'TRUE' WHERE BOOKINGID = @BookingID";
         string DeleteAutomaticLaneBookings = "DELETE FROM LaneBookings\n" +
-                                              "WHERE TrainingTeamID = @TrainingTeamID AND Automatic = 1";
+                                             "WHERE TrainingTeamID = @TrainingTeamID AND Automatic = 1";
         string GetAllOnLaneAndTime = "SELECT * FROM LaneBookings\n" +
                                       "WHERE LaneNumber = @LaneNumber AND DateStart = @DateStart";
-
+        string CreateTrainingLaneBookingSQL = "INSERT INTO LANEBOOKINGS(LaneNumber, Cancelled, DateStart, UserID,  MateID , TrainingTeamID, Automatic) VALUES ( @LaneNumber, @cancelled, @DateStart, @UserID,  @MateID, @TrainingTeamID, @Automatic)";
 
 
         public List<T> GetAllLaneBookings<T>() where T : LaneBooking
@@ -77,7 +77,7 @@ namespace Tennis.Services
                         }
                         else if (typeof(LaneBooking) == typeof(T))
                         {
-                            if (reader.GetInt32("UserID") != null)
+                            if (reader.GetIntOrNull("UserID") != null)
                             {
                                 LaneBooking laneBooking = new UserLaneBooking(reader.GetInt32("BookingID"), reader.GetInt32("LaneNumber"), reader.GetDateTime("DateStart"), reader.GetInt32("UserID"), reader.GetInt32("MateID"), reader.GetBoolean("Cancelled"));
                                 LaneBookingList.Add((T)laneBooking);
@@ -93,11 +93,11 @@ namespace Tennis.Services
                 }
                 catch (SqlException sqlExp)
                 {
-                    Console.WriteLine("Database error" + sqlExp.Message);
+                    throw;
                 }
                 catch (Exception ex)
                 {
-                    Console.WriteLine(ex.Message);
+                    throw;
                 }
 
             return LaneBookingList;
@@ -122,18 +122,18 @@ namespace Tennis.Services
                 }
                 catch (SqlException sqlExp)
                 {
-                    Console.WriteLine("Database error" + sqlExp.Message);
+                    throw;
                 }
                 catch (Exception ex)
                 {
-                    Console.WriteLine(ex.Message);
+                    throw;
                 }
             return null;
         }
 
         public TrainingLaneBooking GetTrainingLaneBookingById(int id)
         {
-            string GetUserLaneBookingByIdSQL = GetLaneBookingByIdSQL + " WHERE UserID IS  NULL AND MateID IS NULL";
+            string GetUserLaneBookingByIdSQL = GetLaneBookingByIdSQL + " AND UserID IS NULL AND MateID IS NULL";
             using (SqlConnection connection = new SqlConnection(connectionString))
                 try
                 {
@@ -151,11 +151,11 @@ namespace Tennis.Services
                 }
                 catch (SqlException sqlExp)
                 {
-                    Console.WriteLine("Database error" + sqlExp.Message);
+                    throw;
                 }
                 catch (Exception ex)
                 {
-                    Console.WriteLine(ex.Message);
+                    throw;
                 }
             return null;
         }
@@ -199,11 +199,11 @@ namespace Tennis.Services
                 }
                 catch (SqlException sqlExp)
                 {
-                    Console.WriteLine("Database error" + sqlExp.Message);
+                    throw;
                 }
                 catch (Exception ex)
                 {
-                    Console.WriteLine(ex.Message);
+                    throw;
                 }
             return false;
         }
@@ -230,11 +230,11 @@ namespace Tennis.Services
                 }
                 catch (SqlException sqlExp)
                 {
-                    Console.WriteLine("Database error" + sqlExp.Message);
+                    throw;
                 }
                 catch (Exception ex)
                 {
-                    Console.WriteLine(ex.Message);
+                    throw;
                 }
 
             return false;
@@ -242,28 +242,30 @@ namespace Tennis.Services
 
         public bool CreateLaneBooking(TrainingLaneBooking laneBooking)
         {
-            if (GetTrainingLaneBookingById(laneBooking.BookingID) == null)
+            if (GetTrainingLaneBookingById(laneBooking.BookingID) is not null)
                 return false;
             using (SqlConnection connection = new SqlConnection(connectionString))
                 try
                 {
-                    SqlCommand command = new SqlCommand(CreateUserLaneBookingSQL, connection);
+                    SqlCommand command = new SqlCommand(CreateTrainingLaneBookingSQL, connection);
                     command.Parameters.AddWithValue("@DateStart", laneBooking.DateStart);
                     command.Parameters.AddWithValue("@UserID", DBNull.Value);
                     command.Parameters.AddWithValue("@MateID", DBNull.Value);
                     command.Parameters.AddWithValue("@cancelled", laneBooking.Cancelled);
-                    command.Parameters.AddWithValue("@TrainingTeamID", laneBooking.trainingTeam);
+                    command.Parameters.AddWithValue("@TrainingTeamID", laneBooking.trainingTeam.TrainingTeamID);
+                    command.Parameters.AddWithValue("@LaneNumber", laneBooking.LaneNumber);
+                    command.Parameters.AddWithValue("@Automatic", laneBooking.Automatic);
                     command.Connection.Open();
                     int noOfRows = command.ExecuteNonQuery();
                     return noOfRows == 1;
                 }
                 catch (SqlException sqlExp)
                 {
-                    Console.WriteLine("Database error" + sqlExp.Message);
+                    throw;
                 }
                 catch (Exception ex)
                 {
-                    Console.WriteLine(ex.Message);
+                    throw;
                 }
 
             return false;
@@ -289,27 +291,23 @@ namespace Tennis.Services
             });
             return Lanes.FirstOrDefault();
         }
-        public bool IsLaneBooked(int laneID, DateTime time)
+        public LaneBooking? IsLaneBooked(int laneID, DateTime time)
         {
-            List<LaneBooking> bookings = GetAllLaneBookings<LaneBooking>();
-            List<Predicate<LaneBooking>> condition = new List<Predicate<LaneBooking>>();
-            condition.Add(b =>
+            LaneBooking? booking = GetAllLaneBookings<LaneBooking>().Find(b =>
             {
                 return laneID == b.LaneNumber && time == b.DateStart && !b.Cancelled;
             });
-            bookings = FilterHelpers.GetItemsOnConditions(condition, bookings);
-            return bookings.Count > 0;
+            
+            return booking;
         }
-        public bool IsLaneBooked(List<int> laneIDs, DateTime time)
+        public List<LaneBooking> IsLaneBooked(List<int> laneIDs, DateTime time)
         {
-            List<LaneBooking> bookings = GetAllLaneBookings<LaneBooking>();
-            List<Predicate<LaneBooking>> condition = new List<Predicate<LaneBooking>>();
-            condition.Add(b =>
+            List<LaneBooking> bookings = GetAllLaneBookings<LaneBooking>().FindAll(b =>
             {
                 return laneIDs.Contains(b.LaneNumber) && time == b.DateStart && !b.Cancelled;
             });
-            bookings = FilterHelpers.GetItemsOnConditions(condition, bookings);
-            return bookings.Count > 0;
+          
+            return bookings;
         }
         public bool VerifyNewBooking(UserLaneBooking laneBooking)
         {
@@ -369,11 +367,11 @@ namespace Tennis.Services
                 }
                 catch (SqlException sqlExp)
                 {
-                    Console.WriteLine("Database error" + sqlExp.Message);
+                    throw;
                 }
                 catch (Exception ex)
                 {
-                    Console.WriteLine(ex.Message);
+                    throw;
                 }
             return false;
         }
@@ -397,11 +395,11 @@ namespace Tennis.Services
                 }
                 catch (SqlException sqlExp)
                 {
-                    Console.WriteLine("Database error" + sqlExp.Message);
+                    throw;
                 }
                 catch (Exception ex)
                 {
-                    Console.WriteLine(ex.Message);
+                    throw;
                 }
 
             return false;

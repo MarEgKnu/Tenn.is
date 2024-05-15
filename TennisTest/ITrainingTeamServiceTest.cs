@@ -32,11 +32,13 @@ namespace TennisTest
                 SqlCommand cmd = new SqlCommand("DELETE FROM TrainingTeams", conn);
                 SqlCommand cmd2 = new SqlCommand("DELETE FROM Users", conn);
                 SqlCommand cmd3 = new SqlCommand("DELETE FROM LaneBookings", conn);
+                SqlCommand cmd4 = new SqlCommand("DELETE FROM UsersAndTeams", conn);
 
 
                 cmd.ExecuteNonQuery();
                 cmd2.ExecuteNonQuery();
                 cmd3.ExecuteNonQuery();
+                cmd4.ExecuteNonQuery();
             }
         }
         [TestMethod]

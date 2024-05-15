@@ -28,6 +28,7 @@
         </div>
         <h3>Ugelig træningstidspunkt</h3>
         <div class="form-group">
+            <label asp-for="OverrideBookings">Book så vidt så muligt, men overskriv ikke andre bookinger:</label><input type="radio" checked="checked" asp-for="OverrideBookings" value="1" /> <label asp-for="OverrideBookings">Overskriv bookinger:</label> <input type="radio" asp-for="OverrideBookings" value="2" /><br />
             <label asp-for="Team.weeklyTimeBetween.StartDay" class="control-label">Træningsdag</label>
             <select asp-for="Team.weeklyTimeBetween.StartDay" asp-items="Model.DayOptions">
                 <option value="">Ingen dag</option>

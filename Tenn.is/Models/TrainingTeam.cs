@@ -46,6 +46,7 @@ namespace Tennis.Models
         public Dictionary<int, Tuple<User, bool>> Members
         {
             get { return _members; }
+            set { _members = value; }
         }
 
 
@@ -96,6 +97,22 @@ namespace Tennis.Models
             new WeeklyTimeBetween(new TimeOnly(6, 0), new TimeOnly(7, 0), DayOfWeek.Monday);
             MaxTrainees = 0;
         }
+        public bool AddMember( User user, bool trainer )
+        {
+            if (user == null)
+            {
+                return false;
+            }
+            if (trainer)
+            {
+                AddTrainer(user);
+            }
+            else
+            {
+                AddTrainee(user);
+            }
+            return true;
+        }
         public bool AddTrainer(User user)
         {
             if (user == null)
@@ -126,6 +143,10 @@ namespace Tennis.Models
             {
                 return true;
             }
+        }
+        public bool RemoveMember(int id)
+        {
+            return _members.Remove(id);
         }
         public void ClearMembers()
         {

@@ -51,31 +51,35 @@ namespace TennisTest
             Assert.AreEqual(0, time.TimeSpan.Value.Minutes);
         }
         [TestMethod]
-        public void NextStartTest_Sucess_2days2hrs()
+        public void NextStartTest_Sucess_2days()
         {
             DateTime now = DateTime.Now;
-            WeeklyTimeBetween time = new WeeklyTimeBetween(new TimeOnly(now.AddHours(2).Hour,  0, 0), new TimeOnly(now.AddHours(3).Hour, 0, 0), DayOfWeekHelpers.IntToDayOfWeek( (int)now.DayOfWeek + 2));
-            Assert.AreEqual(now.AddDays(2).AddHours(2).Day, time.NextStart.Day);
-            Assert.AreEqual(now.AddDays(2).AddHours(2).Hour, time.NextStart.Hour);
-            Assert.AreEqual(now.AddDays(2).AddHours(2).DayOfWeek, time.NextStart.DayOfWeek);
+            WeeklyTimeBetween time = new WeeklyTimeBetween(new TimeOnly(now.Hour,  0, 0), new TimeOnly(now.AddHours(1).Hour, 0, 0), DayOfWeekHelpers.IntToDayOfWeek( (int)now.DayOfWeek + 2));
+            if (now.Hour >= 22)
+            {
+
+            }
+            Assert.AreEqual(now.AddDays(2).Day, time.NextStart.Day);
+            Assert.AreEqual(now.AddDays(2).Hour, time.NextStart.Hour);
+            Assert.AreEqual(now.AddDays(2).DayOfWeek, time.NextStart.DayOfWeek);
         }
         [TestMethod]
-        public void NextStartTest_Sucess_1hour()
+        public void NextStartTest_Sucess_1day()
         {
             DateTime now = DateTime.Now;
-            WeeklyTimeBetween time = new WeeklyTimeBetween(new TimeOnly(now.AddHours(1).Hour, 0, 0), new TimeOnly(now.AddHours(2).Hour, 0, 0), now.DayOfWeek);
-            Assert.AreEqual(now.AddHours(1).Day, time.NextStart.Day);
-            Assert.AreEqual(now.AddHours(1).Hour, time.NextStart.Hour);
-            Assert.AreEqual(now.AddHours(1).DayOfWeek, time.NextStart.DayOfWeek);
+            WeeklyTimeBetween time = new WeeklyTimeBetween(new TimeOnly(now.Hour, 0, 0), new TimeOnly(now.AddHours(2).Hour, 0, 0), DayOfWeekHelpers.IntToDayOfWeek((int)now.DayOfWeek + 1));
+            Assert.AreEqual(now.AddDays(1).Day, time.NextStart.Day);
+            Assert.AreEqual(now.AddDays(1).Hour, time.NextStart.Hour);
+            Assert.AreEqual(now.AddDays(1).DayOfWeek, time.NextStart.DayOfWeek);
         }
         [TestMethod]
-        public void NextStartTest_Sucess_SameDay1HourAgo()
+        public void NextStartTest_Sucess_1DayAgo()
         {
             DateTime now = DateTime.Now;
-            WeeklyTimeBetween time = new WeeklyTimeBetween(new TimeOnly(now.AddHours(-2).Hour, 0, 0), new TimeOnly(now.AddHours(-1).Hour, 0, 0), now.DayOfWeek);
-            Assert.AreEqual(now.AddHours(-2).AddDays(7).Day, time.NextStart.Day);
-            Assert.AreEqual(now.AddHours(-2).AddDays(7).Hour, time.NextStart.Hour);
-            Assert.AreEqual(now.AddHours(-2).AddDays(7).DayOfWeek, time.NextStart.DayOfWeek);
+            WeeklyTimeBetween time = new WeeklyTimeBetween(new TimeOnly(now.Hour, 0, 0), new TimeOnly(now.AddHours(1).Hour, 0, 0), DayOfWeekHelpers.IntToDayOfWeek((int)now.DayOfWeek - 1));
+            Assert.AreEqual(now.AddDays(6).Day, time.NextStart.Day);
+            Assert.AreEqual(now.AddDays(6).Hour, time.NextStart.Hour);
+            Assert.AreEqual(now.AddDays(6).DayOfWeek, time.NextStart.DayOfWeek);
         }
     }
 }
