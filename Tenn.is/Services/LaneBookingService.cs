@@ -1,5 +1,6 @@
 ﻿using Microsoft.Data.SqlClient;
 using System.Data;
+using System.Reflection.PortableExecutable;
 using Tennis.Helpers;
 using Tennis.Interfaces;
 using Tennis.Models;
@@ -31,7 +32,8 @@ namespace Tennis.Services
 
         string GetAllLaneBookingSQL = "SELECT * FROM LANEBOOKINGS";
         string GetLaneBookingByIdSQL = "SELECT * FROM LANEBOOKINGS WHERE BOOKINGID = @BookingID";
-        string CreateLaneBookingSQL = "INSERT INTO LANEBOOKINGS ( LaneNumber, Cancelled, DateStart, UserID,  MateID , TrainingTeamID) VALUES ( @LaneNumber, @cancelled, @DateStart, @UserID,  @MateID, @TrainingTeamID ) ";
+        string CreateUserLaneBookingSQL = "INSERT INTO LANEBOOKINGS ( LaneNumber, Cancelled, DateStart, UserID,  MateID , TrainingTeamID) VALUES ( @LaneNumber, @cancelled, @DateStart, @UserID,  @MateID, @TrainingTeamID ) ";
+        string CreateTrainingLaneBookingSQL = "INSERT INTO LANEBOOKINGS(LaneNumber, Cancelled, DateStart, UserID,  MateID , TrainingTeamID) VALUES ( @LaneNumber, @cancelled, @DateStart, @UserID,  @MateID, @TrainingTeamID )";
         string DeleteLaneBookingSQL = "DELETE FROM LANEBOOKINGS WHERE BOOKINGID = @BookingID";
         string UpdateLaneBookingSQL = "UPDATE LANEBOOKINGS SET LaneNumber = @LaneNumber, DateStart = @DateStart WHERE @ID = BOOKINGID";
         string CancelLaneBookingSQL = "UPDATE LANEBOOKINGS SET Cancelled = 'TRUE' WHERE BOOKINGID = @BookingID";
@@ -136,9 +138,7 @@ namespace Tennis.Services
                     SqlDataReader reader = command.ExecuteReader();
                     if (reader.Read())
                     {
-                        //TrainingTeam trainingTeam = trainingTeamservice.GetTrainingTeamByID(reader.GetInt32("TrainingTeamID"));
-                        //TimeBetween timeBetween = new TimeBetween(reader.GetDateTime("DateStart"), reader.GetDateTime("DateEnd"));
-                        //return new TrainingLaneBooking(reader.GetInt32("LaneNumber"), timeBetween, reader.GetInt32("BookingID"), reader.GetBoolean("Cancelled"), trainingTeam);
+                        return new TrainingLaneBooking(reader.GetInt32("LaneNumber"), reader.GetDateTime("DateStart"), reader.GetInt32("BookingID"), reader.GetBoolean("Cancelled"), trainingTeamService.GetTrainingTeamById(reader.GetInt32("TrainingTeamID")), reader.GetBoolean("Automatic"));
                     }
 
                 }
@@ -189,7 +189,7 @@ namespace Tennis.Services
             using (SqlConnection connection = new SqlConnection(connectionString))
                 try
                 {
-                    SqlCommand command = new SqlCommand(CreateLaneBookingSQL, connection);
+                    SqlCommand command = new SqlCommand(CreateUserLaneBookingSQL, connection);
                     command.Parameters.AddWithValue("@LaneNumber", laneBooking.LaneNumber);
                     command.Parameters.AddWithValue("@DateStart", laneBooking.DateStart);
                     command.Parameters.AddWithValue("@UserID", laneBooking.UserID);
@@ -214,9 +214,33 @@ namespace Tennis.Services
 
         public bool CreateLaneBooking(TrainingLaneBooking laneBooking)
         {
-            throw new NotImplementedException();
-        }
 
+            if (GetTrainingLaneBookingById(laneBooking.BookingID) == null)
+                return false;
+            using (SqlConnection connection = new SqlConnection(connectionString))
+                try
+                {
+                    SqlCommand command = new SqlCommand(CreateUserLaneBookingSQL, connection);
+                    command.Parameters.AddWithValue("@DateStart", laneBooking.DateStart);
+                    command.Parameters.AddWithValue("@UserID", DBNull.Value);
+                    command.Parameters.AddWithValue("@MateID", DBNull.Value);
+                    command.Parameters.AddWithValue("@cancelled", laneBooking.Cancelled);
+                    command.Parameters.AddWithValue("@TrainingTeamID", laneBooking.trainingTeam);
+                    command.Connection.Open();
+                    int noOfRows = command.ExecuteNonQuery();
+                    return noOfRows == 1;
+                }
+                catch (SqlException sqlExp)
+                {
+                    Console.WriteLine("Database error" + sqlExp.Message);
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine(ex.Message);
+                }
+
+            return false;
+        }
         public bool VerifyNewBooking(UserLaneBooking laneBooking)
         {
             List<UserLaneBooking> userLaneBookingList = GetAllLaneBookings<UserLaneBooking>();
