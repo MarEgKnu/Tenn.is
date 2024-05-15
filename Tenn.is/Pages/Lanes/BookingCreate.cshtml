@@ -53,22 +53,25 @@
                 <tbody>
                     @foreach (var user in Model.AvailableUsers)
                     {
-                            if (!Model.CheckMaximum(Model.CurrentUser) && !Model.CheckMaximum(user) && !Model.AlreadyBooked(user) && !Model.AlreadyBooked(Model.CurrentUser))
+                            string buttonvalue = user.UserId < 0 ? user.Username : $"{user.FirstName} {user.LastName}";
+                            string color = user.UserId < 0 ? "primary" : "success";
+                            if (!Model.CheckMaximum(Model.CurrentUser) && !Model.AlreadyBooked(Model.CurrentUser) && !Model.CheckMaximum(user) && !Model.AlreadyBooked(user))
                             {
-                                <tr>
-                                    <td>
-                                        <input type="submit" asp-page-handler="Book" asp-route-partnerid="@user.UserId" value="@user.FirstName @user.LastName" class="btn btn-outline-success w-100 border-0" />
-                                    </td>
-                                </tr>
-                            } else
-                            {
-                                <tr class="table-secondary">
-                                    <td>
-                                        <input type="submit" asp-page-handler="Book" asp-route-partnerid="@user.UserId" value="@user.FirstName @user.LastName" class="btn btn-outline-danger w-100 border-0 disabled" />
-                                    </td>
-                                </tr>
+                                    <tr>
+                                        <td>
+                                            <input type="submit" asp-page-handler="Book" asp-route-partnerid="@user.UserId" value="@buttonvalue" class="btn btn-outline-@color w-100 border-0" />
+                                        </td>
+                                    </tr>
                             }
-                        }
+                            else
+                            {
+                                    <tr class="table-secondary">
+                                        <td>
+                                            <input type="submit" asp-page-handler="Book" asp-route-partnerid="@user.UserId" value="@buttonvalue" class="btn btn-outline-danger w-100 border-0 disabled" />
+                                        </td>
+                                    </tr>
+                                }
+                            }
                 </tbody>
             </table>
         </div>
