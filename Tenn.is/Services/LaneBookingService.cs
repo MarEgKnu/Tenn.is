@@ -84,13 +84,21 @@ namespace Tennis.Services
                             }
                             else
                             {
-                                LaneBooking laneBooking = new TrainingLaneBooking(reader.GetInt32("LaneNumber"), reader.GetDateTime("DateStart"), reader.GetInt32("BookingID"), reader.GetBoolean("Cancelled"), trainingTeamService.GetTrainingTeamById(reader.GetInt32("TrainingTeamID")), reader.GetBoolean("Automatic"));
+                                LaneBooking laneBooking = new TrainingLaneBooking(reader.GetInt32("LaneNumber"), reader.GetDateTime("DateStart"), reader.GetInt32("BookingID"), reader.GetBoolean("Cancelled"), new TrainingTeam(reader.GetInt32("TrainingTeamID")), reader.GetBoolean("Automatic"));
                                 LaneBookingList.Add((T)laneBooking);
 
                             }
                         }
                     }
                     reader.Close();
+                    for (int i = 0; i < LaneBookingList.Count; i++)
+                    {
+                        if (LaneBookingList[i] is TrainingLaneBooking)
+                        {
+                            TrainingLaneBooking c = LaneBookingList[i] as TrainingLaneBooking;
+                            c.trainingTeam = trainingTeamService.GetTrainingTeamById(c.trainingTeam.TrainingTeamID);
+                        }
+                    }
                 }
                 catch (SqlException sqlExp)
                 {

@@ -98,6 +98,10 @@ namespace Tennis.Models
             new WeeklyTimeBetween(new TimeOnly(6, 0), new TimeOnly(7, 0), DayOfWeek.Monday);
             MaxTrainees = 0;
         }
+        public TrainingTeam(int id)
+        {
+            TrainingTeamID = id;
+        }
         public bool AddMember( User user, bool trainer )
         {
             if (user == null)

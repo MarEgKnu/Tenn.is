@@ -395,13 +395,14 @@ namespace Tennis.Services
                                 }
                             }
                         }
+                        //scope.Complete();
                         return true;
                     }
                     else
                     {
                         return false;
                     }
-                    //scope.Complete();
+                    
             //}                                  
         }
     }
