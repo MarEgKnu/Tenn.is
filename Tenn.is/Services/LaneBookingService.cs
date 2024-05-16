@@ -90,6 +90,7 @@ namespace Tennis.Services
                             }
                         }
                     }
+                    reader.Close();
                 }
                 catch (SqlException sqlExp)
                 {
