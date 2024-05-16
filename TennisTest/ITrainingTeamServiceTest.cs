@@ -281,7 +281,51 @@ namespace TennisTest
             
             Assert.AreEqual(beforeDelete, afterDelete);
         }
-        
+        [TestMethod]
+        public void UpdateAutomaticBookingsInTeam_3weeks_13To14Sunday()
+        {
+            TestSetUp();
+            userService.CreateUser(new User(1, "john1", "John", "Jensen", "jensen@gmail.com", "xxxjensenxxx", "41414141", false, false));
+            userService.CreateUser(new User(2, "john2", "John", "Jensen", "jensen@gmail.com", "xxxjensenxxx", "41414141", false, false));
+            List<User> users = userService.GetAllUsers();
+            TrainingTeam trainingTeam = new TrainingTeam(1, "Jeff's træningshold", "stort træningshold", new List<User>(), new List<User>() { users[0] }, new WeeklyTimeBetween(new TimeOnly(14, 0), new TimeOnly(15, 0), DayOfWeek.Sunday), 5);
+            trainingTeamService.CreateTrainingTeam(trainingTeam);
+            trainingTeam = trainingTeamService.GetAllTrainingTeams().First();
+            List<LaneBooking> bookings = laneBookingService.GetAllLaneBookings<LaneBooking>().OrderBy(b => b.DateStart).ToList();
+
+            Assert.AreEqual(bookings[0].DateStart, trainingTeam.weeklyTimeBetween.NextStart );
+            Assert.AreEqual(bookings[1].DateStart, trainingTeam.weeklyTimeBetween.NextStart.AddDays(7));
+            Assert.AreEqual(bookings[2].DateStart, trainingTeam.weeklyTimeBetween.NextStart.AddDays(14));
+        }
+        [TestMethod]
+        public void UpdateAutomaticBookingsInTeam_Fail_TeamNotFound()
+        {
+            TestSetUp();
+            bool sucess = trainingTeamService.UpdateAutomaticBookingsInTeam(int.MaxValue, 0, 3);
+            List<LaneBooking> bookings = laneBookingService.GetAllLaneBookings<LaneBooking>();
+
+            Assert.IsFalse(sucess);
+            Assert.AreEqual(0, bookings.Count);          
+        }
+        [TestMethod]
+        public void UpdateAutomaticBookingsInTeam33weeks_13To14Sunday_AutoDeleteOldOnes()
+        {
+            TestSetUp();
+            userService.CreateUser(new User(1, "john1", "John", "Jensen", "jensen@gmail.com", "xxxjensenxxx", "41414141", false, false));
+            userService.CreateUser(new User(2, "john2", "John", "Jensen", "jensen@gmail.com", "xxxjensenxxx", "41414141", false, false));
+            List<User> users = userService.GetAllUsers();
+            TrainingTeam trainingTeam = new TrainingTeam(1, "Jeff's træningshold", "stort træningshold", new List<User>(), new List<User>() { users[0] }, new WeeklyTimeBetween(new TimeOnly(14, 0), new TimeOnly(15, 0), DayOfWeek.Sunday), 5);
+            trainingTeamService.CreateTrainingTeam(trainingTeam);
+            trainingTeam = trainingTeamService.GetAllTrainingTeams().First();
+            bool sucess = trainingTeamService.UpdateAutomaticBookingsInTeam(trainingTeam.TrainingTeamID, 0, 3);
+            List<LaneBooking> bookings = laneBookingService.GetAllLaneBookings<LaneBooking>().OrderBy(b => b.DateStart).ToList();
+
+            Assert.AreEqual(3, bookings.Count);
+            Assert.AreEqual(bookings[0].DateStart, trainingTeam.weeklyTimeBetween.NextStart);
+            Assert.AreEqual(bookings[1].DateStart, trainingTeam.weeklyTimeBetween.NextStart.AddDays(7));
+            Assert.AreEqual(bookings[2].DateStart, trainingTeam.weeklyTimeBetween.NextStart.AddDays(14));
+
+        }
     }
 }
 

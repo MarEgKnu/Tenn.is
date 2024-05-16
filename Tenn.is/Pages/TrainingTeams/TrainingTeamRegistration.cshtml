@@ -1,14 +1,15 @@
 ﻿@page "{trainingTeamID}"
 @using Tennis.Models
-@model Tennis.Pages.TrainingTeams.DeleteTrainingTeamModel
+@model Tennis.Pages.TrainingTeams.TrainingTeamRegistrationModel
 @{
-    ViewData["Title"] = "Slet træningshold";
+    ViewData["Title"] = "Tilmelding til træningshold";
 }
 <p style="color:red">@ViewData["ErrorMessage"]</p>
-<h1 class="display-4">Fjern træningshold</h1>
+
+
 @if (Model.Team != null)
 {
-    <p><b>Du er ved at slette det følgende træningshold:</b></p>
+    <h1 class="display-4">Tilmelding til @Model.Team.Title</h1>
     <form method="post">
         <div class="form-group">
             <label>ID:</label> @Model.Team.TrainingTeamID <br />
@@ -21,27 +22,27 @@
             else
             {
                 @Model.Team.weeklyTimeBetween.ToString()
-            }    
+            }
             <br />
             <label>Trænere:</label> <details>
                 <summary>@Model.Team.Trainers.Count Trænere</summary>
                 @foreach (User trainer in Model.Team.Trainers)
                 {
-                    <p>@trainer.NameDispayForAdmin</p>
+                    <p>@trainer.NameDispayForUser</p>
                 }
             </details> <br />
             <label>Deltagere:</label> <details>
                 <summary>@Model.Team.Trainees.Count Deltagere</summary>
                 @foreach (User trainee in Model.Team.Trainees)
                 {
-                    <p>@trainee.NameDispayForAdmin</p>
+                    <p>@trainee.NameDispayForUser</p>
                 }
             </details> <br />
-            
 
-            <input type="submit" asp-page-handler="" class="btn btn-danger" value="Fjern bruger" />
+            <input type="submit" asp-page-handler="Cancel" class="btn btn-danger" value="Fortryd" />
+            <input type="submit" asp-page-handler="" class="btn btn-sucess" value="Tilmeld" />
 
-            <input type="submit" asp-page-handler="Cancel" class="btn btn-outline-secondary" value="Fortryd" />
+           
         </div>
     </form>
 }

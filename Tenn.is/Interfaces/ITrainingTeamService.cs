@@ -15,7 +15,7 @@ namespace Tennis.Interfaces
 
         TrainingTeam GetTrainingTeamById(int id);
 
-        void UpdateAutomaticBookingsInTeam(int teamID, int overrideBookings);
+        bool UpdateAutomaticBookingsInTeam(int teamID, int overrideBookings, int weekLimit);
 
     }
 

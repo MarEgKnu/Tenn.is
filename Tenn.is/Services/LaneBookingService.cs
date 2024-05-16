@@ -272,13 +272,10 @@ namespace Tennis.Services
         }
         public Lane GetAnyFreeLane(DateTime time)
         {
-            List<LaneBooking> bookings = GetAllLaneBookings<LaneBooking>();
-            List<Predicate<LaneBooking>> condition = new List<Predicate<LaneBooking>>();
-            condition.Add(b =>
+            List<LaneBooking> bookings = GetAllLaneBookings<LaneBooking>().FindAll(b =>
             {
                 return time == b.DateStart && !b.Cancelled;
-            });
-            bookings = FilterHelpers.GetItemsOnConditions(condition, bookings);
+            }); ;
             HashSet<int> LaneNums = new HashSet<int>();
             foreach (var booking in bookings)
             {

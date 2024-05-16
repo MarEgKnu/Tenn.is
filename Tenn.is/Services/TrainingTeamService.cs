@@ -116,7 +116,7 @@ namespace Tennis.Services
 
                     //OnCreate?.Invoke(GetEventBookingById(primaryKey));
                     transaction.Commit();
-                    UpdateAutomaticBookingsInTeam(primaryKey, overrideBookings);                   
+                    UpdateAutomaticBookingsInTeam(primaryKey, overrideBookings,3);                   
                     return true;
 
                 }
@@ -222,7 +222,7 @@ namespace Tennis.Services
                         if (beforeEdit.weeklyTimeBetween != (trainingTeam.weeklyTimeBetween))
                         {
                             OnWeeklySessionEdit?.Invoke(GetTrainingTeamById(id));
-                            UpdateAutomaticBookingsInTeam(id, overrideBookings);
+                            UpdateAutomaticBookingsInTeam(id, overrideBookings, 3);
                         }
                         return true;
 
@@ -342,7 +342,7 @@ namespace Tennis.Services
             }
             return trainingTeams.Values.ToList();
         }
-        public void UpdateAutomaticBookingsInTeam(int teamID, int overrideBookings)
+        public bool UpdateAutomaticBookingsInTeam(int teamID, int overrideBookings, int weekLimit)
         {
             // if overrideBookings is 0, it will not allow you to change the time if it would override bookings
             // if 1, it will book anything it can that isnt already booked
@@ -352,9 +352,8 @@ namespace Tennis.Services
                 
                     _laneBookingService.DeleteAutomaticBookingOnTeam(teamID);
                     TrainingTeam team = GetTrainingTeamById(teamID);
-                    if (team.weeklyTimeBetween != null)
+                    if (team != null && team.weeklyTimeBetween != null)
                     {
-                        int weekLimit = 3;
                         DateTime startDate = team.weeklyTimeBetween.NextStart;
                         for (int weeks = 0; weeks < weekLimit; weeks++)
                         {
@@ -396,6 +395,11 @@ namespace Tennis.Services
                                 }
                             }
                         }
+                        return true;
+                    }
+                    else
+                    {
+                        return false;
                     }
                     //scope.Complete();
             //}                                  

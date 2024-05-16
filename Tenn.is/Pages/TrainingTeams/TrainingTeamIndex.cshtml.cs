@@ -34,6 +34,8 @@ namespace Tennis.Pages.TrainingTeams
         public DayOfWeek? DayFilter { get; set; }
         [BindProperty(SupportsGet = true)]
         public TimeOnly? TimeFilter { get; set; }
+        [BindProperty(SupportsGet = true)]
+        public bool IsMemberOfFilter { get; set; }
 
         public SelectList DaySearchOptions { get; set; }
         private ITrainingTeamService _trainingTeamService;
@@ -115,9 +117,11 @@ namespace Tennis.Pages.TrainingTeams
         }
         private void FilterTeamsBasic()
         {
+            List<Predicate<TrainingTeam>> conditions = new List<Predicate<TrainingTeam>>();
             if (!GenericFilter.IsNullOrEmpty())
             {
-                Teams = Teams.FindAll(t =>
+                
+                conditions.Add(t =>
                 {
                     if (t.Description != null)
                     {
@@ -130,10 +134,19 @@ namespace Tennis.Pages.TrainingTeams
                     }
                 });
             }
+            if (IsMemberOfFilter)
+            {
+                conditions.Add(t => t.IsMember(LoggedInUser));
+            }
+            Teams = FilterHelpers.GetItemsOnConditions(conditions, Teams);
         }
         private void FilterTeamsAdvanced()
         {
             List<Predicate<TrainingTeam>> conditions = new List<Predicate<TrainingTeam>>();
+            if (IsMemberOfFilter)
+            {
+                conditions.Add(t => t.IsMember(LoggedInUser));
+            }
             if (IDFilter != null)
             {
                 conditions.Add(t => t.TrainingTeamID == IDFilter);

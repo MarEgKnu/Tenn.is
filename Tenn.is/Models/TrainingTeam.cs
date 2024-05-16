@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Microsoft.Extensions.Configuration.UserSecrets;
+using System.ComponentModel.DataAnnotations;
 using System.Diagnostics.CodeAnalysis;
 using System.Diagnostics.Eventing.Reader;
 using Tennis.Exceptions;
@@ -155,6 +156,14 @@ namespace Tennis.Models
         public bool IsTrainer(User user)
         {
             return Trainers.Contains(user);
+        }
+        public bool IsTrainee(User user)
+        {
+            return Trainees.Contains(user);
+        }
+        public bool IsMember(User user)
+        {
+            return _members.TryGetValue(user.UserId, out _);
         }
     }
 }
