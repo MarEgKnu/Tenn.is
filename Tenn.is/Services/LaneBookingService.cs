@@ -2,6 +2,7 @@
 using Microsoft.Identity.Client.Extensibility;
 using System.Data;
 using System.Reflection;
+using Tennis.Exceptions;
 using Tennis.Helpers;
 using Tennis.Interfaces;
 using Tennis.Models;
@@ -219,8 +220,12 @@ namespace Tennis.Services
 
         public bool CreateLaneBooking(UserLaneBooking laneBooking)
         {
-            if (GetUserLaneBookingById(laneBooking.BookingID) is not null)
-                return false;
+            //if (GetUserLaneBookingById(laneBooking.BookingID) is not null)
+            //    return false;
+            if (IsLaneBooked(laneBooking.LaneNumber, laneBooking.DateStart) != null)
+            {
+                throw new DuplicateBookingException($"Bane {laneBooking.LaneNumber} er allerede booket på det tidspunkt");
+            }
             if (VerifyNewBooking(laneBooking) == false)
                 return false;
             using (SqlConnection connection = new SqlConnection(connectionString))
@@ -251,8 +256,12 @@ namespace Tennis.Services
 
         public bool CreateLaneBooking(TrainingLaneBooking laneBooking)
         {
-            if (GetTrainingLaneBookingById(laneBooking.BookingID) is not null)
-                return false;
+            //if (GetTrainingLaneBookingById(laneBooking.BookingID) is not null)
+            //    return false;
+            if (IsLaneBooked(laneBooking.LaneNumber, laneBooking.DateStart) != null)
+            {
+                throw new DuplicateBookingException($"Bane {laneBooking.LaneNumber} er allerede booket på det tidspunkt");
+            }
             using (SqlConnection connection = new SqlConnection(connectionString))
                 try
                 {

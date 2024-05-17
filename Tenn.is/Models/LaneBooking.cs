@@ -22,6 +22,25 @@ namespace Tennis.Models
 
         }
 
+        public RelativeTime BookingState
+        {
+            get
+            {
+                if (DateStart.AddHours(1) < DateTime.Now)
+                {
+                    return RelativeTime.Past;
+                }
+                else if (DateStart > DateTime.Now)
+                {
+                    return RelativeTime.Future;
+                }
+                else
+                {
+                    return RelativeTime.Ongoing;
+                }
+
+            }
+        }
 
         public override string ToString()
         {
