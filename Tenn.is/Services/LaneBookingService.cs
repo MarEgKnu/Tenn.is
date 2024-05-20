@@ -47,6 +47,11 @@ namespace Tennis.Services
                                       "WHERE LaneNumber = @LaneNumber AND DateStart = @DateStart";
         string CreateTrainingLaneBookingSQL = "INSERT INTO LANEBOOKINGS(LaneNumber, Cancelled, DateStart, UserID,  MateID , TrainingTeamID, Automatic) VALUES ( @LaneNumber, @cancelled, @DateStart, @UserID,  @MateID, @TrainingTeamID, @Automatic)";
 
+        string getFirstFreeLane = "SELECT TOP 1 * \n" +
+                                   "FROM Lanes\n" +
+                                    "WHERE NOT Lanes.LaneNumber IN (SELECT LaneNumber\n" +
+                                    "\tFROM LaneBookings\n" +
+                                    "\tWHERE DateStart = @DateStart)";
 
         public List<T> GetAllLaneBookings<T>() where T : LaneBooking
         {
@@ -290,21 +295,34 @@ namespace Tennis.Services
         }
         public Lane GetAnyFreeLane(DateTime time)
         {
-            List<LaneBooking> bookings = GetAllLaneBookings<LaneBooking>().FindAll(b =>
+            using (SqlConnection connection = new SqlConnection(connectionString))
             {
-                return time == b.DateStart && !b.Cancelled;
-            });
-            HashSet<int> LaneNums = new HashSet<int>();
-            foreach (var booking in bookings)
-            {
-                LaneNums.Add(booking.LaneNumber);
+                try
+                {
+                    Lane lane = null;
+                    SqlCommand command = new SqlCommand(getFirstFreeLane, connection);
+                    command.Parameters.AddWithValue("@DateStart", time);
+                    connection.Open();
+                    SqlDataReader reader = command.ExecuteReader();
+                    if (reader.Read())
+                    {
+                        int laneNumber = reader.GetInt32("LaneNumber");
+                        bool padel = reader.GetBoolean("PadelTennis");
+                        bool outdoors = reader.GetBoolean("Outdoors");
+                        lane = new Lane(laneNumber, outdoors, padel);
+                    }
+                    reader.Close();
+                    return lane;
+                }
+                catch (SqlException sqlExp)
+                {
+                    throw;
+                }
+                catch (Exception ex)
+                {
+                    throw;
+                }
             }
-            List<Lane> Lanes = laneService.GetAllLanes();
-            Lanes.RemoveAll(lane =>
-            {
-                return LaneNums.Contains(lane.Id);
-            });
-            return Lanes.FirstOrDefault();
         }
         public LaneBooking? IsLaneBooked(int laneID, DateTime time)
         {
