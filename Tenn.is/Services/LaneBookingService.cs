@@ -70,7 +70,7 @@ namespace Tennis.Services
                         }
                         else if (typeof(LaneBooking) == typeof(T))
                         {
-                            if (reader.GetInt32("UserID") != null)
+                            if (reader.GetIntOrNull("UserID") != null)
                             {
                                 LaneBooking laneBooking = new UserLaneBooking(reader.GetInt32("BookingID"), reader.GetInt32("LaneNumber"), reader.GetDateTime("DateStart"), reader.GetInt32("UserID"), reader.GetInt32("MateID"), reader.GetBoolean("Cancelled"));
                                 LaneBookingList.Add((T)laneBooking);

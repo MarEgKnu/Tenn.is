@@ -138,8 +138,9 @@ namespace Tennis.Pages.Lanes
             {
                 _displayedMonth = new DateTime(DateTime.Now.Year, SelectedMonth, 1);
             }
-            Bookings = _laneBookingService.GetAllLaneBookings<LaneBooking>().Where(b => !b.Cancelled).ToList();
-            UnfilteredBookings = _laneBookingService.GetAllLaneBookings<LaneBooking>().Where(b => !b.Cancelled).ToList();
+            List<LaneBooking>InitialBookings = _laneBookingService.GetAllLaneBookings<LaneBooking>().Where(b => !b.Cancelled && b.DateStart >= DateTime.Now && b.DateStart <= DateTime.Now.AddDays(14)).ToList();
+            Bookings = new List<LaneBooking>(InitialBookings);
+            UnfilteredBookings = new List<LaneBooking>(InitialBookings);
             FilterBookings();
             DatesOfTheMonth = new List<DateTime>();
             for(int i = 1; i <= Calendar.GetDaysInMonth(_displayedMonth.Year, _displayedMonth.Month); i++)
