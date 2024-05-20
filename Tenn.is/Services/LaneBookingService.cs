@@ -293,7 +293,7 @@ namespace Tennis.Services
             List<LaneBooking> bookings = GetAllLaneBookings<LaneBooking>().FindAll(b =>
             {
                 return time == b.DateStart && !b.Cancelled;
-            }); ;
+            });
             HashSet<int> LaneNums = new HashSet<int>();
             foreach (var booking in bookings)
             {
