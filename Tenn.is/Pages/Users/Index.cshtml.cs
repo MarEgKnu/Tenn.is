@@ -94,10 +94,11 @@ namespace Tennis.Pages.Users
             else
                 SortBy = string.Empty;
 
+            MyLaneBookings = _laneBookingService.GetAllLaneBookings<UserLaneBooking>();
+
             switch (SortBy)
             {
                 case "chronologik":
-                    MyLaneBookings = _laneBookingService.GetAllLaneBookings<UserLaneBooking>();
                     MyLaneBookings = MyLaneBookings.OrderBy(B => B.DateStart).ToList();
                     break;
                 case "mate":
@@ -105,7 +106,6 @@ namespace Tennis.Pages.Users
                     MyLaneBookings = searchbymateusername.ToList();
                     break;
                 default:
-                    MyLaneBookings = _laneBookingService.GetAllLaneBookings<UserLaneBooking>();
                     break;
             }
 
