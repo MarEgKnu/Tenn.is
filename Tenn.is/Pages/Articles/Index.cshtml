@@ -4,6 +4,8 @@
 @{
 }
 
+
+
 <!-- CREATE NEW ARTICLE BUTTON -->
 <span>
     <a class="btn btn-outline-success rounded-pill" asp-page="/Articles/CreateArticle" style="float:left">
@@ -18,15 +20,19 @@
 <br />
 
 <!-- SEARCH AREA -->
-<div class="sticky-top float-end p-4">
-
-    <input type="text" name="search" placeholder="Search..">
-    <button formmethod="post">
-        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-search" viewBox="0 0 16 16">
-            <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001q.044.06.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1 1 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0" />
-        </svg>
-    </button>
+<div class="sticky-top float-end p-2">
+    <form method="get">
+        <input type="text" asp-for="@Model.SearchFilter" onchange="this.form.submit()" placeholder="Search..." />
+        <button>
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-search" viewBox="0 0 16 16">
+                <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001q.044.06.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1 1 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0" />
+            </svg>
+        </button>
+<input type="checkbox" asp-for="@Model.AlsoSearchContent" onchange="this.form.submit()" /> Also seach content?
+    </form>
 </div>
+
+
 
 <!-- NEWSFEED -->
 @foreach (var a in Model.AllArticles) {

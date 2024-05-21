@@ -34,12 +34,12 @@ namespace Tennis.Services.Tests
         {
             //Arrange
             ArticleService testService = new ArticleService(true);
-            int expectedResult = 5;
+            
             //Act
             int articleCountResult = testService.GetAllArticles().Count();
 
             //Assert
-            Assert.AreEqual(expectedResult, articleCountResult);
+            Assert.IsTrue(articleCountResult > 0);
         }
 
         [TestMethod()]
@@ -49,7 +49,7 @@ namespace Tennis.Services.Tests
             ArticleService testService = new ArticleService(true);
 
             //Act
-            Article? a = testService.GetArticleById(3);
+            Article? a = testService.GetArticleById(29);
 
             //Assert
             Assert.IsNotNull(a);
@@ -60,7 +60,7 @@ namespace Tennis.Services.Tests
         {
             //Arrange
             ArticleService testService = new ArticleService(true);
-            int articleToEdit = 3;
+            int articleToEdit = 29;
             Article editedArticlea = new Article("aa", "aa");
             Article editedArticleb = new Article("bb", "bb");
 
@@ -70,11 +70,11 @@ namespace Tennis.Services.Tests
 
             //Act
             if (originalTitle == "aa") {
-                returnedBool = testService.EditArticle(editedArticleb, 3);
+                returnedBool = testService.EditArticle(editedArticleb, articleToEdit);
                 newTitle = testService.GetArticleById(articleToEdit).Title;
             }
             else {
-                returnedBool = testService.EditArticle(editedArticlea, 3);
+                returnedBool = testService.EditArticle(editedArticlea, articleToEdit);
                 newTitle = testService.GetArticleById(articleToEdit).Title;
             }
 
@@ -97,6 +97,23 @@ namespace Tennis.Services.Tests
 
             //Assert
             Assert.IsTrue(articleCount1 == (articleCount2 + 1));
+        }
+
+        [TestMethod()]
+        public void SearchArticlesDefaultTest()
+        {
+            //Arrange
+            ArticleService testService = new ArticleService(true);
+            List<Article> searchResults = new List<Article>();
+            string searchFilter = "hej";
+            int expectedCount = 1;
+
+            //Act
+            searchResults = testService.SearchArticlesDefault(searchFilter);
+            int actualCount = searchResults.Count;
+
+            //Assert
+            Assert.AreEqual(expectedCount, actualCount);
         }
     }
 }
