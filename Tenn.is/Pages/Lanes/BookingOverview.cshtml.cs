@@ -69,7 +69,6 @@ namespace Tennis.Pages.Lanes
         public DateTime CurrentTime { get; set; }
 
         public string BookingError { get; set; }
-        public BookingOverviewModel(ILaneService laneService, ILaneBookingService laneBookingService)
         public BookingOverviewModel(ILaneService laneService, ILaneBookingService laneBookingService, ITrainingTeamService trainingTeamService)
         {
             _laneService = laneService;
@@ -174,10 +173,10 @@ namespace Tennis.Pages.Lanes
             OnGet(trainingTeamID);
         }
 
-        public void OnGetBookingFailed()
+        public void OnGetBookingFailed(int? trainingTeamID)
         {
             BookingError = "Noget gik galt ved booking. Kontakt venligst support hvis dette problem opstår igen.";
-            OnGetFirstClick();
+            OnGetFirstClick(trainingTeamID);
         }
 
         public void FilterBookings()
