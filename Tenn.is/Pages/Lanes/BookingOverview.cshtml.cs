@@ -13,6 +13,7 @@ namespace Tennis.Pages.Lanes
     {
         private ILaneService _laneService;
         private ILaneBookingService _laneBookingService;
+        private ITrainingTeamService _trainingTeamService;
         private DateTime _displayedMonth;
 
 
@@ -47,6 +48,7 @@ namespace Tennis.Pages.Lanes
 
         [BindProperty(SupportsGet = true)]
         public int SelectedMonth { get; set; }
+        public int? TrainingTeamID { get;  set; }
 
         [BindProperty(SupportsGet = true)]
         public string DateString { get; set; }
@@ -68,8 +70,10 @@ namespace Tennis.Pages.Lanes
 
         public string BookingError { get; set; }
         public BookingOverviewModel(ILaneService laneService, ILaneBookingService laneBookingService)
+        public BookingOverviewModel(ILaneService laneService, ILaneBookingService laneBookingService, ITrainingTeamService trainingTeamService)
         {
             _laneService = laneService;
+            _trainingTeamService = trainingTeamService;
             Calendar = new GregorianCalendar();
             Dictionary<string, int> options = new Dictionary<string, int>()
             {
@@ -126,7 +130,7 @@ namespace Tennis.Pages.Lanes
             //OutsideFilter = true;
             _laneBookingService = laneBookingService;
         }
-        public void OnGet()
+        public void OnGet(int? trainingTeamID)
         {
             Lanes = _laneService.GetAllLanes();
             if (SelectedMonth == 0)
@@ -148,17 +152,26 @@ namespace Tennis.Pages.Lanes
                 DatesOfTheMonth.Add(new DateTime(_displayedMonth.Year, _displayedMonth.Month, i));
             }
             FirstOfTheWeek = (int)Calendar.GetDayOfWeek(new DateTime(_displayedMonth.Year, _displayedMonth.Month, 1));
+            if (trainingTeamID != null)
+            {
+                TrainingTeamID = trainingTeamID;
+                if (_trainingTeamService.GetTrainingTeamById((int)trainingTeamID) == null)
+                {
+                    ViewData["ErrorMessage"] = "Træningshold eksister ikke";
+                }
+            }
+            
 
             CurrentTime = DateTime.Now;
         }
 
-        public void OnGetFirstClick()
+        public void OnGetFirstClick(int? trainingTeamID)
         {
             TennisFilter = true;
             PadelFilter = true;
             InsideFilter = true;
             OutsideFilter = true;
-            OnGet();
+            OnGet(trainingTeamID);
         }
 
         public void OnGetBookingFailed()

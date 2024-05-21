@@ -36,7 +36,7 @@ namespace Tennis.Models
                 if (Event == null || User == null) return false;
                 return DateTime.Now.AddMinutes(Event.CancellationThresholdMinutes) <= Event.EventTime.StartTime  && 
                     !Event.Cancelled &&
-                     Event.EventState != RelativeTime.Past; ;
+                     Event.EventState != RelativeTime.Past;
             } }
     }
 }

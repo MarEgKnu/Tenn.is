@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Microsoft.Extensions.Configuration.UserSecrets;
+using System.ComponentModel.DataAnnotations;
 using System.Diagnostics.CodeAnalysis;
 using System.Diagnostics.Eventing.Reader;
 using Tennis.Exceptions;
@@ -46,6 +47,7 @@ namespace Tennis.Models
         public Dictionary<int, Tuple<User, bool>> Members
         {
             get { return _members; }
+            set { _members = value; }
         }
 
 
@@ -96,6 +98,26 @@ namespace Tennis.Models
             new WeeklyTimeBetween(new TimeOnly(6, 0), new TimeOnly(7, 0), DayOfWeek.Monday);
             MaxTrainees = 0;
         }
+        public TrainingTeam(int id)
+        {
+            TrainingTeamID = id;
+        }
+        public bool AddMember( User user, bool trainer )
+        {
+            if (user == null)
+            {
+                return false;
+            }
+            if (trainer)
+            {
+                AddTrainer(user);
+            }
+            else
+            {
+                AddTrainee(user);
+            }
+            return true;
+        }
         public bool AddTrainer(User user)
         {
             if (user == null)
@@ -127,6 +149,10 @@ namespace Tennis.Models
                 return true;
             }
         }
+        public bool RemoveMember(int id)
+        {
+            return _members.Remove(id);
+        }
         public void ClearMembers()
         {
             _members.Clear();
@@ -134,6 +160,14 @@ namespace Tennis.Models
         public bool IsTrainer(User user)
         {
             return Trainers.Contains(user);
+        }
+        public bool IsTrainee(User user)
+        {
+            return Trainees.Contains(user);
+        }
+        public bool IsMember(User user)
+        {
+            return _members.TryGetValue(user.UserId, out _);
         }
     }
 }

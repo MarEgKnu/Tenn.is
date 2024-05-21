@@ -45,6 +45,7 @@ namespace Tennis.Services
                     {
                         Lanelist.Add(new Lane(reader.GetInt32("LANENUMBER"), reader.GetBoolean("OUTDOORS"), reader.GetBoolean("PADELTENNIS")));
                     }
+                    reader.Close();
                 }
                 catch (SqlException sqlExp)
                 {
@@ -71,6 +72,7 @@ namespace Tennis.Services
                     {
                         return new Lane(reader.GetInt32("LANENUMBER"), reader.GetBoolean("OUTDOORS"), reader.GetBoolean("PADELTENNIS"));
                     }
+                    reader.Close();
 
                 }
                 catch (SqlException sqlExp)

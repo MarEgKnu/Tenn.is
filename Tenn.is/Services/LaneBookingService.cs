@@ -1,5 +1,8 @@
 ﻿using Microsoft.Data.SqlClient;
+using Microsoft.Identity.Client.Extensibility;
 using System.Data;
+using System.Reflection;
+using Tennis.Exceptions;
 using Tennis.Helpers;
 using Tennis.Interfaces;
 using Tennis.Models;
@@ -9,15 +12,18 @@ namespace Tennis.Services
     public class LaneBookingService : Connection, ILaneBookingService
     {
         public ITrainingTeamService trainingTeamService { get; set; }
+        private ILaneService laneService;
         public LaneBookingService(ITrainingTeamService trainingTeamService)
         {
             connectionString = Secret.ConnectionString;
             this.trainingTeamService = trainingTeamService;
+            this.laneService = new LaneService();
 
         }
         public LaneBookingService(bool test, ITrainingTeamService trainingTeamService)
         {
             this.trainingTeamService = trainingTeamService;
+            this.laneService = new LaneService(test);
             if (test)
             {
                 connectionString = Secret.ConnectionStringTest;
@@ -35,10 +41,17 @@ namespace Tennis.Services
         string DeleteLaneBookingSQL = "DELETE FROM LANEBOOKINGS WHERE BOOKINGID = @BookingID";
         string UpdateLaneBookingSQL = "UPDATE LANEBOOKINGS SET LaneNumber = @LaneNumber, DateStart = @DateStart WHERE @ID = BOOKINGID";
         string CancelLaneBookingSQL = "UPDATE LANEBOOKINGS SET Cancelled = 'TRUE' WHERE BOOKINGID = @BookingID";
+        string DeleteAutomaticLaneBookings = "DELETE FROM LaneBookings\n" +
+                                             "WHERE TrainingTeamID = @TrainingTeamID AND Automatic = 1";
+        string GetAllOnLaneAndTime = "SELECT * FROM LaneBookings\n" +
+                                      "WHERE LaneNumber = @LaneNumber AND DateStart = @DateStart";
+        string CreateTrainingLaneBookingSQL = "INSERT INTO LANEBOOKINGS(LaneNumber, Cancelled, DateStart, UserID,  MateID , TrainingTeamID, Automatic) VALUES ( @LaneNumber, @cancelled, @DateStart, @UserID,  @MateID, @TrainingTeamID, @Automatic)";
 
-
-
-
+        string getFirstFreeLane = "SELECT TOP 1 * \n" +
+                                   "FROM Lanes\n" +
+                                    "WHERE NOT Lanes.LaneNumber IN (SELECT LaneNumber\n" +
+                                    "\tFROM LaneBookings\n" +
+                                    "\tWHERE DateStart = @DateStart)";
 
         public List<T> GetAllLaneBookings<T>() where T : LaneBooking
         {
@@ -77,20 +90,29 @@ namespace Tennis.Services
                             }
                             else
                             {
-                                LaneBooking laneBooking = new TrainingLaneBooking(reader.GetInt32("LaneNumber"), reader.GetDateTime("DateStart"), reader.GetInt32("BookingID"), reader.GetBoolean("Cancelled"), trainingTeamService.GetTrainingTeamById(reader.GetInt32("TrainingTeamID")), reader.GetBoolean("Automatic"));
+                                LaneBooking laneBooking = new TrainingLaneBooking(reader.GetInt32("LaneNumber"), reader.GetDateTime("DateStart"), reader.GetInt32("BookingID"), reader.GetBoolean("Cancelled"), new TrainingTeam(reader.GetInt32("TrainingTeamID")), reader.GetBoolean("Automatic"));
                                 LaneBookingList.Add((T)laneBooking);
 
                             }
                         }
                     }
+                    reader.Close();
+                    for (int i = 0; i < LaneBookingList.Count; i++)
+                    {
+                        if (LaneBookingList[i] is TrainingLaneBooking)
+                        {
+                            TrainingLaneBooking c = LaneBookingList[i] as TrainingLaneBooking;
+                            c.trainingTeam = trainingTeamService.GetTrainingTeamById(c.trainingTeam.TrainingTeamID);
+                        }
+                    }
                 }
                 catch (SqlException sqlExp)
                 {
-                    Console.WriteLine("Database error" + sqlExp.Message);
+                    throw;
                 }
                 catch (Exception ex)
                 {
-                    Console.WriteLine(ex.Message);
+                    throw;
                 }
 
             return LaneBookingList;
@@ -115,18 +137,18 @@ namespace Tennis.Services
                 }
                 catch (SqlException sqlExp)
                 {
-                    Console.WriteLine("Database error" + sqlExp.Message);
+                    throw;
                 }
                 catch (Exception ex)
                 {
-                    Console.WriteLine(ex.Message);
+                    throw;
                 }
             return null;
         }
 
         public TrainingLaneBooking GetTrainingLaneBookingById(int id)
         {
-            string GetUserLaneBookingByIdSQL = GetLaneBookingByIdSQL + " WHERE UserID IS  NULL AND MateID IS NULL";
+            string GetUserLaneBookingByIdSQL = GetLaneBookingByIdSQL + " AND UserID IS NULL AND MateID IS NULL";
             using (SqlConnection connection = new SqlConnection(connectionString))
                 try
                 {
@@ -144,16 +166,37 @@ namespace Tennis.Services
                 }
                 catch (SqlException sqlExp)
                 {
-                    Console.WriteLine("Database error" + sqlExp.Message);
+                    throw;
                 }
                 catch (Exception ex)
                 {
-                    Console.WriteLine(ex.Message);
+                    throw;
                 }
             return null;
         }
 
+        public int DeleteAutomaticBookingOnTeam(int teamID)
+        {
+            using (SqlConnection connection = new SqlConnection(connectionString))
+            {
+                try
+                {
+                    connection.Open();
+                    SqlCommand command = new SqlCommand(DeleteAutomaticLaneBookings, connection);
+                    command.Parameters.AddWithValue("@TrainingTeamID", teamID);
+                    return command.ExecuteNonQuery();
 
+                }
+                catch (SqlException ex)
+                {
+                    throw;
+                }
+                catch (Exception ex)
+                {
+                    throw;
+                }
+            }
+        }
 
 
         public bool CancelLaneBonking(int id)
@@ -171,19 +214,23 @@ namespace Tennis.Services
                 }
                 catch (SqlException sqlExp)
                 {
-                    Console.WriteLine("Database error" + sqlExp.Message);
+                    throw;
                 }
                 catch (Exception ex)
                 {
-                    Console.WriteLine(ex.Message);
+                    throw;
                 }
             return false;
         }
 
         public bool CreateLaneBooking(UserLaneBooking laneBooking)
         {
-            if (GetUserLaneBookingById(laneBooking.BookingID) is not null)
-                return false;
+            //if (GetUserLaneBookingById(laneBooking.BookingID) is not null)
+            //    return false;
+            if (IsLaneBooked(laneBooking.LaneNumber, laneBooking.DateStart) != null)
+            {
+                throw new DuplicateBookingException($"Bane {laneBooking.LaneNumber} er allerede booket på det tidspunkt");
+            }
             if (VerifyNewBooking(laneBooking) == false)
                 return false;
             using (SqlConnection connection = new SqlConnection(connectionString))
@@ -202,11 +249,11 @@ namespace Tennis.Services
                 }
                 catch (SqlException sqlExp)
                 {
-                    Console.WriteLine("Database error" + sqlExp.Message);
+                    throw;
                 }
                 catch (Exception ex)
                 {
-                    Console.WriteLine(ex.Message);
+                    throw;
                 }
 
             return false;
@@ -214,9 +261,87 @@ namespace Tennis.Services
 
         public bool CreateLaneBooking(TrainingLaneBooking laneBooking)
         {
-            throw new NotImplementedException();
-        }
+            //if (GetTrainingLaneBookingById(laneBooking.BookingID) is not null)
+            //    return false;
+            if (IsLaneBooked(laneBooking.LaneNumber, laneBooking.DateStart) != null)
+            {
+                throw new DuplicateBookingException($"Bane {laneBooking.LaneNumber} er allerede booket på det tidspunkt");
+            }
+            using (SqlConnection connection = new SqlConnection(connectionString))
+                try
+                {
+                    SqlCommand command = new SqlCommand(CreateTrainingLaneBookingSQL, connection);
+                    command.Parameters.AddWithValue("@DateStart", laneBooking.DateStart);
+                    command.Parameters.AddWithValue("@UserID", DBNull.Value);
+                    command.Parameters.AddWithValue("@MateID", DBNull.Value);
+                    command.Parameters.AddWithValue("@cancelled", laneBooking.Cancelled);
+                    command.Parameters.AddWithValue("@TrainingTeamID", laneBooking.trainingTeam.TrainingTeamID);
+                    command.Parameters.AddWithValue("@LaneNumber", laneBooking.LaneNumber);
+                    command.Parameters.AddWithValue("@Automatic", laneBooking.Automatic);
+                    command.Connection.Open();
+                    int noOfRows = command.ExecuteNonQuery();
+                    return noOfRows == 1;
+                }
+                catch (SqlException sqlExp)
+                {
+                    throw;
+                }
+                catch (Exception ex)
+                {
+                    throw;
+                }
 
+            return false;
+        }
+        public Lane GetAnyFreeLane(DateTime time)
+        {
+            using (SqlConnection connection = new SqlConnection(connectionString))
+            {
+                try
+                {
+                    Lane lane = null;
+                    SqlCommand command = new SqlCommand(getFirstFreeLane, connection);
+                    command.Parameters.AddWithValue("@DateStart", time);
+                    connection.Open();
+                    SqlDataReader reader = command.ExecuteReader();
+                    if (reader.Read())
+                    {
+                        int laneNumber = reader.GetInt32("LaneNumber");
+                        bool padel = reader.GetBoolean("PadelTennis");
+                        bool outdoors = reader.GetBoolean("Outdoors");
+                        lane = new Lane(laneNumber, outdoors, padel);
+                    }
+                    reader.Close();
+                    return lane;
+                }
+                catch (SqlException sqlExp)
+                {
+                    throw;
+                }
+                catch (Exception ex)
+                {
+                    throw;
+                }
+            }
+        }
+        public LaneBooking? IsLaneBooked(int laneID, DateTime time)
+        {
+            LaneBooking? booking = GetAllLaneBookings<LaneBooking>().Find(b =>
+            {
+                return laneID == b.LaneNumber && time == b.DateStart && !b.Cancelled;
+            });
+            
+            return booking;
+        }
+        public List<LaneBooking> IsLaneBooked(List<int> laneIDs, DateTime time)
+        {
+            List<LaneBooking> bookings = GetAllLaneBookings<LaneBooking>().FindAll(b =>
+            {
+                return laneIDs.Contains(b.LaneNumber) && time == b.DateStart && !b.Cancelled;
+            });
+          
+            return bookings;
+        }
         public bool VerifyNewBooking(UserLaneBooking laneBooking)
         {
             List<UserLaneBooking> userLaneBookingList = GetAllLaneBookings<UserLaneBooking>();
@@ -275,11 +400,11 @@ namespace Tennis.Services
                 }
                 catch (SqlException sqlExp)
                 {
-                    Console.WriteLine("Database error" + sqlExp.Message);
+                    throw;
                 }
                 catch (Exception ex)
                 {
-                    Console.WriteLine(ex.Message);
+                    throw;
                 }
             return false;
         }
@@ -303,11 +428,11 @@ namespace Tennis.Services
                 }
                 catch (SqlException sqlExp)
                 {
-                    Console.WriteLine("Database error" + sqlExp.Message);
+                    throw;
                 }
                 catch (Exception ex)
                 {
-                    Console.WriteLine(ex.Message);
+                    throw;
                 }
 
             return false;

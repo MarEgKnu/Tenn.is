@@ -58,21 +58,25 @@ namespace Tennis.Pages.Events
             CancelelledFilterOptions = new SelectList(BoolHelpers.CancelledBoolKeyValuePair, "Key", "Value");
             _userService = userService;
         }
-        public IActionResult OnGet()
+        public IActionResult OnGet(bool sorting)
         {
             if (!_userService.AdminVerify(HttpContext.Session.GetString("Username"), HttpContext.Session.GetString("Password")))
             {
                 return RedirectToPage("AccessDenied");
             }
-            if (SortBy == PrevSortBy)
+            if (sorting)
             {
-                Descending = !Descending;
+                if (SortBy == PrevSortBy)
+                {
+                    Descending = !Descending;
+                }
+                else
+                {
+                    Descending = false;
+                }
+                PrevSortBy = SortBy;
             }
-            else
-            {
-                Descending = false;
-            }
-            PrevSortBy = SortBy;
+            
             try
             {
                 Events = _eventService.GetAllEvents();
