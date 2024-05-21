@@ -54,7 +54,9 @@ namespace Tennis.Services
                                     "WHERE NOT Lanes.LaneNumber IN (SELECT LaneNumber\n" +
                                     "\tFROM LaneBookings\n" +
                                     "\tWHERE DateStart = @DateStart)";
-
+        string getNoOfBookings = "SELECT COUNT(*) AS Bookings\n" +
+                                 "FROM LaneBookings\n" +
+                                 "WHERE LaneNumber = @LaneNumber AND DateStart >= @minTime AND DateStart <= @maxTime";
         public List<T> GetAllLaneBookings<T>() where T : LaneBooking
         {
             string getAllUserLaneBookingSQL = GetAllLaneBookingSQL;
@@ -313,6 +315,40 @@ namespace Tennis.Services
                     }
                     reader.Close();
                     return lane;
+                }
+                catch (SqlException sqlExp)
+                {
+                    throw;
+                }
+                catch (Exception ex)
+                {
+                    throw;
+                }
+            }
+        }
+        public int GetNoOfBookings(int laneID, DateTime minTime, DateTime maxTime)
+        {
+            if (minTime >= maxTime)
+            {
+                throw new ArgumentException("minTime kan ikke være større end maxTime");
+            }
+            using (SqlConnection connection = new SqlConnection(connectionString))
+            {
+                try
+                {
+                    SqlCommand command = new SqlCommand(getNoOfBookings, connection);
+                    command.Parameters.AddWithValue("@minTime", minTime);
+                    command.Parameters.AddWithValue("@maxTime", maxTime);
+                    command.Parameters.AddWithValue("@LaneNumber", laneID);
+                    connection.Open();
+                    SqlDataReader reader = command.ExecuteReader();
+                    int result = 0;
+                    while (reader.Read())
+                    {
+                        result = reader.GetInt32("Bookings");
+                    }
+                    reader.Close();
+                    return result;
                 }
                 catch (SqlException sqlExp)
                 {

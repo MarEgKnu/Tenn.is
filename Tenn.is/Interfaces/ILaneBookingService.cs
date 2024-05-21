@@ -6,6 +6,7 @@ namespace Tennis.Interfaces
     {
         bool CancelLaneBonking(int id);
 
+        public int GetNoOfBookings(int laneID, DateTime minTime, DateTime maxTime);
         Lane GetAnyFreeLane(DateTime time);
 
         bool CreateLaneBooking(UserLaneBooking laneBooking);

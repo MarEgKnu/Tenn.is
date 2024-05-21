@@ -1,4 +1,6 @@
 ﻿@page "{trainingTeamID?}"
+@using Tennis.Interfaces
+@inject ILaneBookingService _laneBookingService
 @model Tennis.Pages.Lanes.BookingOverviewModel
 @{
     ViewData["Title"] = "Baner";
@@ -96,11 +98,12 @@
                                                             {
                                                             if (actualDate.Date >= DateTime.Now.Date && actualDate.Date <= DateTime.Now.AddDays(14).Date)
                                                             {
-                                                                int existingbookings = Model.Bookings.Where(b =>
+                                                                @* int existingbookings = Model.Bookings.Where(b =>
                                                                 b.LaneNumber == item.Id &&
                                                                 b.DateStart.Day == actualDate.Day &&
                                                                 b.DateStart.Month == Model.SelectedMonth).
-                                                                Count();
+                                                                Count(); *@
+                                                                int existingbookings = _laneBookingService.GetNoOfBookings(item.Id, actualDate.AddHours(Model.StartFilter), actualDate.AddHours(Model.EndFilter));
                                                                 int possiblebookings = Model.EndFilter - Model.StartFilter;
                                                                 if (Model.StartFilter < Model.EndFilter && existingbookings < possiblebookings)
                                                                 {

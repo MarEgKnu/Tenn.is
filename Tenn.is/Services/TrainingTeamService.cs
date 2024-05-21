@@ -357,14 +357,16 @@ namespace Tennis.Services
                         DateTime startDate = team.weeklyTimeBetween.NextStart;
                         for (int weeks = 0; weeks < weekLimit; weeks++)
                         {
-                            for (int hour = team.weeklyTimeBetween.StartTime.Value.Hour; hour < team.weeklyTimeBetween.EndTime.Value.Hour; hour++)
+                            for (int hour = team.weeklyTimeBetween.StartTime.Value.Hour; 
+                                hour < team.weeklyTimeBetween.EndTime.Value.Hour; hour++)
                             {
-                                DateTime bookingTime = startDate.AddDays(weeks * 7).AddHours(hour - team.weeklyTimeBetween.StartTime.Value.Hour);
-                                //TrainingLaneBooking booking = new TrainingLaneBooking()
+                                DateTime bookingTime = startDate.AddDays(weeks * 7).
+                                AddHours(hour - team.weeklyTimeBetween.StartTime.Value.Hour);                            
                                 Lane freeLane = _laneBookingService.GetAnyFreeLane(bookingTime);
                                 if (freeLane != null)
                                 {
-                                    TrainingLaneBooking booking = new TrainingLaneBooking(freeLane.Id, bookingTime, 0, false, team, true);
+                                    TrainingLaneBooking booking = new TrainingLaneBooking(freeLane.Id,
+                                                                 bookingTime, 0, false, team, true);
                                     _laneBookingService.CreateLaneBooking(booking);
                                 }
                                 else
