@@ -17,6 +17,7 @@ namespace Tennis.Services
         private string sqlEditArticleWithImg = "UPDATE Articles SET Title = @newTitle, Content = @newContent, LastEdited = CURRENT_TIMESTAMP, ImgPath = @newImgPath WHERE ArticleID = @articleId";
         private string _sqlEditArticle = "UPDATE Articles SET Title = @newTitle, Content = @newContent, LastEdited = CURRENT_TIMESTAMP WHERE ArticleID = @articleId";
         private string _sqlDeleteArticle = "DELETE FROM Articles WHERE ArticleID = @articleId";
+        private string _sqlSearchArticlesDefault = "SELECT * FROM Articles WHERE Content LIKE @searchFilter";
         
 
         // KOLONNERNES NUMMER - INT SOM KOLONNENAVN
@@ -207,5 +208,15 @@ namespace Tennis.Services
             }
             return false;
         }
+
+        
+        public List<Article> SearchArticlesDefault(string searchFilter)
+        {
+            List<Article> allArticles = GetAllArticles();
+            List<Article> searchResults = allArticles.Where(t => t.Title.Contains(searchFilter)).ToList();
+
+            return searchResults;
+        }
     }
+    
 }
