@@ -212,8 +212,18 @@ namespace Tennis.Services
         
         public List<Article> SearchArticlesDefault(string searchFilter)
         {
+            searchFilter = searchFilter.ToLower();
             List<Article> allArticles = GetAllArticles();
-            List<Article> searchResults = allArticles.Where(t => t.Title.Contains(searchFilter)).ToList();
+            List<Article> searchResults = allArticles.Where(t => t.Title.ToLower().Contains(searchFilter)).ToList();
+
+            return searchResults;
+        }
+
+        List<Article> IArticleService.SearchArticlesContent(string searchFilter)
+        {
+            searchFilter = searchFilter.ToLower();
+            List<Article> allArticles = GetAllArticles();
+            List<Article> searchResults = allArticles.Where(t => t.Title.ToLower().Contains(searchFilter) || t.Content.ToLower().Contains(searchFilter)).ToList();
 
             return searchResults;
         }
