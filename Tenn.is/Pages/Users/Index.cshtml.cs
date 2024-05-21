@@ -4,6 +4,7 @@ using Microsoft.Data.SqlClient;
 using System.ComponentModel.DataAnnotations;
 using Tennis.Interfaces;
 using Tennis.Models;
+using Tennis.Services;
 
 namespace Tennis.Pages.Users
 {
@@ -11,12 +12,14 @@ namespace Tennis.Pages.Users
     {
         private IEventBookingService _eventBookingService;
         private IUserService _userService;
+        private ILaneBookingService _laneBookingService;
 
-        public IndexModel(IEventBookingService eventBookingService, IUserService userService)
+        public IndexModel(IEventBookingService eventBookingService, IUserService userService, ILaneBookingService laneBookingService)
         {
             _eventBookingService = eventBookingService;
             _userService = userService;
             DateFilter = DateTime.Now;
+            _laneBookingService = laneBookingService;
         }
 
 
@@ -28,13 +31,22 @@ namespace Tennis.Pages.Users
         [BindProperty(SupportsGet = true), DisplayFormat(DataFormatString = "{0:yyyy-MM-ddTHH:mm}", ApplyFormatInEditMode = true)]
         public DateTime? DateFilter { get; set; }
 
-        public User LoggedInUser { get; set; }
+        [BindProperty]
+        public bool chronologik { get; set; }
+
+        [BindProperty]
+        public string mate { get; set; }
 
         public User CurrentUser { get; set; }
 
+        public User Mate { get; set; }
+
         public List<EventBooking> MyBookings { get; set; }
 
-        public List<LaneBooking> MyLaneBookings { get; set; }
+        public List<UserLaneBooking> MyLaneBookings { get; set; }
+
+        [BindProperty(SupportsGet = true)]
+        public string SortBy { get; set; }
 
 
         public IActionResult OnGet()
@@ -47,6 +59,8 @@ namespace Tennis.Pages.Users
                 if (CurrentUser != null) {
                         //MyBookings = _userService.GetAllEventBookingWithUserId(CurrentUser.UserId);
                         MyBookings = _eventBookingService.GetEventBookingsByUser(CurrentUser.UserId);
+                        MyLaneBookings = _laneBookingService.GetAllLaneBookings<UserLaneBooking>();
+                        Sorted();
                         return Page();
                 }
                 else 
@@ -69,7 +83,33 @@ namespace Tennis.Pages.Users
 
 
 
+        public void Sorted()
+        {
+            if (chronologik)
+            {
+                SortBy = "chronologik";
+            }
+            else if (mate != null)
+                SortBy = "mate";
+            else
+                SortBy = string.Empty;
 
+            switch (SortBy)
+            {
+                case "chronologik":
+                    MyLaneBookings = _laneBookingService.GetAllLaneBookings<UserLaneBooking>();
+                    MyLaneBookings = MyLaneBookings.OrderBy(B => B.DateStart).ToList();
+                    break;
+                case "mate":
+                    IEnumerable<UserLaneBooking> searchbymateusername = from b in MyLaneBookings where _userService.GetUserById(b.MateID).Username.Contains(mate) || _userService.GetUserById(b.UserID).Username.Contains(mate) select b;
+                    MyLaneBookings = searchbymateusername.ToList();
+                    break;
+                default:
+                    MyLaneBookings = _laneBookingService.GetAllLaneBookings<UserLaneBooking>();
+                    break;
+            }
+
+        }
 
 
 

@@ -88,7 +88,7 @@ namespace Tennis.Services
                 }
                 catch (SqlException sqlExp)
                 {
-                    Console.WriteLine("Database error" + sqlExp.Message);
+                    throw;
                 }
                 catch (Exception ex)
                 {
