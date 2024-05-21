@@ -53,10 +53,10 @@ namespace Tennis.Services
                                    "FROM Lanes\n" +
                                     "WHERE NOT Lanes.LaneNumber IN (SELECT LaneNumber\n" +
                                     "\tFROM LaneBookings\n" +
-                                    "\tWHERE DateStart = @DateStart)";
+                                    "\tWHERE DateStart = @DateStart AND Cancelled = 0)";
         string getNoOfBookings = "SELECT COUNT(*) AS Bookings\n" +
                                  "FROM LaneBookings\n" +
-                                 "WHERE LaneNumber = @LaneNumber AND DateStart >= @minTime AND DateStart <= @maxTime";
+                                 "WHERE LaneNumber = @LaneNumber AND DateStart >= @minTime AND DateStart <= @maxTime AND Cancelled = 0";
         string LaneBookingStatus = "Select * FROM LaneBookings WHERE DateStart = @Date AND LaneNumber = @Lane AND Cancelled = 0";
         public List<T> GetAllLaneBookings<T>() where T : LaneBooking
         {

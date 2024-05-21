@@ -63,8 +63,7 @@ namespace Tennis.Services
                     command.Parameters.AddWithValue("@DateStart", evt.EventTime.StartTime);
                     command.Parameters.AddWithValue("@DateEnd", evt.EventTime.EndTime);
                     command.Parameters.AddWithValue("@CancellationThreshold", evt.CancellationThresholdMinutes);
-                    command.ExecuteNonQuery();
-                    return true;
+                    return command.ExecuteNonQuery() != 0;
                     
                 }
                 catch (SqlException ex)
@@ -98,8 +97,7 @@ namespace Tennis.Services
                     command.Parameters.AddWithValue("@DateStart", evt.EventTime.StartTime);
                     command.Parameters.AddWithValue("@DateEnd", evt.EventTime.EndTime);
                     command.Parameters.AddWithValue("@CancellationThreshold", evt.CancellationThresholdMinutes);
-                    command.ExecuteNonQuery();
-                    return true;
+                    return command.ExecuteNonQuery() != 0;
 
                 }
                 catch (SqlException ex)
@@ -123,7 +121,7 @@ namespace Tennis.Services
                     connection.Open();
                     SqlCommand command = new SqlCommand(deleteString, connection);
                     command.Parameters.AddWithValue("@EventId", id);
-                    if (command.ExecuteNonQuery() != 1)
+                    if (command.ExecuteNonQuery() == 0)
                     {
                         return false;
                     }
@@ -168,7 +166,7 @@ namespace Tennis.Services
                     command.Parameters.AddWithValue("@DateStart", evt.EventTime.StartTime);
                     command.Parameters.AddWithValue("@DateEnd", evt.EventTime.EndTime);
                     command.Parameters.AddWithValue("@CancellationThreshold", evt.CancellationThresholdMinutes);
-                    if (command.ExecuteNonQuery() != 1)
+                    if (command.ExecuteNonQuery() == 0)
                     {
                         return false;
                     }
