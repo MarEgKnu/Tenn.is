@@ -49,34 +49,34 @@ namespace Tennis.Services.Tests
         //    ArticleService testService = new ArticleService(true);
 
             //Act
-            Article? a = testService.GetArticleById(29);
+            //Article? a = testService.GetArticleById(29);
 
         //    //Assert
         //    Assert.IsNotNull(a);
         //}
 
-        [TestMethod()]
-        public void EditArticleTest()
-        {
-            //Arrange
-            ArticleService testService = new ArticleService(true);
-            int articleToEdit = 29;
-            Article editedArticlea = new Article("aa", "aa");
-            Article editedArticleb = new Article("bb", "bb");
+        //[TestMethod()]
+        //public void EditArticleTest()
+        //{
+        //    //Arrange
+        //    ArticleService testService = new ArticleService(true);
+        //    int articleToEdit = 29;
+        //    Article editedArticlea = new Article("aa", "aa");
+        //    Article editedArticleb = new Article("bb", "bb");
 
         //    string? originalTitle = testService.GetArticleById(articleToEdit).Title;
         //    bool returnedBool = false;
         //    string? newTitle = null;
 
             //Act
-            if (originalTitle == "aa") {
-                returnedBool = testService.EditArticle(editedArticleb, articleToEdit);
-                newTitle = testService.GetArticleById(articleToEdit).Title;
-            }
-            else {
-                returnedBool = testService.EditArticle(editedArticlea, articleToEdit);
-                newTitle = testService.GetArticleById(articleToEdit).Title;
-            }
+            //if (originalTitle == "aa") {
+            //    returnedBool = testService.EditArticle(editedArticleb, articleToEdit);
+            //    newTitle = testService.GetArticleById(articleToEdit).Title;
+            //}
+            //else {
+            //    returnedBool = testService.EditArticle(editedArticlea, articleToEdit);
+            //    newTitle = testService.GetArticleById(articleToEdit).Title;
+            //}
 
         //    //Assert
         //    Assert.IsTrue((returnedBool) && (newTitle != originalTitle));

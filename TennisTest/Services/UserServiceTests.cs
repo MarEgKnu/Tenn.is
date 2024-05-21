@@ -17,10 +17,26 @@ namespace Tennis.Services.Tests
     public class UserServiceTests
     {
 
+        public void NukeTable()
+        {
+            UserService userService = new UserService(true);
+
+
+            using (SqlConnection conn = new SqlConnection(Secret.ConnectionStringTest))
+            {
+                conn.Open();
+                SqlCommand cmd = new SqlCommand("DELETE FROM Users", conn);
+
+
+                cmd.ExecuteNonQuery();
+            }
+        }
+
         [TestMethod()]
         public void GetAllUsersTest()
         {
             //Setup
+            NukeTable();
             UserService userService = new UserService(true);
             //Execute
             List<User> users = userService.GetAllUsers();
@@ -31,6 +47,7 @@ namespace Tennis.Services.Tests
         public void CreateUserTest_Valid()
         {
             //Setup
+            NukeTable();
             User user = new User(101, "test1", "Test", "Testson", "test", "testestest", "1234", false, false);
             int before = 0;
             int after = 0;
@@ -49,6 +66,7 @@ namespace Tennis.Services.Tests
         public void CreateUserTest_Invalid_IDAlreadyExists()
         {
             //Setup
+            NukeTable();
             User user = new User(201, "test2", "Test", "Testson", "test", "testestest", "1234", false, false);
             UserService userService = new UserService(true);
             int before = 0;
@@ -76,6 +94,7 @@ namespace Tennis.Services.Tests
         public void CreateUserTest_Invalid_NameAlreadyExists()
         {
             //Setup
+            NukeTable();
             User user = new User(201, "test3", "Test", "Testson", "test", "testestest", "1234", false, false);
             User sameuser = new User(301, "test3", "Test", "Testson", "test", "testestest", "1234", false, false);
 
@@ -106,6 +125,7 @@ namespace Tennis.Services.Tests
         public void CreateUserTest_Invalid_BadID()
         {
             //Setup
+            NukeTable();
             User user = new User(0, "test4", "Test", "Testson", "test", "testestest", "1234", false, false);
 
             int before = 0;
@@ -123,6 +143,7 @@ namespace Tennis.Services.Tests
         public void GetUserByIdTest_Valid()
         {
             //Setup
+            NukeTable();
             User originaluser = new User(102, "test5", "Test", "Testson", "test", "testestest", "1234", false, false);
             UserService service = new UserService(true);
             service.CreateUser(originaluser);
@@ -138,6 +159,7 @@ namespace Tennis.Services.Tests
         public void GetUserByIdTest_Invalid_NoUserfound()
         {
             //Setup
+            NukeTable();
             User originaluser = new User(202, "test6", "Test", "Testson", "test", "testestest", "1234", false, false);
             UserService service = new UserService(true);
             service.CreateUser(originaluser);
@@ -154,6 +176,7 @@ namespace Tennis.Services.Tests
         public void DeleteUserTest_Valid()
         {
             //Setup
+            NukeTable();
             User user = new User(103, "test7", "Test", "Testson", "test", "testestest", "1234", false, false);
 
             int before = 0;
@@ -173,6 +196,7 @@ namespace Tennis.Services.Tests
         public void DeleteUserTest_Invalid_NoUserFound()
         {
             //Setup
+            NukeTable();
             int before = 0;
             int after = 0;
 
@@ -189,6 +213,7 @@ namespace Tennis.Services.Tests
         public void DeleteUserTest_Invalid_DeleteAdmin()
         {
             //Setup
+            NukeTable();
             int before = 0;
             int after = 0;
 
@@ -206,6 +231,7 @@ namespace Tennis.Services.Tests
         public void EditUserTest_Valid()
         {
             //Setup
+            NukeTable();
             User user = new User(104, "test8", "Test", "Testson", "test", "testestest", "1234", false, false);
 
 
@@ -226,6 +252,7 @@ namespace Tennis.Services.Tests
         public void EditUserTest_Invalid_IDNotFound()
         {
             //Setup
+            NukeTable();
             User user = new User(204, "test9", "Test", "Testson", "test", "testestest", "1234", false, false);
 
             UserService userService = new UserService(true);
