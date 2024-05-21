@@ -141,7 +141,7 @@ namespace Tennis.Pages.Lanes
             {
                 _displayedMonth = new DateTime(DateTime.Now.Year, SelectedMonth, 1);
             }
-            List<LaneBooking>InitialBookings = _laneBookingService.GetAllLaneBookings<LaneBooking>().Where(b => !b.Cancelled && b.DateStart >= DateTime.Now && b.DateStart <= DateTime.Now.AddDays(14)).ToList();
+            List<LaneBooking>InitialBookings = new List<LaneBooking>();
             Bookings = new List<LaneBooking>(InitialBookings);
             UnfilteredBookings = new List<LaneBooking>(InitialBookings);
             FilterBookings();

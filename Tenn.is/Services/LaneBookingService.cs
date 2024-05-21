@@ -57,6 +57,7 @@ namespace Tennis.Services
         string getNoOfBookings = "SELECT COUNT(*) AS Bookings\n" +
                                  "FROM LaneBookings\n" +
                                  "WHERE LaneNumber = @LaneNumber AND DateStart >= @minTime AND DateStart <= @maxTime";
+        string LaneBookingStatus = "Select * FROM LaneBookings WHERE DateStart = @Date AND LaneNumber = @Lane AND Cancelled = 0";
         public List<T> GetAllLaneBookings<T>() where T : LaneBooking
         {
             string getAllUserLaneBookingSQL = GetAllLaneBookingSQL;
@@ -122,6 +123,73 @@ namespace Tennis.Services
             return LaneBookingList;
         }
 
+        public List<T> GetRelevantLaneBookings<T>() where T : LaneBooking
+        {
+            string getAllUserLaneBookingSQL = GetAllLaneBookingSQL;
+            getAllUserLaneBookingSQL += " WHERE DateStart >= @DATENOW AND DateStart < @DATEEND AND Cancelled = 0";
+            List<T> LaneBookingList = new List<T>();
+            if (typeof(UserLaneBooking) == typeof(T))
+                getAllUserLaneBookingSQL += " AND TrainingTeamID IS NULL";
+            else if (typeof(TrainingTeam) == typeof(T))
+                getAllUserLaneBookingSQL += " AND UserID IS  NULL AND MateID IS NULL";
+
+            using (SqlConnection connection = new SqlConnection(connectionString))
+                try
+                {
+                    SqlCommand command = new SqlCommand(getAllUserLaneBookingSQL, connection);
+                    command.Parameters.AddWithValue("@DATENOW", DateTime.Now);
+                    command.Parameters.AddWithValue("@DATEEND", DateTime.Now.AddDays(14));
+                    command.Connection.Open();
+                    SqlDataReader reader = command.ExecuteReader();
+                    while (reader.Read())
+                    {
+                        if (typeof(UserLaneBooking) == typeof(T))
+                        {
+                            object[] userLaneBooking = new object[] { reader.GetInt32("BookingID"), reader.GetInt32("LaneNumber"), reader.GetDateTime("DateStart"), reader.GetInt32("UserID"), reader.GetInt32("MateID"), reader.GetBoolean("Cancelled") };
+                            LaneBookingList.Add((T)Activator.CreateInstance(typeof(T), userLaneBooking));
+                        }
+                        else if (typeof(TrainingLaneBooking) == typeof(T))
+                        {
+                            object[] TrainingLaneBooking = new object[] { reader.GetInt32("LaneNumber"), reader.GetDateTime("DateStart"), reader.GetInt32("BookingID"), reader.GetBoolean("Cancelled"), trainingTeamService.GetTrainingTeamById(reader.GetInt32("TrainingTeamID")) };
+                            LaneBookingList.Add((T)Activator.CreateInstance(typeof(T), TrainingLaneBooking));
+
+                        }
+                        else if (typeof(LaneBooking) == typeof(T))
+                        {
+                            if (reader.GetIntOrNull("UserID") != null)
+                            {
+                                LaneBooking laneBooking = new UserLaneBooking(reader.GetInt32("BookingID"), reader.GetInt32("LaneNumber"), reader.GetDateTime("DateStart"), reader.GetInt32("UserID"), reader.GetInt32("MateID"), reader.GetBoolean("Cancelled"));
+                                LaneBookingList.Add((T)laneBooking);
+                            }
+                            else
+                            {
+                                LaneBooking laneBooking = new TrainingLaneBooking(reader.GetInt32("LaneNumber"), reader.GetDateTime("DateStart"), reader.GetInt32("BookingID"), reader.GetBoolean("Cancelled"), new TrainingTeam(reader.GetInt32("TrainingTeamID")), reader.GetBoolean("Automatic"));
+                                LaneBookingList.Add((T)laneBooking);
+
+                            }
+                        }
+                    }
+                    reader.Close();
+                    for (int i = 0; i < LaneBookingList.Count; i++)
+                    {
+                        if (LaneBookingList[i] is TrainingLaneBooking)
+                        {
+                            TrainingLaneBooking c = LaneBookingList[i] as TrainingLaneBooking;
+                            c.trainingTeam = trainingTeamService.GetTrainingTeamById(c.trainingTeam.TrainingTeamID);
+                        }
+                    }
+                }
+                catch (SqlException sqlExp)
+                {
+                    throw;
+                }
+                catch (Exception ex)
+                {
+                    throw;
+                }
+
+            return LaneBookingList;
+        }
 
         public UserLaneBooking GetUserLaneBookingById(int id)
         {
@@ -362,12 +430,45 @@ namespace Tennis.Services
         }
         public LaneBooking? IsLaneBooked(int laneID, DateTime time)
         {
-            LaneBooking? booking = GetAllLaneBookings<LaneBooking>().Find(b =>
+
+            //LaneBooking? booking = GetAllLaneBookings<LaneBooking>().Find(b =>
+            //{
+            //    return laneID == b.LaneNumber && time == b.DateStart && !b.Cancelled;
+            //});
+            LaneBooking? booking = null;
+            using (SqlConnection connection = new SqlConnection(connectionString))
             {
-                return laneID == b.LaneNumber && time == b.DateStart && !b.Cancelled;
-            });
-            
-            return booking;
+                try
+                {
+                    SqlCommand command = new SqlCommand(LaneBookingStatus, connection);
+                    command.Parameters.AddWithValue("@Date", time);
+                    command.Parameters.AddWithValue("@Lane", laneID);
+                    connection.Open();
+                    SqlDataReader reader = command.ExecuteReader();
+                    int result = 0;
+                    while (reader.Read())
+                    {
+                        int? UserId = reader.GetIntOrNull("UserID");
+                        if (UserId != null)
+                        {
+                            booking = new UserLaneBooking(reader.GetInt32("BookingID"), reader.GetInt32("LaneNumber"), reader.GetDateTime("DateStart"), (int)UserId, reader.GetInt32("MateID"), reader.GetBoolean("Cancelled"));
+                        } else
+                        {
+                            booking = new TrainingLaneBooking(reader.GetInt32("LaneNumber"), reader.GetDateTime("DateStart"), reader.GetInt32("BookingID"), reader.GetBoolean("Cancelled"), new TrainingTeam(reader.GetInt32("TrainingTeamID")), reader.GetBoolean("Automatic"));
+                        }
+                    }
+                    reader.Close();
+                    return booking;
+                }
+                catch (SqlException sqlExp)
+                {
+                    throw;
+                }
+                catch (Exception ex)
+                {
+                    throw;
+                }
+            }
         }
         public List<LaneBooking> IsLaneBooked(List<int> laneIDs, DateTime time)
         {

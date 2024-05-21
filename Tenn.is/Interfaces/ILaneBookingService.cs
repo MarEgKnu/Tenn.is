@@ -23,6 +23,8 @@ namespace Tennis.Interfaces
 
         List<T> GetAllLaneBookings<T>() where T : LaneBooking;
 
+        List<T> GetRelevantLaneBookings<T>() where T : LaneBooking;
+
         List<LaneBooking> IsLaneBooked(List<int> laneIDs, DateTime time);
 
         LaneBooking? IsLaneBooked(int laneID, DateTime time);

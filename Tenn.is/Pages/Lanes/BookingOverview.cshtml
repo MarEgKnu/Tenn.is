@@ -186,7 +186,8 @@
                                     DateOnly currentDay = DateOnly.FromDateTime(Model.SelectedDay.Value);
                                     TimeOnly currentTime = new TimeOnly(hour, 0);
                                     DateTime currentDayAndTime = new DateTime(currentDay, currentTime);
-                                    bool foundBooking = Model.UnfilteredBookings.Where(b => b.DateStart == currentDayAndTime && b.LaneNumber == item.Id).Count() > 0;
+                                    @* bool foundBooking = Model.UnfilteredBookings.Where(b => b.DateStart == currentDayAndTime && b.LaneNumber == item.Id).Count() > 0; *@
+                                    bool foundBooking = _laneBookingService.IsLaneBooked(item.Id, currentDayAndTime) != null;
                                     if(foundBooking)
                                     {
                                         <td>
