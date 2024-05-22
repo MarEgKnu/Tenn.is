@@ -280,7 +280,7 @@ namespace Tennis.Services
                     command.Parameters.AddWithValue("@BookingID", id);
                     command.Connection.Open();
                     int noOfRows = command.ExecuteNonQuery();
-                    return noOfRows == 1;
+                    return noOfRows > 0;
                 }
                 catch (SqlException sqlExp)
                 {
@@ -315,7 +315,7 @@ namespace Tennis.Services
                     command.Parameters.AddWithValue("@TrainingTeamID", DBNull.Value);
                     command.Connection.Open();
                     int noOfRows = command.ExecuteNonQuery();
-                    return noOfRows == 1;
+                    return noOfRows > 0;
                 }
                 catch (SqlException sqlExp)
                 {
@@ -350,7 +350,7 @@ namespace Tennis.Services
                     command.Parameters.AddWithValue("@Automatic", laneBooking.Automatic);
                     command.Connection.Open();
                     int noOfRows = command.ExecuteNonQuery();
-                    return noOfRows == 1;
+                    return noOfRows > 0;
                 }
                 catch (SqlException sqlExp)
                 {
@@ -533,7 +533,7 @@ namespace Tennis.Services
                     command.Parameters.AddWithValue("@BookingID", id);
                     command.Connection.Open();
                     int noOfRows = command.ExecuteNonQuery();
-                    return noOfRows == 1;
+                    return noOfRows > 0;
                 }
                 catch (SqlException sqlExp)
                 {
@@ -561,7 +561,7 @@ namespace Tennis.Services
                     command.Parameters.AddWithValue("@ID", laneBooking.Cancelled);
                     command.Connection.Open();
                     int noOfRows = command.ExecuteNonQuery();
-                    return noOfRows == 1;
+                    return noOfRows > 0;
                 }
                 catch (SqlException sqlExp)
                 {
