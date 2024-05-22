@@ -18,7 +18,7 @@ namespace Tennis.Services.Tests
         {
             //Arrange
             ArticleService testService = new ArticleService(true);
-            Article createTest = new Article("Test: CreateArticle", "Simpel artikel oprettet i unittest for CreateArticle.");
+            Article createTest = new Article("God påske", "Nu er der påskeferie, og jeg ønsker alle vores medlemmer en dejlig ferie.");
             int articleCount1 = testService.GetAllArticles().Count();
 
             //Act
