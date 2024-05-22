@@ -100,12 +100,12 @@ namespace Tennis.Pages.Lanes
                 ViewData["ErrorMessage"] = "Generel fejl: " + ex.Message;
                 return Page();
             }
-            return RedirectToPage(("BookingOverview", "Redirect", new { laneid = laneid, datetime = datetime, trainingTeamID = trainingTeamID}));
+            return RedirectToPage("BookingOverview", "FirstClick", new { trainingTeamID = trainingTeamID});
 
         }
         public IActionResult OnPostCancel(int laneid, string datetime, int trainingTeamID)
         {
-            return RedirectToPage(("BookingOverview", "Redirect", new { laneid = laneid, datetime = datetime, trainingTeamID = trainingTeamID }));
+            return RedirectToPage("BookingOverview", "FirstClick", new { trainingTeamID = trainingTeamID });
         }
     }
 }

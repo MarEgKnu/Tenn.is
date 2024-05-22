@@ -374,18 +374,21 @@ namespace Tennis.Services
                                     switch (overrideBookings)
                                     {
                                         case 0:
-                                            throw new DuplicateBookingException("Der eksisterer allerede en booking på det tidspunkt");
+                                            throw new DuplicateBookingException(
+                                                "Der eksisterer allerede en booking på det tidspunkt");
                                         case 1:
                                             continue;
                                         case 2:
-                                            LaneBooking? delBooking = _laneBookingService.GetAllLaneBookings<LaneBooking>().Find(b =>
+                                            LaneBooking? delBooking = _laneBookingService.GetAllLaneBookings<LaneBooking>()
+                                            .Find(b =>
                                             {
                                                 return b.DateStart == bookingTime && !b.Cancelled;
                                             });
                                             if (delBooking != null)
                                             {
                                                 _laneBookingService.CancelLaneBonking(delBooking.BookingID);
-                                                TrainingLaneBooking booking = new TrainingLaneBooking(delBooking.LaneNumber, bookingTime, 0, false, team, true);
+                                                TrainingLaneBooking booking = new TrainingLaneBooking(
+                                                    delBooking.LaneNumber, bookingTime, 0, false, team, true);
                                                 _laneBookingService.CreateLaneBooking(booking);
                                             }
                                             else
