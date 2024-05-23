@@ -96,13 +96,13 @@ else if (Model.CurrentUser.Administrator)
     <div style="display:flex;justify-content:space-between">
         <form method="get">
             <p>
-                kronologisk rejkeføjle: <input type="checkbox" asp-for="@Model.chronologik" onclick="this.form.submit()" />
+                kronologisk rejkeføjle: <input type="checkbox" asp-for="@Model.chronologic" onclick="this.form.submit()" />
                 søg efter maker: <input asp-for="@Model.mate" onchange="this.form.submit()" />
             </p>
 
             @foreach (var booking in Model.MyLaneBookings)
             {
-                if (booking.DateStart < DateTime.Now)
+                if (booking.DateStart > DateTime.Now.AddHours(-1))
                 {
                     <p class="align-items-md-center">
                         <div class="card" style="width: 45rem;">
@@ -117,13 +117,13 @@ else if (Model.CurrentUser.Administrator)
 
 
                                 <h6 class="card-subtitle mb-2 text-muted">
-                                    afslutter den @booking.DateStart.AddHours(1);
+                                    varer 1 time
                                 </h6>
                                 <h6 class="card-subtitle mb-2 text-muted">
                                     På bannen nr @booking.LaneNumber
                                 </h6>
 
-                                @if (booking.UserID != @Model.CurrentUser.UserId)
+                                @if (booking.UserID == @Model.CurrentUser.UserId)
                                 {
                                     <h6 class="card-subtitle mb-2 text-muted">
                                         Med @userService.GetUserById(booking.MateID).Username
@@ -145,7 +145,7 @@ else if (Model.CurrentUser.Administrator)
                             </div>
 
                             <p class="align-items-md-right">
-                                <a asp-page="/Lanes/LaneDelete" asp-route-BookingID="@booking.BookingID" class="btn btn-default pull-right">Fjern </a>
+                                <a asp-page="/lanes/b" asp-route-BookingID="@booking.BookingID" class="btn btn-default pull-right">Fjern </a>
                             </p>
 
                         </div>
