@@ -4,7 +4,101 @@
     ViewData["Title"] = "Home page";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>aflys bananer <a asp-area="" asp-page="/Lanes/BookingCancel" asp-route-bookingid="@Model.StuffToCancel.BookingID">her</a></p>
+<div class="card container-fluid cardgold">
+<div class="text-center row">
+    <h1 class="display-4 textdark">Gadevang Tennisklub</h1>
+    <p class="textaccent"><i>- Tennis langt ude i skoven</i></p>
+</div>
+<br />
+    <div class="row">
+        <div class="container col-md card cardouter">
+            <div align="center">
+                <h2 class="display-6 textmain">Seneste nyt:</h2>
+            </div>
+            <p class="align-items-md-center">
+                <div class="card cardfocus" style="width: 100%;">
+                    <div class="card-body cardfocus">
+                        <h4 class="card-title text-decoration-underline">
+                            <strong>
+                                @Model.NewestArticle.Title
+                            </strong>
+                        </h4>
+
+                        @if (Model.NewestArticle.AuthorID != null)
+                        {
+                            <h7 class="card-subtitle mb-2 text-muted">
+                                - @Model.NewestArticle.AuthorID,
+                            </h7>
+                        }
+                        else
+                        {
+                            <h7 class="card-subtitle mb-2 text-muted">
+                                - Deleted User,
+                            </h7>
+                        }
+
+                        <h7 class="card-subtitle mb-2 text-muted">
+                            @Model.NewestArticle.TimeStamp
+                        </h7>
+
+                        <h6 class="card-footer card mb-2 text-body">
+                            <p class="card-text">
+                                @Model.NewestArticle.Content
+                                <br />
+                                <br />
+                            </p>
+                        </h6>
+
+                        @if (Model.NewestArticle.ImgPath != null)
+                        {
+                            <img class="card-img" src="..." alt="@Model.NewestArticle.Title" />
+                        }
+
+                        @if (Model.NewestArticle.LastEdited != null && Model.NewestArticle.LastEdited != Model.NewestArticle.TimeStamp)
+                        {
+                            <h7 class="card-subtitle mb-2 text-muted">
+                                Edited at: @Model.NewestArticle.LastEdited
+                            </h7>
+                        }
+                    </div>
+                </div>
+            </p>
+        </div>
+        <div class="container col-md card cardouter">
+            <div align="center">
+                <h2 class="display-6 textmain">Kommende begivenheder:</h2>
+            </div>
+            <table class="table">
+                <thead class="lighttablehead">
+                    <tr>
+                        <th>
+                            Event
+                        </th>
+                        <th>
+                            Dato
+                        </th>
+                        <th>
+                            Tid til start
+                        </th>
+                    </tr>
+                </thead>
+                <tbody class="lighttable">
+                    @foreach(var e in Model.Events)
+                    {
+                        <tr>
+                            <td>
+                                    @e.Title
+                            </td>
+                            <td>
+                                @e.EventTime.StartTime.Value.ToString("dd/MM HH:mm") til @e.EventTime.EndTime.Value.ToString("HH:mm")
+                            </td>
+                            <td>
+                                @e.TimeTillStartDisplay
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
 </div>

@@ -7,8 +7,9 @@
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/Tenn.is.styles.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/TennisProjectStyling.css" asp-append-version="true" />
 </head>
-<body>
+<body class="sitebackground">
     @if (ViewData["ErrorMessage"] != null)
     {
         <script type="text/javascript">
@@ -20,7 +21,7 @@
     <header>
         <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
             <div class="container">
-                <a class="navbar-brand" asp-area="" asp-page="/Index">Tenn.is</a>
+                <a class="navbar-brand textaccent" asp-area="" asp-page="/Index">Logo</a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
                         aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
@@ -28,41 +29,42 @@
                 <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
                     <ul class="navbar-nav flex-grow-1">
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-page="/Index">Hjem</a>
+                            <a class="nav-link textdark" asp-area="" asp-page="/Index">Hjem</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-page="/Articles/Index">Nyheder</a>
+                            <a class="nav-link textdark" asp-area="" asp-page="/Articles/Index">Nyheder</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-page="/Lanes/BookingOverview" asp-page-handler="FirstClick">Baner</a>
+                            <a class="nav-link textdarl" asp-area="" asp-page="/Lanes/BookingOverview" asp-page-handler="FirstClick">Baner</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-page="/Events/IndexUser">Events</a>
+                            <a class="nav-link textdark" asp-area="" asp-page="/Events/IndexUser">Events</a>
                         </li>
                     </ul>
-                    @using Microsoft.AspNetCore.Http;
-                    @inject IHttpContextAccessor HttpContextAccessor
-                    @if (HttpContextAccessor.HttpContext.Session.GetString("Username") == null)
-                    {
-                        <a class="btn btn-success rounded-pill" asp-area="" asp-page="/Users/Login">
-                            <span class="text-light">Log ind</span>
-                        </a>
-                    }
-                    else
-                    {
-                        <div class="dropdown">
-                            <button type="button" class="btn btn-outline-success rounded-pill dropdown-toggle" data-bs-toggle="dropdown">
-                                @HttpContextAccessor.HttpContext.Session.GetString("Username")
-                                </button>
-                                <ul class="dropdown-menu">
-                                <li><a asp-area="" asp-page="/Users/Index" class="dropdown-item">Min info</a></li>
-                                <li><a asp-area="" asp-page="/Users/UpdateUser" class="dropdown-item">Opdater</a></li>
-                                <li><hr class="dropdown-divider"></hr></li>
-                                <li><a asp-area="" asp-page="/Users/Login" asp-page-handler="Logout" class="dropdown-item">Log ud</a></li>
-                            </ul>
-                        </div>
-                    }
+                    
                 </div>
+                @using Microsoft.AspNetCore.Http;
+                @inject IHttpContextAccessor HttpContextAccessor
+                @if (HttpContextAccessor.HttpContext.Session.GetString("Username") == null)
+                {
+                    <a class="btn btn-success rounded-pill" asp-area="" asp-page="/Users/Login">
+                        <span class="text-light">Log ind</span>
+                    </a>
+                }
+                else
+                {
+                    <div class="dropdown">
+                        <button type="button" class="btn btn-outline-success rounded-pill dropdown-toggle" data-bs-toggle="dropdown">
+                            @HttpContextAccessor.HttpContext.Session.GetString("Username")
+                        </button>
+                        <ul class="dropdown-menu">
+                            <li><a asp-area="" asp-page="/Users/Index" class="dropdown-item">Min info</a></li>
+                            <li><a asp-area="" asp-page="/Users/UpdateUser" class="dropdown-item">Opdater</a></li>
+                            <li><hr class="dropdown-divider"></hr></li>
+                            <li><a asp-area="" asp-page="/Users/Login" asp-page-handler="Logout" class="dropdown-item">Log ud</a></li>
+                        </ul>
+                    </div>
+                }
             </div>
         </nav>
     </header>
@@ -77,7 +79,6 @@
             &copy; 2024 - Tenn.is - <a asp-area="" asp-page="/Privacy">Privacy</a>
         </div>
     </footer>
-
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>

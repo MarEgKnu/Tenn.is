@@ -7,19 +7,21 @@ namespace Tennis.Pages;
 public class IndexModel : PageModel
 {
     private readonly ILogger<IndexModel> _logger;
-    private ILaneBookingService _laneBookingService;
-    public UserLaneBooking StuffToCancel {  get; set; }
-    public List<UserLaneBooking> LaneBooking { get; set; }
+    private IArticleService _articleService;
+    private IEventService _eventService;
+    public List<Event> Events { get; set; }
+    public Article NewestArticle { get; set; }
 
-    public IndexModel(ILogger<IndexModel> logger, ILaneBookingService laneBookingService)
+    public IndexModel(ILogger<IndexModel> logger, IEventService eventService, IArticleService articleService)
     {
         _logger = logger;
-        _laneBookingService = laneBookingService;
+        _articleService = articleService;
+        _eventService = eventService;
     }
 
     public void OnGet()
     {
-        LaneBooking = _laneBookingService.GetAllLaneBookings<UserLaneBooking>();
-        StuffToCancel = LaneBooking.Find(u => !u.Cancelled);
+        Events = _eventService.GetAllEvents().Where(x => x.EventState == Helpers.RelativeTime.Future).OrderBy(x => x.EventTime.StartTime).Take(5).ToList();
+        NewestArticle = _articleService.GetAllArticles().OrderBy(a => a.TimeStamp).FirstOrDefault();
     }
 }

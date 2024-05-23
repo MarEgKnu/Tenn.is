@@ -1,0 +1,46 @@
+﻿:root {
+    --tenniswhite: #F8EDD6;
+    --tennisgold: #EBD07E;
+    --tennisaccent: #388C53;
+    --tennismain: #694320;
+    --tennisdark: #2E1D13;
+    --tennisdanger: #C44949;
+}
+
+.cardfocus {
+    background-color: #FFFFFF;
+}
+.cardouter {
+    background-color: var(--tenniswhite);
+}
+
+.cardgold {
+    background-color: var(--tennisgold)
+}
+
+.textdark {
+    color: var(--tennisdark);
+}
+.textmain {
+    color: var(--tennismain);
+}
+
+.textaccent {
+    color: var(--tennisaccent) !important;
+}
+
+.sitebackground {
+    background-color: var(--tennisdark);
+}
+
+.lighttablehead {
+    background-color: var(--tennisaccent);
+    color: #fff
+}
+
+.lighttable {
+    background-color: #fff;
+    color: var(--tennismain);
+}
+body {
+}

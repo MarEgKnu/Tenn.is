@@ -4,10 +4,12 @@
     ViewData["Title"] = "Log ind";
 }
 
-<div align="center">
+<div align="center" >
+    <div class="container card cardouter" style="max-width: 500px">
 <h1>Log ind</h1>
 <span class="text-danger">@Model.Message</span>
-<form method="post">
+<form method="post" class="container card cardfocus p-2">
+    <br />
     <div class="form-group">
         <table>
             <tr>
@@ -28,6 +30,6 @@
         <Input type="submit" value="Log ind" class="btn btn-success" />
     </div>
 
-
 </form>
+</div>
 </div>

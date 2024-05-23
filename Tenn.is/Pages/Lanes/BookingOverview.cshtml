@@ -5,11 +5,12 @@
 @{
     ViewData["Title"] = "Baner";
 }
-<form method="get">
+<form method="get" class="card cardgold p-3">
+    <div class="row">
 @* <form method="get" class="container row justify-content-start"> *@
-<div class="container col-md-6 row">
-        <p>Vælg dine søgekriterier her:</p>
-        <br />
+<div class="container col-md-6 row card cardouter p-3 mx-0">
+        <p class="textdark">Søgekriterier:</p>
+        <div class="row">
     <div class="col">
 
     <span>Fra </span><select asp-for="@Model.StartFilter" asp-items="@Model.FromOptions" onchange="this.form.submit()"></select>
@@ -28,19 +29,23 @@
             <input asp-for="OutsideFilter" onclick="this.form.submit()" />
             <label for="OutsideFilter">Udendørs</label>
         </div>
+        </div>
         <span class="text-danger">@Model.BookingError</span>
+</div>
+@* <div class="container col-md-6 row card cardouter p-3 mx-0">
+</div> *@
 </div>
 @* </form> *@
 <div class="d-flex row justify-content-start" style="height: 500px">
 
-<div class="col-md-6">
+<div class="col-md-6 card cardfocus p-3">
         <form method="get" class="container">
         <div align="center">
         <select asp-for="@Model.SelectedMonth" asp-items="@Model.SelectOptions" onchange="this.form.submit()"></select>
     </div>
     <div class="container">
     <table class="table table-borderless m-auto">
-        <thead>
+        <thead class="lighttablehead">
             <tr>
                 <th class="text-center" style="width: 14%">
                     Søn
@@ -65,7 +70,7 @@
                 </th>
             </tr>
         </thead>
-        <tbody>
+        <tbody class="lighttable">
             @for(int week=0; week<6; week++)
             {
                 <tr>
@@ -139,16 +144,19 @@
             }
         </tbody>
     </table>
+    <span class="text-black-50 small">&#129001; = 2 eller flere tider tilbage</span>
+    <span class="text-black-50 small">&#129000; = 1 tid tilbage</span>
+    <span class="text-black-50 small">&#128997; = Ingen tider tilbage</span>
             </div>
             </form>
 </div>
 
     @if(Model.SelectedDay != null)
     {
-        <div class="container-fluid col-md-6 border" align="center" style="max-height: 500px; overflow-y: scroll">
+        <div class="container-fluid col-md-6 border cardfocus p-3" align="center" style="max-height: 500px; overflow-y: scroll">
             <h3 class="display-6">@Model.SelectedDay.Value.Date.ToShortDateString()</h3>
             <table class="table table-bordered table-hover">
-                <thead>
+                <thead class="lighttablehead">
                     <tr>
                         <th style="width:20%">
                             <p>Tider:</p>
@@ -178,7 +186,7 @@
                     @for(int hour=8; hour<=21; hour++)
                     {
                         <tr>
-                            <td>
+                            <td class="lighttable">
                                 <span>@hour</span> - <span>@(hour+1)</span>
                             </td>
                             @foreach(var item in Model.Lanes)
