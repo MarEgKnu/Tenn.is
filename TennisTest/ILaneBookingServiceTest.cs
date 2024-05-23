@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Tennis.Exceptions;
 using Tennis.Helpers;
 using Tennis.Models;
 using Tennis.Services;
@@ -63,7 +64,7 @@ namespace TennisTest
             Assert.IsFalse(Testresult);
         }
 
-
+        [ExpectedException(typeof(DuplicateBookingException))]
         [TestMethod]
         public void CreateLaneBookingUserTest2TimesTheSame()
         {
@@ -71,10 +72,11 @@ namespace TennisTest
             laneService.CreateLane(new Lane(1, true, false));
             userService.CreateUser(new User(201, "test2", "Test", "Testson", "test", "testestest", "1234", false, false));
             userService.CreateUser(new User(101, "test1", "Test", "Testson", "test", "testestest", "1234", false, false));
-            laneBookingService.CreateLaneBooking(new UserLaneBooking(1, 1, DateTime.Now.AddHours(2), 201, 101, false));
-            bool Testresult = laneBookingService.CreateLaneBooking(new UserLaneBooking(1, 1, DateTime.Now.AddHours(2), 201, 101, false));
+            DateTime dateTime = DateTime.Now;
+            laneBookingService.CreateLaneBooking(new UserLaneBooking(1, 1, dateTime, 201, 101, false));
+            bool Testresult = laneBookingService.CreateLaneBooking(new UserLaneBooking(1, 1, dateTime, 201, 101, false));
             CleanTest();
-            Assert.IsFalse(Testresult);
+            Assert.Fail();
         }
 
         [TestMethod]
@@ -128,10 +130,13 @@ namespace TennisTest
             laneService.CreateLane(new Lane(1, true, false));
             userService.CreateUser(new User(201, "test2", "Test", "Testson", "test", "testestest", "1234", false, false));
             userService.CreateUser(new User(101, "test1", "Test", "Testson", "test", "testestest", "1234", false, false));
-            laneBookingService.CreateLaneBooking(new UserLaneBooking(1, 1, DateTime.Now.AddHours(2), 201, 101,  false));
-            laneBookingService.CreateLaneBooking(new UserLaneBooking(1, 2, DateTime.Now.AddHours(2), 201, 101, false));
-            bool Testresult = laneBookingService.EditLaneBooking(new UserLaneBooking(1, 2, DateTime.Now.AddHours(2), 101, 101, false), 2);
+            DateTime dateTime = DateTime.Now.AddHours(2);
+            laneBookingService.CreateLaneBooking(new UserLaneBooking(1, 1, dateTime, 201, 101,  false));
+            laneBookingService.CreateLaneBooking(new UserLaneBooking(2, 1, dateTime.AddHours(1), 201, 101, false));
+            bool Testresult = laneBookingService.EditLaneBooking(new UserLaneBooking(1, 2, dateTime, 101, 101, false), 2);
             laneBookingService.DeleteLaneBooking(2);
+            laneBookingService.DeleteLaneBooking(1);
+
             CleanTest();
             Assert.IsFalse(Testresult);
         }
