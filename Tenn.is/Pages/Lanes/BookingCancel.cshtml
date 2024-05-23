@@ -1,23 +1,40 @@
-﻿@page
+﻿@page "{bookingid:int}"
 @model Tennis.Pages.Lanes.BookingCancelModel
 @{
     ViewData["Title"] = "Aflys banebooking";
 }
 
 <h1 class="display-4">Aflys booking</h1>
-
 <p class="text-danger">@Model.Message</p>
 
-<form method="post">
-    <div class="form-group">
-        <p>Du er ved at aflyse din booking mellem <b>@Model.Booker.FirstName @Model.Booker.LastName</b> og <b>@Model.Mate.FirstName @Model.Mate.LastName</b>,</p>
-        <p>Bane @Model.CurrentBooking.LaneNumber,  @Model.CurrentBooking.DateStart.ToShortDateString() kl. @Model.CurrentBooking.DateStart.ToShortTimeString()</p>
-        <br />
-        <p>Bare rolig, din tennismakker bliver informeret om aflysningen.</p>
-        <br />
+@if (Model.CurrentBooking != null)
+{
+    <form method="post">
+        <div class="form-group">
+            <p>Du er ved at aflyse din booking mellem <b>@Model.Booker.FirstName @Model.Booker.LastName</b> og <b>@Model.Mate.FirstName @Model.Mate.LastName</b>,</p>
+            <p>Bane @Model.CurrentBooking.LaneNumber,  @Model.CurrentBooking.DateStart.ToShortDateString() kl. @Model.CurrentBooking.DateStart.ToShortTimeString()</p>
+            <br />
+            <p>Bare rolig, din tennismakker bliver informeret om aflysningen.</p>
+            <br />
 
-        <input type="submit" asp-page-handler="Delete" asp-route-bookingid="@Model.CurrentBooking.BookingID" class="btn btn-danger" value="Aflys" />
+            <input type="submit" asp-page-handler="Delete" asp-route-bookingid="@Model.CurrentBooking.BookingID" class="btn btn-danger" value="Aflys" />
 
-        <input type="submit" asp-page-handler="Cancel" class="btn btn-outline-secondary" value="Fortryd" />
-    </div>
-</form>
+            <input type="submit" asp-page-handler="Cancel" class="btn btn-outline-secondary" value="Fortryd" />
+        </div>
+    </form>
+}
+else if (Model.CurrentBookingTraining != null)
+{
+    <form method="post">
+        <div class="form-group">
+            <p>Du er ved at aflyse din booking i træningsholdet <b>@Model.TrainingTeam.Title</b>,</p>
+            <p>Bane @Model.CurrentBookingTraining.LaneNumber,  @Model.CurrentBookingTraining.DateStart.ToShortDateString() kl. @Model.CurrentBookingTraining.DateStart.ToShortTimeString()</p>
+            <br />
+         
+            <input type="submit" asp-page-handler="Delete" asp-route-bookingid="@Model.CurrentBookingTraining.BookingID" class="btn btn-danger" value="Aflys" />
+
+            <input type="submit" asp-page-handler="Cancel" class="btn btn-outline-secondary" value="Fortryd" />
+        </div>
+    </form>
+}
+
