@@ -36,8 +36,9 @@ namespace Tennis.Pages.TrainingTeams
         public int OverrideBookings { get; set; }
         public List<SelectListItem> SelectUser { get; set; }
 
-
-
+        public string AvailabillityText { get; set; }
+        [BindProperty(SupportsGet = true)]
+        public int WeeksToBook { get; set; }
 
         private ITrainingTeamService _teamService;
         private IUserService _userService;
@@ -62,6 +63,36 @@ namespace Tennis.Pages.TrainingTeams
             if (!_userService.AdminVerify(HttpContext.Session.GetString("Username"), HttpContext.Session.GetString("Password")))
             {
                 return RedirectToPage("/Users/Login", "Redirect", new { message = "Du har ikke tilladelse til at se denne side. Log venligst ind som admin" });
+            }
+            try
+            {
+                if (Team.weeklyTimeBetween != null &&
+                Team.weeklyTimeBetween.EndTime != null &&
+                Team.weeklyTimeBetween.StartTime != null &&
+                Team.weeklyTimeBetween.StartDay != null)
+                {
+                    List<DateTime>? conflicts = _teamService.CheckAutomaticBookingAvailability(Team.weeklyTimeBetween, WeeksToBook);
+                    if (conflicts != null && conflicts.Count > 0)
+                    {
+                        AvailabillityText = "Der er disse potentielle bookingkonflikter:";
+                        foreach (var conflict in conflicts)
+                        {
+                            AvailabillityText += $"\n{conflict.ToString("dd/MM/yyyy HH:mm")}";
+                        }
+                    }
+                    else
+                    {
+                        AvailabillityText = "Der er ingen konflikter";
+                    }
+                }
+            }
+            catch (SqlException sqlEx)
+            {
+                ViewData["ErrorMessage"] = "Database fejl. Fejlbesked:\n " + sqlEx.Message;
+            }
+            catch (Exception ex)
+            {
+                ViewData["ErrorMessage"] = "Generel fejl. Fejlbesked:\n " + ex.Message;
             }
             FilterMembers();
             return Page();
@@ -121,7 +152,7 @@ namespace Tennis.Pages.TrainingTeams
                 {
                     Team.AddTrainer(ValidUsers[item]);
                 }
-                _teamService.CreateTrainingTeam(Team, OverrideBookings);
+                _teamService.CreateTrainingTeam(Team, OverrideBookings, WeeksToBook);
             }
             catch (SqlException sqlEx)
             {

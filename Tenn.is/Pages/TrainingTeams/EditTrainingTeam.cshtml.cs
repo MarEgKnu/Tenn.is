@@ -35,6 +35,10 @@ namespace Tennis.Pages.TrainingTeams
 
         public List<SelectListItem> SelectUser { get; set; }
 
+        public string AvailabillityText { get; set; }
+        [BindProperty(SupportsGet = true)]
+        public int WeeksToBook { get; set; }
+
         private IUserService _userService;
         private ITrainingTeamService _teamService;
         private ILaneBookingService _laneBookingService;
@@ -62,11 +66,31 @@ namespace Tennis.Pages.TrainingTeams
             }
             try
             {
+                if (Team.weeklyTimeBetween != null &&
+                Team.weeklyTimeBetween.EndTime != null &&
+                Team.weeklyTimeBetween.StartTime != null &&
+                Team.weeklyTimeBetween.StartDay != null)
+                {
+                    List<DateTime>? conflicts = _teamService.CheckAutomaticBookingAvailability(Team.weeklyTimeBetween, WeeksToBook);
+                    if (conflicts != null && conflicts.Count > 0)
+                    {
+                        AvailabillityText = "Der er disse potentielle bookingkonflikter:";
+                        foreach (var conflict in conflicts)
+                        {
+                            AvailabillityText += $"\n{conflict.ToString("dd/MM/yyyy HH:mm")}";
+                        }
+                    }
+                    else
+                    {
+                        AvailabillityText = "Der er ingen konflikter";
+                    }
+                }
 
                 if (!ProcessTeamInputData(trainingTeamID))
                 {
                     ViewData["ErrorMessage"] = "Fejl, kunne ikke finde træningshold i database";
                 }
+             
             }
             catch (SqlException sqlEx)
             {
@@ -134,7 +158,7 @@ namespace Tennis.Pages.TrainingTeams
                 {
                     Team.AddTrainer(ValidUsers[item]);
                 }
-                _teamService.EditTrainingTeam(Team, trainingTeamID, OverrideBookings);
+                _teamService.EditTrainingTeam(Team, trainingTeamID, OverrideBookings, WeeksToBook);
             }
             catch (SqlException sqlEx)
             {

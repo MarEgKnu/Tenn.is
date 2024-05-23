@@ -51,7 +51,10 @@ namespace Tennis.Models
         }
 
 
-
+        public bool AtCapacity { get
+            {
+                return Trainees.Count >= MaxTrainees;
+            } }
         public TrainingTeam(int traningTeamID, string title, string description, List<User> trainers, List<User> trainees, WeeklyTimeBetween _weeklyTimeBetween, int maxTrainees)
         {
             _members = new Dictionary<int, Tuple<User, bool>>();

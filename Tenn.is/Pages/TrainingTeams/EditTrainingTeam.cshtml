@@ -45,6 +45,15 @@
             <input type="time" step="3600" min="@LaneBookingHelpers.HourOptions.First().Value" max="@LaneBookingHelpers.HourOptions.Last().Value" asp-for="Team.weeklyTimeBetween.EndTime" class="form-control" />
             <span asp-validation-for="Team.weeklyTimeBetween.EndTime" class=" text-danger"></span>
         </div>
+        <div class="form-group">
+            <label asp-for="WeeksToBook" class="control-label">Antal uger der skal bookes</label>
+            <input asp-for="WeeksToBook" class="form-control" />
+            <span asp-validation-for="WeeksToBook" class=" text-danger"></span>
+        </div>
+        <div>
+            <input type="submit" value="Tjek ledighed" formmethod="get" asp-page-handler="" />
+            <p style="max-width:fit-content; white-space:pre-wrap">@Model.AvailabillityText</p>
+        </div>
 
         <h3>Træningshold medlemmer</h3>
         <input type="search" asp-for="MemberFilter" />

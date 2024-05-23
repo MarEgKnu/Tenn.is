@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Data.SqlClient;
 using System;
+using Tennis.Helpers;
 using Tennis.Interfaces;
 using Tennis.Models;
 
@@ -31,7 +32,7 @@ namespace Tennis.Pages.Lanes
                 bool succeeded = DateTime.TryParse(DateString, out DateTime result);
                 if (succeeded)
                 {
-                    return result;
+                    return result.RoundDownToHour();
                 }
                 else
                 {
