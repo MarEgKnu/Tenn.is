@@ -4,11 +4,6 @@ namespace Tennis.Interfaces
 {
     public interface IEventService
     {
-        // should prehaps be changed to static?
-        public event Action<Event> OnCancelling;
-        public event Action<Event> OnCreate;
-        public event Action<Event> OnDelete;
-        public event Action<Event> OnEdit;
 
         bool CreateEvent(Event evt);
 

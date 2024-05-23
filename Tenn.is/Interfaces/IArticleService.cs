@@ -13,5 +13,7 @@ namespace Tennis.Interfaces
         List<Article> GetAllArticles();
 
         Article? GetArticleById(int id);
+
+        List<Article> SearchArticlesDefault(string searchFilter);
     }
 }

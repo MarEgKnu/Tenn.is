@@ -17,11 +17,13 @@ namespace TennisTest
     {
         private ITrainingTeamService trainingTeamService;
         private IUserService userService;
+        private ILaneBookingService laneBookingService;
 
         void TestSetUp()
         {
             userService = new UserService(true);
             trainingTeamService = new TrainingTeamService(true, userService);
+            laneBookingService = new LaneBookingService(true, trainingTeamService);
           
 
             using (SqlConnection conn = new SqlConnection(Secret.ConnectionStringTest))
@@ -29,10 +31,14 @@ namespace TennisTest
                 conn.Open();
                 SqlCommand cmd = new SqlCommand("DELETE FROM TrainingTeams", conn);
                 SqlCommand cmd2 = new SqlCommand("DELETE FROM Users", conn);
+                SqlCommand cmd3 = new SqlCommand("DELETE FROM LaneBookings", conn);
+                SqlCommand cmd4 = new SqlCommand("DELETE FROM UsersAndTeams", conn);
 
 
                 cmd.ExecuteNonQuery();
                 cmd2.ExecuteNonQuery();
+                cmd3.ExecuteNonQuery();
+                cmd4.ExecuteNonQuery();
             }
         }
         [TestMethod]
@@ -242,6 +248,83 @@ namespace TennisTest
             trainingTeamService.EditTrainingTeam(trainingTeam, trainingTeam.TrainingTeamID);
             trainingTeamService.OnWeeklySessionEdit -= function;
             Assert.IsFalse(ranEvent);
+        }
+        [TestMethod]
+        public void DeleteTrainingTeam_Sucess()
+        {
+            TestSetUp();
+            userService.CreateUser(new User(1, "john1", "John", "Jensen", "jensen@gmail.com", "xxxjensenxxx", "41414141", false, false));
+            userService.CreateUser(new User(2, "john2", "John", "Jensen", "jensen@gmail.com", "xxxjensenxxx", "41414141", false, false));
+            List<User> users = userService.GetAllUsers();
+            TrainingTeam trainingTeam = new TrainingTeam(1, "Jeff's træningshold", "stort træningshold", new List<User>(), new List<User>() { users[0] }, new WeeklyTimeBetween(new TimeOnly(5, 0), new TimeOnly(6, 0), DayOfWeek.Thursday), 5);
+            trainingTeamService.CreateTrainingTeam(trainingTeam);
+            trainingTeam = trainingTeamService.GetAllTrainingTeams().First();
+            int beforeDelete = trainingTeamService.GetAllTrainingTeams().Count;
+            trainingTeamService.DeleteTrainingTeam(trainingTeam.TrainingTeamID);
+            int afterDelete = trainingTeamService.GetAllTrainingTeams().Count;
+
+            Assert.AreEqual(beforeDelete-1, afterDelete);
+        }
+        [TestMethod]
+        public void DeleteTrainingTeam_Failure_CantFindID()
+        {
+            TestSetUp();
+            userService.CreateUser(new User(1, "john1", "John", "Jensen", "jensen@gmail.com", "xxxjensenxxx", "41414141", false, false));
+            userService.CreateUser(new User(2, "john2", "John", "Jensen", "jensen@gmail.com", "xxxjensenxxx", "41414141", false, false));
+            List<User> users = userService.GetAllUsers();
+            TrainingTeam trainingTeam = new TrainingTeam(1, "Jeff's træningshold", "stort træningshold", new List<User>(), new List<User>() { users[0] }, new WeeklyTimeBetween(new TimeOnly(5, 0), new TimeOnly(6, 0), DayOfWeek.Thursday), 5);
+            trainingTeamService.CreateTrainingTeam(trainingTeam);
+            trainingTeam = trainingTeamService.GetAllTrainingTeams().First();
+            int beforeDelete = trainingTeamService.GetAllTrainingTeams().Count;
+            trainingTeamService.DeleteTrainingTeam(trainingTeam.TrainingTeamID+1);
+            int afterDelete = trainingTeamService.GetAllTrainingTeams().Count;
+            
+            Assert.AreEqual(beforeDelete, afterDelete);
+        }
+        [TestMethod]
+        public void UpdateAutomaticBookingsInTeam_3weeks_13To14Sunday()
+        {
+            TestSetUp();
+            userService.CreateUser(new User(1, "john1", "John", "Jensen", "jensen@gmail.com", "xxxjensenxxx", "41414141", false, false));
+            userService.CreateUser(new User(2, "john2", "John", "Jensen", "jensen@gmail.com", "xxxjensenxxx", "41414141", false, false));
+            List<User> users = userService.GetAllUsers();
+            TrainingTeam trainingTeam = new TrainingTeam(1, "Jeff's træningshold", "stort træningshold", new List<User>(), new List<User>() { users[0] }, new WeeklyTimeBetween(new TimeOnly(14, 0), new TimeOnly(15, 0), DayOfWeek.Sunday), 5);
+            trainingTeamService.CreateTrainingTeam(trainingTeam);
+            trainingTeam = trainingTeamService.GetAllTrainingTeams().First();
+            List<LaneBooking> bookings = laneBookingService.GetAllLaneBookings<LaneBooking>().OrderBy(b => b.DateStart).ToList();
+
+            Assert.AreEqual(bookings[0].DateStart, trainingTeam.weeklyTimeBetween.NextStart );
+            Assert.AreEqual(bookings[1].DateStart, trainingTeam.weeklyTimeBetween.NextStart.AddDays(7));
+            Assert.AreEqual(bookings[2].DateStart, trainingTeam.weeklyTimeBetween.NextStart.AddDays(14));
+        }
+        [TestMethod]
+        public void UpdateAutomaticBookingsInTeam_Fail_TeamNotFound()
+        {
+            TestSetUp();
+            bool sucess = trainingTeamService.UpdateAutomaticBookingsInTeam(int.MaxValue, 0, 3);
+            List<LaneBooking> bookings = laneBookingService.GetAllLaneBookings<LaneBooking>();
+
+            Assert.IsFalse(sucess);
+            Assert.AreEqual(0, bookings.Count);          
+        }
+        [TestMethod]
+        public void UpdateAutomaticBookingsInTeam33weeks_13To14Sunday_AutoDeleteOldOnes()
+        {
+            TestSetUp();
+            userService.CreateUser(new User(1, "john1", "John", "Jensen", "jensen@gmail.com", "xxxjensenxxx", "41414141", false, false));
+            userService.CreateUser(new User(2, "john2", "John", "Jensen", "jensen@gmail.com", "xxxjensenxxx", "41414141", false, false));
+            List<User> users = userService.GetAllUsers();
+            TrainingTeam trainingTeam = new TrainingTeam(1, "Jeff's træningshold", "stort træningshold", new List<User>(), new List<User>() { users[0] }, new WeeklyTimeBetween(new TimeOnly(14, 0), new TimeOnly(15, 0), DayOfWeek.Sunday), 5);
+            trainingTeamService.CreateTrainingTeam(trainingTeam);
+            trainingTeam = trainingTeamService.GetAllTrainingTeams().First();
+            bool sucess = trainingTeamService.UpdateAutomaticBookingsInTeam(trainingTeam.TrainingTeamID, 0, 3);
+            List<LaneBooking> bookings = laneBookingService.GetAllLaneBookings<LaneBooking>().OrderBy(b => b.DateStart).ToList();
+
+            Assert.AreEqual(3, bookings.Count);
+            Assert.AreEqual(bookings[0].DateStart, trainingTeam.weeklyTimeBetween.NextStart);
+            Assert.AreEqual(bookings[1].DateStart, trainingTeam.weeklyTimeBetween.NextStart.AddDays(7));
+            Assert.AreEqual(bookings[2].DateStart, trainingTeam.weeklyTimeBetween.NextStart.AddDays(14));
+
         }
     }
 }

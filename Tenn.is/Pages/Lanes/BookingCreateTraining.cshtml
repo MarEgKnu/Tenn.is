@@ -1,0 +1,32 @@
+﻿@page "{laneid}/{trainingTeamID}/{datetime}"
+@model Tennis.Pages.Lanes.BookingCreateTrainingModel
+@{
+    ViewData["Title"] = "Book en bane til træningshold";
+}
+<h3>Din booking:</h3>
+<form method="post" class="container row">
+    <div class="col-md-6 card">
+    
+    <p>Bane @Model.Lane.Id :
+        @if(Model.Lane.OutDoor)
+        {
+            <span>Udendørs </span>
+        } else
+        {
+            <span>Indendørs </span>
+        }
+        @if(Model.Lane.PadelTennis)
+        {
+            <span>padeltennis</span>
+        } else
+        {
+            <span>tennis</span>
+        }
+    </p>
+    <p>
+        Tidspunkt: @Model.SelectedDay
+    </p>
+        <input type="submit" value="Book" class="btn btn-outline-success w-100 border-0" />
+        <input type="submit" asp-page-handler="Cancel" value="Fortryd" class="btn btn-outline-danger w-100 border-0" />
+    </div>
+</form>

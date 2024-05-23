@@ -58,15 +58,18 @@ namespace Tennis.Pages.Lanes
                 {
                     return RedirectToPage("/Users/Login", "Redirect", new { message = "Du kan ikke booke en bane som denne bruger. Log ind på din egen bruger" });
                 }
-                AvailableUsers = _userService.GetAllUsers();
-                AvailableUsers.Remove(AvailableUsers.Find(u => u.UserId == CurrentUser.UserId));
+                AvailableUsers = _userService.GetAllUsers(true);
                 AvailableUsers.Remove(AvailableUsers.Find(u => u.UserId == 0));
+                List<User> PersonalUsers = _userService.GetAllUsers(false).OrderBy(u => u.FirstName).ToList();
+                PersonalUsers.Remove(PersonalUsers.Find(u => u.UserId == CurrentUser.UserId));
+                AvailableUsers.AddRange(PersonalUsers);
+
                 if (datetime != null)
                 {
                     DateString = datetime;
                 }
                 LaneInfo = _laneService.GetLaneByNumber(laneid);
-                ExistingBookings = _bookingService.GetAllLaneBookings<UserLaneBooking>();
+                ExistingBookings = _bookingService.GetAllLaneBookings<UserLaneBooking>().Where(b => !b.Cancelled).ToList();
 
                 if (SelectedDay != null)
                 {
@@ -92,13 +95,24 @@ namespace Tennis.Pages.Lanes
         public IActionResult OnPostBook(int partnerid)
         {
             CurrentBooking.MateID = partnerid;
-            try { 
+            try {
                 if (_bookingService.CreateLaneBooking(CurrentBooking))
                 {
-                    return RedirectToPage("Login");
+                    //Alt info hentes og formateres her. Der er allerede forbindelse til de nødvendige services i denne side, så det kan lige så godt genbruges her.
+                    LaneInfo = _laneService.GetLaneByNumber(CurrentBooking.LaneNumber);
+                    User partner = _userService.GetUserById(partnerid);
+                    string date = $"den {CurrentBooking.DateStart.Day}/{CurrentBooking.DateStart.Month}, kl. {CurrentBooking.DateStart.Hour}:00 til {CurrentBooking.DateStart.Hour+1}:00";
+                    string lane = LaneInfo.OutDoor ? "udendørs " : "indendørs ";
+                    lane += LaneInfo.PadelTennis ? "padeltennis " : "tennis ";
+                    lane += $"på bane {CurrentBooking.LaneNumber}";
+                    return RedirectToPage("BookingSuccess", new { lane = lane, mate = $"{partner.FirstName} {partner.LastName}", date = date});
                 }
+                else
+                {
 
-        }
+                    return RedirectToPage("BookingOverview", "BookingFailed");
+            }
+            }
             catch (SqlException sqlExp)
             {
                 ViewData["ErrorMessage"] = "Databasefejl: " + sqlExp.Message;
@@ -109,13 +123,20 @@ namespace Tennis.Pages.Lanes
                 ViewData["ErrorMessage"] = "Generel fejl: " + ex.Message;
                 return Page();
             }
-            return RedirectToPage("BookingOverview");
+
         }
         public bool CheckMaximum(User user)
         {
             List<UserLaneBooking> bookingsWithin14Days = ExistingBookings.Where(b => b.DateStart >= DateTime.Now && b.DateStart <= DateTime.Now.AddDays(14)).ToList();
-            List<UserLaneBooking> bookingsWithThisUser = bookingsWithin14Days.Where(b => (b.UserID == user.UserId && b.MateID > 0) || b.MateID == user.UserId).ToList();
+            List<UserLaneBooking> bookingsWithThisUser = bookingsWithin14Days.Where(b => (b.UserID == user.UserId && user.UserId > 0) || (b.MateID == user.UserId && b.MateID != -2)).ToList();
             return bookingsWithThisUser.Count >= 4;
+        }
+
+        public bool AlreadyBooked(User user)
+        {
+            List<UserLaneBooking> atThatTime = ExistingBookings.Where(b => b.DateStart == SelectedDay).ToList();
+            List<UserLaneBooking> bookingsWithThisUser = atThatTime.Where(b => (b.UserID == user.UserId && user.UserId != -2) || (b.MateID == user.UserId && b.MateID != -2)).ToList();
+            return bookingsWithThisUser.Count > 0;
         }
     }
 }

@@ -34,17 +34,12 @@ namespace Tennis.Services
         private string getFromIdString = "SELECT * FROM Events\n" +
                                          "WHERE EventID = @EventID";
         private string insertString = "INSERT INTO Events (Title, Description, Cancelled, DateStart, DateEnd, CancellationThreshold )\n" +
-                                      "OUTPUT INSERTED.EventID\n" +
                                       "VALUES (@Title, @Description, @Cancelled, @DateStart, @DateEnd, @CancellationThreshold)";
 
         private string deleteString = "DELETE FROM Events WHERE EventID = @EventID";
 
         private string updateById = "UPDATE Events SET Title = @Title, Description = @Description, Cancelled = @Cancelled, DateStart = @DateStart, DateEnd = @DateEnd, CancellationThreshold = @CancellationThreshold WHERE EventID = @EventID";
 
-        public event Action<Event> OnCancelling;
-        public event Action<Event> OnCreate;
-        public event Action<Event> OnDelete;
-        public event Action<Event> OnEdit;
         public bool CreateEvent(Event evt)
         {
             if (evt == null)
@@ -68,9 +63,7 @@ namespace Tennis.Services
                     command.Parameters.AddWithValue("@DateStart", evt.EventTime.StartTime);
                     command.Parameters.AddWithValue("@DateEnd", evt.EventTime.EndTime);
                     command.Parameters.AddWithValue("@CancellationThreshold", evt.CancellationThresholdMinutes);
-                    int primaryKey = (int)command.ExecuteScalar();
-                    OnCreate?.Invoke(GetEventByNumber(primaryKey));
-                    return true;
+                    return command.ExecuteNonQuery() != 0;
                     
                 }
                 catch (SqlException ex)
@@ -104,9 +97,7 @@ namespace Tennis.Services
                     command.Parameters.AddWithValue("@DateStart", evt.EventTime.StartTime);
                     command.Parameters.AddWithValue("@DateEnd", evt.EventTime.EndTime);
                     command.Parameters.AddWithValue("@CancellationThreshold", evt.CancellationThresholdMinutes);
-                    int primaryKey = (int)command.ExecuteScalar();
-                    OnCreate?.Invoke(GetEventByNumber(primaryKey));
-                    return true;
+                    return command.ExecuteNonQuery() != 0;
 
                 }
                 catch (SqlException ex)
@@ -128,16 +119,14 @@ namespace Tennis.Services
                 try
                 {
                     connection.Open();
-                    Event deletedEvent = GetEventByNumber(id);
                     SqlCommand command = new SqlCommand(deleteString, connection);
                     command.Parameters.AddWithValue("@EventId", id);
-                    if (command.ExecuteNonQuery() != 1)
+                    if (command.ExecuteNonQuery() == 0)
                     {
                         return false;
                     }
                     else
                     {
-                        OnDelete?.Invoke(deletedEvent);
                         return true;
                     }
                     
@@ -168,7 +157,6 @@ namespace Tennis.Services
             {
                 try
                 {
-                    Event BeforeEdit = GetEventByNumber(id);
                     connection.Open();
                     SqlCommand command = new SqlCommand(updateById, connection);
                     command.Parameters.AddWithValue("@EventID", id);
@@ -178,17 +166,12 @@ namespace Tennis.Services
                     command.Parameters.AddWithValue("@DateStart", evt.EventTime.StartTime);
                     command.Parameters.AddWithValue("@DateEnd", evt.EventTime.EndTime);
                     command.Parameters.AddWithValue("@CancellationThreshold", evt.CancellationThresholdMinutes);
-                    if (command.ExecuteNonQuery() != 1)
+                    if (command.ExecuteNonQuery() == 0)
                     {
                         return false;
                     }
                     else
                     {
-                        if (!BeforeEdit.Cancelled && evt.Cancelled)
-                        {
-                            OnCancelling?.Invoke(GetEventByNumber(id));
-                        }
-                        OnEdit?.Invoke(GetEventByNumber(id));
                         return true;
                     }
                     

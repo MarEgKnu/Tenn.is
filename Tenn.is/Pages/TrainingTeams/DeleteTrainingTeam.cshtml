@@ -1,0 +1,47 @@
+﻿@page "{trainingTeamID}"
+@using Tennis.Models
+@model Tennis.Pages.TrainingTeams.DeleteTrainingTeamModel
+@{
+    ViewData["Title"] = "Slet træningshold";
+}
+<p style="color:red">@ViewData["ErrorMessage"]</p>
+<h1 class="display-4">Fjern træningshold</h1>
+@if (Model.Team != null)
+{
+    <p><b>Du er ved at slette det følgende træningshold:</b></p>
+    <form method="post">
+        <div class="form-group">
+            <label>ID:</label> @Model.Team.TrainingTeamID <br />
+            <label>Navn:</label> @Model.Team.Title <br />
+            <label>Beskrivelse:</label> <p style="max-width:fit-content; white-space:pre-wrap"></p> <br />
+            <label>Træningstid:</label> @if (Model.Team.weeklyTimeBetween == null)
+            {
+                <p>Ingen træningstid</p>
+            }
+            else
+            {
+                @Model.Team.weeklyTimeBetween.ToString()
+            }    
+            <br />
+            <label>Trænere:</label> <details>
+                <summary>@Model.Team.Trainers.Count Trænere</summary>
+                @foreach (User trainer in Model.Team.Trainers)
+                {
+                    <p>@trainer.NameDispayForAdmin</p>
+                }
+            </details> <br />
+            <label>Deltagere:</label> <details>
+                <summary>@Model.Team.Trainees.Count Deltagere</summary>
+                @foreach (User trainee in Model.Team.Trainees)
+                {
+                    <p>@trainee.NameDispayForAdmin</p>
+                }
+            </details> <br />
+            
+
+            <input type="submit" asp-page-handler="" class="btn btn-danger" value="Fjern bruger" />
+
+            <input type="submit" asp-page-handler="Cancel" class="btn btn-outline-secondary" value="Fortryd" />
+        </div>
+    </form>
+}

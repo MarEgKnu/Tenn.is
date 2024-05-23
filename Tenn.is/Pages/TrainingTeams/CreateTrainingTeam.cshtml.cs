@@ -32,6 +32,8 @@ namespace Tennis.Pages.TrainingTeams
         [BindProperty(SupportsGet = true)]
         public string? MemberFilter { get; set; }
 
+        [BindProperty(SupportsGet = true)]
+        public int OverrideBookings { get; set; }
         public List<SelectListItem> SelectUser { get; set; }
 
 
@@ -119,7 +121,7 @@ namespace Tennis.Pages.TrainingTeams
                 {
                     Team.AddTrainer(ValidUsers[item]);
                 }
-                _teamService.CreateTrainingTeam(Team);
+                _teamService.CreateTrainingTeam(Team, OverrideBookings);
             }
             catch (SqlException sqlEx)
             {

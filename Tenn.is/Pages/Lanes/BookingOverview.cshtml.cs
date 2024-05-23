@@ -13,13 +13,14 @@ namespace Tennis.Pages.Lanes
     {
         private ILaneService _laneService;
         private ILaneBookingService _laneBookingService;
+        private ITrainingTeamService _trainingTeamService;
         private DateTime _displayedMonth;
 
 
         public List<DateTime> DatesOfTheMonth { get; set; }
         public int FirstOfTheWeek { get; set; }
-        public List<UserLaneBooking> Bookings { get; set; }
-        public List<UserLaneBooking> UnfilteredBookings { get; set; }
+        public List<LaneBooking> Bookings { get; set; }
+        public List<LaneBooking> UnfilteredBookings { get; set; }
         public List<Lane> Lanes { get; set; }
         public Calendar Calendar { get; set; }
 
@@ -47,6 +48,7 @@ namespace Tennis.Pages.Lanes
 
         [BindProperty(SupportsGet = true)]
         public int SelectedMonth { get; set; }
+        public int? TrainingTeamID { get;  set; }
 
         [BindProperty(SupportsGet = true)]
         public string DateString { get; set; }
@@ -63,9 +65,14 @@ namespace Tennis.Pages.Lanes
                     return null;
                 }
             } }
-        public BookingOverviewModel(ILaneService laneService, ILaneBookingService laneBookingService)
+
+        public DateTime CurrentTime { get; set; }
+
+        public string BookingError { get; set; }
+        public BookingOverviewModel(ILaneService laneService, ILaneBookingService laneBookingService, ITrainingTeamService trainingTeamService)
         {
             _laneService = laneService;
+            _trainingTeamService = trainingTeamService;
             Calendar = new GregorianCalendar();
             Dictionary<string, int> options = new Dictionary<string, int>()
             {
@@ -122,7 +129,7 @@ namespace Tennis.Pages.Lanes
             //OutsideFilter = true;
             _laneBookingService = laneBookingService;
         }
-        public void OnGet()
+        public void OnGet(int? trainingTeamID)
         {
             Lanes = _laneService.GetAllLanes();
             if (SelectedMonth == 0)
@@ -134,8 +141,9 @@ namespace Tennis.Pages.Lanes
             {
                 _displayedMonth = new DateTime(DateTime.Now.Year, SelectedMonth, 1);
             }
-            Bookings = _laneBookingService.GetAllLaneBookings<UserLaneBooking>();
-            UnfilteredBookings = _laneBookingService.GetAllLaneBookings<UserLaneBooking>();
+            List<LaneBooking>InitialBookings = new List<LaneBooking>();
+            Bookings = new List<LaneBooking>(InitialBookings);
+            UnfilteredBookings = new List<LaneBooking>(InitialBookings);
             FilterBookings();
             DatesOfTheMonth = new List<DateTime>();
             for(int i = 1; i <= Calendar.GetDaysInMonth(_displayedMonth.Year, _displayedMonth.Month); i++)
@@ -143,15 +151,32 @@ namespace Tennis.Pages.Lanes
                 DatesOfTheMonth.Add(new DateTime(_displayedMonth.Year, _displayedMonth.Month, i));
             }
             FirstOfTheWeek = (int)Calendar.GetDayOfWeek(new DateTime(_displayedMonth.Year, _displayedMonth.Month, 1));
+            if (trainingTeamID != null)
+            {
+                TrainingTeamID = trainingTeamID;
+                if (_trainingTeamService.GetTrainingTeamById((int)trainingTeamID) == null)
+                {
+                    ViewData["ErrorMessage"] = "Træningshold eksister ikke";
+                }
+            }
+            
+
+            CurrentTime = DateTime.Now;
         }
 
-        public void OnGetFirstClick()
+        public void OnGetFirstClick(int? trainingTeamID)
         {
             TennisFilter = true;
             PadelFilter = true;
             InsideFilter = true;
             OutsideFilter = true;
-            OnGet();
+            OnGet(trainingTeamID);
+        }
+
+        public void OnGetBookingFailed(int? trainingTeamID)
+        {
+            BookingError = "Noget gik galt ved booking. Kontakt venligst support hvis dette problem opstår igen.";
+            OnGetFirstClick(trainingTeamID);
         }
 
         public void FilterBookings()

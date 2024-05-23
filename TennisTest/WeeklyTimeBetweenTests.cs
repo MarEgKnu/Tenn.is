@@ -50,5 +50,36 @@ namespace TennisTest
             Assert.AreEqual(24, time.TimeSpan.Value.TotalHours);
             Assert.AreEqual(0, time.TimeSpan.Value.Minutes);
         }
+        [TestMethod]
+        public void NextStartTest_Sucess_2days()
+        {
+            DateTime now = DateTime.Now;
+            WeeklyTimeBetween time = new WeeklyTimeBetween(new TimeOnly(now.Hour,  0, 0), new TimeOnly(now.AddHours(1).Hour, 0, 0), DayOfWeekHelpers.IntToDayOfWeek( (int)now.DayOfWeek + 2));
+            if (now.Hour >= 22)
+            {
+
+            }
+            Assert.AreEqual(now.AddDays(2).Day, time.NextStart.Day);
+            Assert.AreEqual(now.AddDays(2).Hour, time.NextStart.Hour);
+            Assert.AreEqual(now.AddDays(2).DayOfWeek, time.NextStart.DayOfWeek);
+        }
+        [TestMethod]
+        public void NextStartTest_Sucess_1day()
+        {
+            DateTime now = DateTime.Now;
+            WeeklyTimeBetween time = new WeeklyTimeBetween(new TimeOnly(now.Hour, 0, 0), new TimeOnly(now.AddHours(2).Hour, 0, 0), DayOfWeekHelpers.IntToDayOfWeek((int)now.DayOfWeek + 1));
+            Assert.AreEqual(now.AddDays(1).Day, time.NextStart.Day);
+            Assert.AreEqual(now.AddDays(1).Hour, time.NextStart.Hour);
+            Assert.AreEqual(now.AddDays(1).DayOfWeek, time.NextStart.DayOfWeek);
+        }
+        [TestMethod]
+        public void NextStartTest_Sucess_1DayAgo()
+        {
+            DateTime now = DateTime.Now;
+            WeeklyTimeBetween time = new WeeklyTimeBetween(new TimeOnly(now.Hour, 0, 0), new TimeOnly(now.AddHours(1).Hour, 0, 0), DayOfWeekHelpers.IntToDayOfWeek((int)now.DayOfWeek - 1));
+            Assert.AreEqual(now.AddDays(6).Day, time.NextStart.Day);
+            Assert.AreEqual(now.AddDays(6).Hour, time.NextStart.Hour);
+            Assert.AreEqual(now.AddDays(6).DayOfWeek, time.NextStart.DayOfWeek);
+        }
     }
 }

@@ -1,0 +1,14 @@
+﻿@page
+@model Tennis.Pages.Lanes.BookingSuccessModel
+@{
+    ViewData["Title"] = "Bane booket!";
+
+}
+<div class="card" align="center">
+    <h3>Banen er booket!</h3>
+    <p>Vi har modtaget din booking til <b>@Model.Lane</b> med <b>@Model.Partner</b>.</p>
+    <p>Banen er jeres <b>@Model.BookingDate</b>.</p>
+    <br />
+    <p>Husk: Hvis I er forhindret i at spille, er det god stil at aflyse banebookingen. Du kan se/aflyse dine banebookings på din <a asp-area="" asp-page="/Users/Index">profilside</a>.</p>
+    <p>Har du lyst til at spille mere? <a asp-area="" asp-page="/Lanes/BookingOverview" asp-page-handler="FirstClick">Vend tilbage til banebooking her!</a></p>
+</div>

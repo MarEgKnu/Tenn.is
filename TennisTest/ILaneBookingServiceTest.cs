@@ -177,5 +177,16 @@ namespace TennisTest
             CleanTest();
             Assert.IsTrue(Testresult);
         }
+        //[TestMethod]
+        //public void CancelLaneBonkingTestcc()
+        //{
+        //    TestSetUp();
+        //    CreateLaneBooking();
+        //    int Id = laneBookingService.GetAllLaneBookings<UserLaneBooking>().First().BookingID;
+        //    bool Testresult = laneBookingService.CancelLaneBonking(Id);
+        //    laneBookingService.GetAnyFreeLane(new TrainingLaneBooking(1, DateTime.Now, 1, false, new TrainingTeam(), false));
+        //    CleanTest();
+        //    Assert.IsTrue(Testresult);
+        //}
     }
 }
