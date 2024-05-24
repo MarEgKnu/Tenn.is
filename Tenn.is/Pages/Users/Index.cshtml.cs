@@ -1,7 +1,9 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Data.SqlClient;
+using Microsoft.IdentityModel.Tokens;
 using System.ComponentModel.DataAnnotations;
+using Tennis.Helpers;
 using Tennis.Interfaces;
 using Tennis.Models;
 using Tennis.Services;
@@ -60,6 +62,7 @@ namespace Tennis.Pages.Users
                         //MyBookings = _userService.GetAllEventBookingWithUserId(CurrentUser.UserId);
                         MyBookings = _eventBookingService.GetEventBookingsByUser(CurrentUser.UserId);
                         MyLaneBookings = _laneBookingService.GetAllLaneBookings<UserLaneBooking>();
+                        FilterBookings();
                         Sorted();
                         return Page();
                 }
@@ -109,6 +112,23 @@ namespace Tennis.Pages.Users
                     break;
             }
 
+        }
+        private void FilterBookings()
+        {
+            List<Predicate<EventBooking>> conditions = new List<Predicate<EventBooking>>();
+            if (!TitleFilter.IsNullOrEmpty())
+            {
+                conditions.Add(e => e.Event.Title.ToLower().Contains(TitleFilter.ToLower()));
+            }
+            if (!CancelledFilter)
+            {
+                conditions.Add(e => e.Event.Cancelled == CancelledFilter);
+            }
+            if (DateFilter != null)
+            {
+                conditions.Add(e => e.Event.EventStateAt(DateFilter.Value) == RelativeTime.Ongoing || e.Event.EventStateAt(DateFilter.Value) == RelativeTime.Future);
+            }
+            MyBookings = FilterHelpers.GetItemsOnConditions(conditions, MyBookings);
         }
 
 
