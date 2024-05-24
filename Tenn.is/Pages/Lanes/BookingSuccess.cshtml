@@ -4,11 +4,13 @@
     ViewData["Title"] = "Bane booket!";
 
 }
-<div class="card" align="center">
-    <h3>Banen er booket!</h3>
-    <p>Vi har modtaget din booking til <b>@Model.Lane</b> med <b>@Model.Partner</b>.</p>
-    <p>Banen er jeres <b>@Model.BookingDate</b>.</p>
+<div class="card cardouter p-3" align="center">
+    <h3 class="display-4 textaccent">Banen er booket!</h3>
+    <div class="card cardfocus p-3">
+    <p class="textdark">Vi har modtaget din booking til <b class="textmain">@Model.Lane</b> med <b class="textmain">@Model.Partner</b>.</p>
+    <p class="textdark">Banen er jeres <b class="textmain">@Model.BookingDate</b>.</p>
     <br />
-    <p>Husk: Hvis I er forhindret i at spille, er det god stil at aflyse banebookingen. Du kan se/aflyse dine banebookings på din <a asp-area="" asp-page="/Users/Index">profilside</a>.</p>
-    <p>Har du lyst til at spille mere? <a asp-area="" asp-page="/Lanes/BookingOverview" asp-page-handler="FirstClick">Vend tilbage til banebooking her!</a></p>
+    <p class="textmain">Husk: Hvis I er forhindret i at spille, er det god stil at aflyse banebookingen. Du kan se/aflyse dine banebookings på din <a asp-area="" asp-page="/Users/Index">profilside</a>.</p>
+    <p class="textaccent">Har du lyst til at spille mere? <a asp-area="" asp-page="/Lanes/BookingOverview" asp-page-handler="FirstClick">Vend tilbage til banebooking her!</a></p>
+    </div>
 </div>

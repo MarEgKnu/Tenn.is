@@ -3,17 +3,17 @@
 @{
     ViewData["Title"] = "Aflys banebooking";
 }
-
-<h1 class="display-4">Aflys booking</h1>
+<div class="card cardouter" align="center">
+<h1 class="display-4 text-danger">Aflys booking</h1>
 
 <p class="text-danger">@Model.Message</p>
 
 <form method="post">
-    <div class="form-group">
-        <p>Du er ved at aflyse din booking mellem <b>@Model.Booker.FirstName @Model.Booker.LastName</b> og <b>@Model.Mate.FirstName @Model.Mate.LastName</b>,</p>
-        <p>Bane @Model.CurrentBooking.LaneNumber,  @Model.CurrentBooking.DateStart.ToShortDateString() kl. @Model.CurrentBooking.DateStart.ToShortTimeString()</p>
+    <div class="form-group border cardfocus">
+        <p class="textdark">Du er ved at aflyse din booking mellem <b class="textmain">@Model.Booker.FirstName @Model.Booker.LastName</b> og <b class="textmain">@Model.Mate.FirstName @Model.Mate.LastName</b>,</p>
+        <p class="textdark">Bane @Model.CurrentBooking.LaneNumber,  @Model.CurrentBooking.DateStart.ToShortDateString() kl. @Model.CurrentBooking.DateStart.ToShortTimeString()</p>
         <br />
-        <p>Bare rolig, din tennismakker bliver informeret om aflysningen.</p>
+        <p class="textaccent">Bare rolig, din tennismakker bliver informeret om aflysningen.</p>
         <br />
 
         <input type="submit" asp-page-handler="Delete" asp-route-bookingid="@Model.CurrentBooking.BookingID" class="btn btn-danger" value="Aflys" />
@@ -21,3 +21,4 @@
         <input type="submit" asp-page-handler="Cancel" class="btn btn-outline-secondary" value="Fortryd" />
     </div>
 </form>
+</div>

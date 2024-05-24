@@ -42,5 +42,169 @@
     background-color: #fff;
     color: var(--tennismain);
 }
+
+.text-danger {
+    color: var(--tennisdanger);
+}
+
+.btn-outline-primary {
+    color: var(--tennismain);
+    border-color: var(--tennismain);
+}
+
+    .btn-outline-primary:hover {
+        color: #fff;
+        background-color: var(--tennismain);
+        border-color: var(--tennismain);
+    }
+
+    .btn-check:focus + .btn-outline-primary, .btn-outline-primary:focus {
+        box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.5);
+    }
+
+    .btn-check:checked + .btn-outline-primary, .btn-check:active + .btn-outline-primary, .btn-outline-primary:active, .btn-outline-primary.active, .btn-outline-primary.dropdown-toggle.show {
+        color: #fff;
+        background-color: var(--tennismain);
+        border-color: var(--tennismain);
+    }
+
+        .btn-check:checked + .btn-outline-primary:focus, .btn-check:active + .btn-outline-primary:focus, .btn-outline-primary:active:focus, .btn-outline-primary.active:focus, .btn-outline-primary.dropdown-toggle.show:focus {
+            box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.5);
+        }
+
+    .btn-outline-primary:disabled, .btn-outline-primary.disabled {
+        color: var(--tennismain);
+        background-color: transparent;
+    }
+
+.btn-outline-secondary {
+    color: var(--tennisdark);
+    border-color: var(--tennisdark);
+}
+
+    .btn-outline-secondary:hover {
+        color: #fff;
+        background-color: var(--tennisdark);
+        border-color: var(--tennisdark);
+    }
+
+    .btn-check:focus + .btn-outline-secondary, .btn-outline-secondary:focus {
+        box-shadow: 0 0 0 0.25rem rgba(108, 117, 125, 0.5);
+    }
+
+    .btn-check:checked + .btn-outline-secondary, .btn-check:active + .btn-outline-secondary, .btn-outline-secondary:active, .btn-outline-secondary.active, .btn-outline-secondary.dropdown-toggle.show {
+        color: #fff;
+        background-color: var(--tennisdark);
+        border-color: var(--tennisdark);
+    }
+
+        .btn-check:checked + .btn-outline-secondary:focus, .btn-check:active + .btn-outline-secondary:focus, .btn-outline-secondary:active:focus, .btn-outline-secondary.active:focus, .btn-outline-secondary.dropdown-toggle.show:focus {
+            box-shadow: 0 0 0 0.25rem rgba(108, 117, 125, 0.5);
+        }
+
+    .btn-outline-secondary:disabled, .btn-outline-secondary.disabled {
+        color: var(--tennisdark);
+        background-color: transparent;
+    }
+
+.btn-outline-success {
+    color: var(--tennisaccent);
+    border-color: var(--tennisaccent);
+}
+
+    .btn-outline-success:hover {
+        color: #fff;
+        background-color: var(--tennisaccent);
+        border-color: var(--tennisaccent);
+    }
+
+    .btn-check:focus + .btn-outline-success, .btn-outline-success:focus {
+        box-shadow: 0 0 0 0.25rem rgba(25, 135, 84, 0.5);
+    }
+
+    .btn-check:checked + .btn-outline-success, .btn-check:active + .btn-outline-success, .btn-outline-success:active, .btn-outline-success.active, .btn-outline-success.dropdown-toggle.show {
+        color: #fff;
+        background-color: var(--tennisaccent);
+        border-color: var(--tennisaccent);
+    }
+
+        .btn-check:checked + .btn-outline-success:focus, .btn-check:active + .btn-outline-success:focus, .btn-outline-success:active:focus, .btn-outline-success.active:focus, .btn-outline-success.dropdown-toggle.show:focus {
+            box-shadow: 0 0 0 0.25rem rgba(25, 135, 84, 0.5);
+        }
+
+    .btn-outline-success:disabled, .btn-outline-success.disabled {
+        color: var(--tennisaccent);
+        background-color: var(--tennisaccent);
+    }
+
+
+.btn-outline-warning {
+    color: var(--tennisgold);
+    border-color: var(--tennisgold);
+}
+
+    .btn-outline-warning:hover {
+        color: #000;
+        background-color: var(--tennisgold);
+        border-color: var(--tennisgold);
+    }
+
+    .btn-check:focus + .btn-outline-warning, .btn-outline-warning:focus {
+        box-shadow: 0 0 0 0.25rem rgba(255, 193, 7, 0.5);
+    }
+
+    .btn-check:checked + .btn-outline-warning, .btn-check:active + .btn-outline-warning, .btn-outline-warning:active, .btn-outline-warning.active, .btn-outline-warning.dropdown-toggle.show {
+        color: #000;
+        background-color: var(--tennisgold);
+        border-color: var(--tennisgold);
+    }
+
+        .btn-check:checked + .btn-outline-warning:focus, .btn-check:active + .btn-outline-warning:focus, .btn-outline-warning:active:focus, .btn-outline-warning.active:focus, .btn-outline-warning.dropdown-toggle.show:focus {
+            box-shadow: 0 0 0 0.25rem rgba(255, 193, 7, 0.5);
+        }
+
+    .btn-outline-warning:disabled, .btn-outline-warning.disabled {
+        color: var(--tennisgold);
+        background-color: transparent;
+    }
+
+.btn-outline-danger {
+    color: var(--tennisdanger);
+    border-color: var(--tennisdanger);
+}
+
+    .btn-outline-danger:hover {
+        color: #fff;
+        background-color: var(--tennisdanger);
+        border-color: var(--tennisdanger);
+    }
+
+    .btn-check:focus + .btn-outline-danger, .btn-outline-danger:focus {
+        box-shadow: 0 0 0 0.25rem rgba(220, 53, 69, 0.5);
+    }
+
+    .btn-check:checked + .btn-outline-danger, .btn-check:active + .btn-outline-danger, .btn-outline-danger:active, .btn-outline-danger.active, .btn-outline-danger.dropdown-toggle.show {
+        color: #fff;
+        background-color: var(--tennisdanger);
+        border-color: var(--tennisdanger);
+    }
+
+        .btn-check:checked + .btn-outline-danger:focus, .btn-check:active + .btn-outline-danger:focus, .btn-outline-danger:active:focus, .btn-outline-danger.active:focus, .btn-outline-danger.dropdown-toggle.show:focus {
+            box-shadow: 0 0 0 0.25rem rgba(220, 53, 69, 0.5);
+        }
+
+    .btn-outline-danger:disabled, .btn-outline-danger.disabled {
+        color: var(--tennisdanger);
+        background-color: transparent;
+    }
+
+a {
+    color:var(--tennisaccent)
+}
+
+.form-check-input:checked {
+    background-color: var(--tennisaccent);
+    border-color: var(--tennisaccent);
+}
 body {
 }

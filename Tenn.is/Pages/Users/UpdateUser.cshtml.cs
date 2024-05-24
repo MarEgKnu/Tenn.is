@@ -125,7 +125,14 @@ namespace Tennis.Pages.Users
         }
         public IActionResult OnPostCancel()
         {
-            return RedirectToPage("Overview");
+            if (_isOtherUser)
+            {
+                return RedirectToPage("Overview");
+            }
+            else
+            {
+                return RedirectToPage("Index");
+            }
         }
     }
 }
