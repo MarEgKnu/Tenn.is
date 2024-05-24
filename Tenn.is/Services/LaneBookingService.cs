@@ -271,7 +271,7 @@ namespace Tennis.Services
 
         public bool CancelLaneBonking(int id)
         {
-            if (GetUserLaneBookingById(id) is null)
+            if (GetUserLaneBookingById(id) is null && GetTrainingLaneBookingById(id) is null)
                 return false;
             using (SqlConnection connection = new SqlConnection(connectionString))
                 try

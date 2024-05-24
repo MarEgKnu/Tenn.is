@@ -51,7 +51,7 @@ namespace Tennis.Services
             }
             _laneBookingService = new LaneBookingService(test, this);
         }
-        public bool CreateTrainingTeam(TrainingTeam trainingTeam, int overrideBookings = 0)
+        public bool CreateTrainingTeam(TrainingTeam trainingTeam, int overrideBookings = 0, int weekLimit = 3)
         {
             
             using (SqlConnection connection = new SqlConnection(connectionString))
@@ -116,7 +116,7 @@ namespace Tennis.Services
 
                     //OnCreate?.Invoke(GetEventBookingById(primaryKey));
                     transaction.Commit();
-                    UpdateAutomaticBookingsInTeam(primaryKey, overrideBookings,3);                   
+                    UpdateAutomaticBookingsInTeam(primaryKey, overrideBookings, weekLimit);                   
                     return true;
 
                 }
@@ -162,7 +162,7 @@ namespace Tennis.Services
             return false;
         }
 
-        public bool EditTrainingTeam(TrainingTeam trainingTeam, int id, int overrideBookings = 0)
+        public bool EditTrainingTeam(TrainingTeam trainingTeam, int id, int overrideBookings = 0, int weekLimit = 3)
         {
           
                 using (SqlConnection connection = new SqlConnection(connectionString))
@@ -222,7 +222,7 @@ namespace Tennis.Services
                         if (beforeEdit.weeklyTimeBetween != (trainingTeam.weeklyTimeBetween))
                         {
                             OnWeeklySessionEdit?.Invoke(GetTrainingTeamById(id));
-                            UpdateAutomaticBookingsInTeam(id, overrideBookings, 3);
+                            UpdateAutomaticBookingsInTeam(id, overrideBookings, weekLimit);
                         }
                         return true;
 
@@ -409,6 +409,37 @@ namespace Tennis.Services
                     }
                     
             //}                                  
+        }
+        public List<DateTime>? CheckAutomaticBookingAvailability(WeeklyTimeBetween time, int weekLimit)
+        {
+            List<DateTime>? conflictingTimes = new List<DateTime>();
+            if (time != null)
+            {
+                DateTime startDate = time.NextStart;
+                for (int weeks = 0; weeks < weekLimit; weeks++)
+                {
+                    for (int hour = time.StartTime.Value.Hour;
+                        hour < time.EndTime.Value.Hour; hour++)
+                    {
+                        DateTime bookingTime = startDate.AddDays(weeks * 7).
+                        AddHours(hour - time.StartTime.Value.Hour);
+                        Lane freeLane = _laneBookingService.GetAnyFreeLane(bookingTime);
+                        if (freeLane != null)
+                        {
+                            continue;
+                        }
+                        else
+                        {
+                            conflictingTimes.Add(bookingTime);
+                        }
+                    }
+                }
+                return conflictingTimes;
+            }
+            else
+            {
+                return null;
+            }
         }
     }
 }

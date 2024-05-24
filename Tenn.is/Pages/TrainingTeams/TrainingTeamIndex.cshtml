@@ -38,7 +38,7 @@
     <p>
         @if (Model.LoggedInUser.Administrator)
         {
-            <a asp-page="/Events/CreateTrainingTeam">Opret Nyt Træningshold</a>
+            <a asp-page="/TrainingTeams/CreateTrainingTeam">Opret Nyt Træningshold</a>
         }
     </p>
 
@@ -141,7 +141,7 @@
                         </td>
                         <td>
                             <p>
-                                @if (item.IsMember(Model.LoggedInUser)) 
+                                @if (item.IsMember(Model.LoggedInUser) || item.AtCapacity || Model.LoggedInUser.IsUtilityUser) 
                                 {
                                     <button class="btn btn-outline-secondary disabled btn-sm w-100">Tilmeld</button>
                                 }
@@ -153,7 +153,7 @@
                                 {
                                     <a asp-page="/TrainingTeams/DeleteTrainingTeam" asp-route-trainingTeamID="@item.TrainingTeamID" class="btn btn-outline-warning btn-sm w-100" style="margin-top: 5px">Slet</a>
                                     <a asp-page="/TrainingTeams/EditTrainingTeam" asp-route-trainingTeamID="@item.TrainingTeamID" class="btn btn-outline-success btn-sm w-100">Rediger</a>
-                                    <a asp-page="/Lanes/BookingOverview" asp-route-trainingTeamID="@item.TrainingTeamID" class="btn btn-outline-success btn-sm w-100">Book bane</a>
+                                    <a asp-page="/Lanes/BookingOverview" asp-page-handler="FirstClick" asp-route-trainingTeamID="@item.TrainingTeamID" class="btn btn-outline-success btn-sm w-100">Book bane</a>
 
                                 }
                                 else if (item.IsTrainer(Model.LoggedInUser))
