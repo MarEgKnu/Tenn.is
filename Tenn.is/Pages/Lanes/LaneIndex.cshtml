@@ -59,9 +59,9 @@
                         }
                     </td>
                     <td>
-                        <a asp-page="LaneDelete" asp-route-Id="@item.Id" style="color: red">Fjern</a>|
+                                <a asp-page="LaneDelete" asp-route-Id="@item.Id" class="btn btn-outline-danger">Fjern</a>|
 
-                        <a asp-page="LaneUpdate" asp-route-Id="@item.Id" style="color: orange">Opdater</a>
+                                <a asp-page="LaneUpdate" asp-route-Id="@item.Id" class="btn btn-outline-secondary">Opdater</a>
                     </td>
                 </tr>
             }
