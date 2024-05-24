@@ -18,15 +18,15 @@
         <span>Til </span><select asp-for="@Model.EndFilter" asp-items="@Model.ToOptions" onchange="this.form.submit()"></select>
         </div>
         <div class="col">
-            <input asp-for="TennisFilter" onclick="this.form.submit()"  />
+            <input class="form-check-input" asp-for="TennisFilter" onclick="this.form.submit()"  />
             <label for="TennisFilter">Tennis</label><br>
-            <input asp-for="PadelFilter" onclick="this.form.submit()"  />
+            <input class="form-check-input" asp-for="PadelFilter" onclick="this.form.submit()"  />
             <label for="PadelFilter">Padel</label>
         </div>
         <div class="col">
-            <input asp-for="InsideFilter" onclick="this.form.submit()" />
+            <input class="form-check-input" asp-for="InsideFilter" onclick="this.form.submit()" />
             <label for="InsideFilter">Indendørs</label><br>
-            <input asp-for="OutsideFilter" onclick="this.form.submit()" />
+            <input class="form-check-input" asp-for="OutsideFilter" onclick="this.form.submit()" />
             <label for="OutsideFilter">Udendørs</label>
         </div>
         </div>
