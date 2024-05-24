@@ -8,10 +8,13 @@
 @{
     ViewData["Title"] = "Kommende events";
 }
-<form method="get" class="card cardouter p-3">
-Vis events fra dato: <input class="w-50" asp-for="@Model.DateFilter" onchange="this.form.submit()" />
+<div class="card cardouter p-3">
+<form method="get">
+    <div class="form-group">
+Vis events fra dato: <input asp-for="@Model.DateFilter" onchange="this.form.submit()" />
     Vis aflyste events: <input class="form-check-input" asp-for="CancelledFilter" onclick="this.form.submit()" />
 Søg events: <input asp-for="StringFilter" onchange="this.form.submit()" />
+    </div>
 <!-- NEWSFEED -->
 @foreach (var evt in Model.Events)
 {
@@ -118,3 +121,4 @@ Søg events: <input asp-for="StringFilter" onchange="this.form.submit()" />
     </p>
 }
 </form>
+</div>
