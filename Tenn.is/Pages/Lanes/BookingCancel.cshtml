@@ -3,10 +3,9 @@
 @{
     ViewData["Title"] = "Aflys banebooking";
 }
-<div class="card cardouter" align="center">
+<div class="card cardouter p-3" align="center">
+    <div class="card cardfocus p-3"></div>
 <h1 class="display-4 text-danger">Aflys booking</h1>
-
-<h1 class="display-4">Aflys booking</h1>
 <p class="text-danger">@Model.Message</p>
 
 @if (Model.CurrentBooking != null)
@@ -39,4 +38,5 @@ else if (Model.CurrentBookingTraining != null)
         </div>
     </form>
 }
-
+</div>
+</div>
