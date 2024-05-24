@@ -31,10 +31,10 @@ namespace Tennis.Pages.Users
         [BindProperty(SupportsGet = true), DisplayFormat(DataFormatString = "{0:yyyy-MM-ddTHH:mm}", ApplyFormatInEditMode = true)]
         public DateTime? DateFilter { get; set; }
 
-        [BindProperty]
-        public bool chronologik { get; set; }
+        [BindProperty(SupportsGet = true)]
+        public bool chronologic { get; set; }
 
-        [BindProperty]
+        [BindProperty(SupportsGet = true)]
         public string mate { get; set; }
 
         public User CurrentUser { get; set; }
@@ -85,7 +85,7 @@ namespace Tennis.Pages.Users
 
         public void Sorted()
         {
-            if (chronologik)
+            if (chronologic)
             {
                 SortBy = "chronologik";
             }
@@ -102,7 +102,7 @@ namespace Tennis.Pages.Users
                     MyLaneBookings = MyLaneBookings.OrderBy(B => B.DateStart).ToList();
                     break;
                 case "mate":
-                    IEnumerable<UserLaneBooking> searchbymateusername = from b in MyLaneBookings where _userService.GetUserById(b.MateID).Username.Contains(mate) || _userService.GetUserById(b.UserID).Username.Contains(mate) select b;
+                    IEnumerable<UserLaneBooking> searchbymateusername = from b in MyLaneBookings where (_userService.GetUserById(b.UserID).Username == CurrentUser.Username && _userService.GetUserById(b.MateID).Username.Contains(mate)) || ( _userService.GetUserById(b.UserID).Username.Contains(mate) && _userService.GetUserById(b.MateID).Username == CurrentUser.Username) select b;
                     MyLaneBookings = searchbymateusername.ToList();
                     break;
                 default:
