@@ -4,12 +4,15 @@
     ViewData["Title"] = "LaneIndex";
 }
 
-
+<div class="card container-fluid cardgold">
+    <div class="card container-fluid lighttablehead">
 <h3>Liste af banner </h3>
 <p>
     <a asp-page="LaneCreate">Lav en ny banne</a>
 </p>
+</div>
 
+    <div class="container col-md card cardfocus">
 
 <table class="table">
     <thead>
@@ -56,12 +59,14 @@
                         }
                     </td>
                     <td>
-                        <a asp-page="LaneDelete" asp-route-Id="@item.Id">Fjern </a>|
+                        <a asp-page="LaneDelete" asp-route-Id="@item.Id" style="color: red">Fjern</a>|
 
-                        <a asp-page="LaneUpdate" asp-route-Id="@item.Id">Opdater</a>
+                        <a asp-page="LaneUpdate" asp-route-Id="@item.Id" style="color: orange">Opdater</a>
                     </td>
                 </tr>
             }
         }
     </tbody>
 </table>
+</div>
+</div>
