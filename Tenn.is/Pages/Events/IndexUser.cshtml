@@ -8,9 +8,9 @@
 @{
     ViewData["Title"] = "Kommende events";
 }
-<form method="get">
-Vis events fra dato: <input asp-for="@Model.DateFilter" onchange="this.form.submit()" />
-Vis aflyste events: <input asp-for="CancelledFilter" onclick="this.form.submit()" />
+<form method="get" class="card cardouter p-3">
+Vis events fra dato: <input class="w-50" asp-for="@Model.DateFilter" onchange="this.form.submit()" />
+    Vis aflyste events: <input class="form-check-input" asp-for="CancelledFilter" onclick="this.form.submit()" />
 Søg events: <input asp-for="StringFilter" onchange="this.form.submit()" />
 <!-- NEWSFEED -->
 @foreach (var evt in Model.Events)
@@ -27,7 +27,7 @@ Søg events: <input asp-for="StringFilter" onchange="this.form.submit()" />
     <p class="align-items-md-center">
         <div class="card" style="width: 45rem;">
             <div class="card-body">
-                <h5 class="card-title">
+                <h5 class="card-title textdark">
                     <strong>
                         @evt.Title
                     </strong>
@@ -35,13 +35,13 @@ Søg events: <input asp-for="StringFilter" onchange="this.form.submit()" />
               
                 @if (evt.Cancelled)
                 {
-                    <h6 class="card-subtitle mb-2 text-muted">
+                    <h6 class="card-subtitle mb-2 textmain">
                         Status: &#128997; Aflyst
                     </h6>
                 }
                 else
                 {
-                    <h6 class="card-subtitle mb-2 text-muted">
+                    <h6 class="card-subtitle mb-2 textmain">
                         Status: @RelativeTimeHelpers.TimeDisplay[evt.EventState]<br />
                         @evt.TimeTillStartDisplay
                     </h6>
@@ -66,20 +66,20 @@ Søg events: <input asp-for="StringFilter" onchange="this.form.submit()" />
                     </h6>
                 }           *@
 
-                <h6 class="card-subtitle mb-2 text-muted">
+                <h6 class="card-subtitle mb-2 textmain">
                     @evt.EventTime.StartTime.Value.ToString("dd/MM/yyyy HH:mm") til @evt.EventTime.EndTime.Value.ToString("dd/MM/yyyy HH:mm")
                 </h6>
 
-                <h6 class="card-subtitle mb-2 text-muted">
+                <h6 class="card-subtitle mb-2 textmain">
                     Du kan seneste afmelde @evt.CancellationThresholdMinutes minutter før start
                 </h6>
                 <p class="card-text" style="max-width:fit-content; white-space:pre-wrap">
-                    <details>
-                        <summary>Beskrivelse</summary>
+                    <details class="textmain">
+                        <summary class="textaccent">Beskrivelse</summary>
                         @evt.Description
                     </details>
-                    <details>
-                        <summary>Tilmeldte medlemmer</summary>
+                    <details class="textmain">
+                        <summary class="textaccent">Tilmeldte medlemmer</summary>
                             @foreach (var booking in bookingService.GetAllBookingsByEventID(evt.EventID))
                             {
                                 <p>@booking.User.Username</p><br />

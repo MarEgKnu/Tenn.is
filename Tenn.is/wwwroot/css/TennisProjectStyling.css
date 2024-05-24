@@ -202,9 +202,18 @@ a {
     color:var(--tennisaccent)
 }
 
+.btn-link {
+    font-weight:600;
+    color:#fff;
+}
+
 .form-check-input:checked {
     background-color: var(--tennisaccent);
     border-color: var(--tennisaccent);
+}
+
+.form-switch {
+    color: var(--tennisaccent);
 }
 body {
 }

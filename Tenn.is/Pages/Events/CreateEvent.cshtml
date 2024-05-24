@@ -4,10 +4,11 @@
     ViewData["Title"] = "Opret Event";
 }
 
-<h1>Opret Event</h1>
+<div class="card cardouter p3">
+<h1 class="display-4 textdark">Opret Event</h1>
 <p style="color:red">@ViewData["ErrorMessage"]</p>
 
-<form method="post">
+<form method="post" class="card cardfocus p-3">
     <div class="form-group">
         <label asp-for="@Model.Event.Title" class="control-label">Titel</label>
         <input asp-for="@Model.Event.Title" class="form-control" />
@@ -37,4 +38,4 @@
         <input type="submit" value="Opret event" class="btn btn-primary" />
     </div>
 </form>
-
+</div>

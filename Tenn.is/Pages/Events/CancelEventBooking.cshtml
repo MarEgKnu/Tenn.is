@@ -3,21 +3,24 @@
 @{
     ViewData["Title"] = "Fjern tilmelding";
 }
-
+<div class="card cardouter p-3">
 <p style="color:red">@ViewData["ErrorMessage"]</p>
 
 @if (Model.Booking != null)
 {
-    <h1 style="font-weight:bold">Slet Event Tilmelding til @Model.Booking.Event.Title</h1>
-    <h2 style="font-weight:bold">
+    <div class="card cardfocus p-3">
+            <h1 class="textmain" style="font-weight:bold">Slet Event Tilmelding til @Model.Booking.Event.Title</h1>
+    <h2 class="textdark" style="font-weight:bold">
         Er du sikker på at du vil slette tilmelding til @Model.Booking.Event.Title ?
     </h2>
 
-    <p style="font-weight:bold">Tidspunkt:</p>
-    <p>@Model.Booking.Event.EventTime.StartTime.Value.ToString("dd/MM/yyyy HH:mm") til @Model.Booking.Event.EventTime.EndTime.Value.ToString("dd/MM/yyyy HH:mm")</p>
+    <p class="textdark" style="font-weight:bold">Tidspunkt:</p>
+    <p class="textmain">@Model.Booking.Event.EventTime.StartTime.Value.ToString("dd/MM/yyyy HH:mm") til @Model.Booking.Event.EventTime.EndTime.Value.ToString("dd/MM/yyyy HH:mm")</p>
 
     <form method="post">
         <input type="submit" class="btn btn-danger" value="Slet Event Tilmelding" />
         <input type="submit" asp-page-handler="Cancel" class="btn btn-outline-secondary" value="Fortryd" />
     </form>
+        </div>
 }
+</div>

@@ -3,8 +3,10 @@
 @{
     ViewData["Title"] = "Opret ny bruger";
 }
-<p class="text-danger">@Model.DatabaseString</p>
-<form method="post">
+<div class="card cardouter p-3">
+    <h2 class="display-4 textdark">Opret ny bruger:</h2>
+<form method="post" class="card cardfocus p-3">
+        <p class="text-danger">@Model.DatabaseString</p>
     <input type="hidden" asp-for="@Model.NewUser.Password" />
     <div class="form-group">
         <label asp-for="@Model.NewUser.Username" class="control-label"></label>
@@ -42,6 +44,7 @@
         <p class="text-danger">@Model.PhoneString</p>
     </div>
     <div class="form-group">
-        <input type="submit" value="Tilføj bruger" class="btn btn-primary" />
+        <input type="submit" value="Tilføj bruger" class="btn btn-outline-success" />
         </div>
 </form>
+</div>

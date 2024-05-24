@@ -3,13 +3,15 @@
 @{
     ViewData["Title"] = "Brugeroversigt";
 }
-
+<div class="card cardouter p-3">
+    <h2 class="display-4 textdark">Brugeroversigt</h2>
 <a asp-page="CreateUser" class="btn btn-outline-primary">Opret ny bruger</a>
 <br />
+<div class="card cardfocus p-3">
 <form method="get">
-    <input asp-for="AdvancedSearch" onclick="this.form.submit()" />
+    <input class="form-check-input" asp-for="AdvancedSearch" onclick="this.form.submit()" />
     <label for="AdvancedSearch">Advanceret søgning</label><br>
-    <input asp-for="AdminSearch" onclick="this.form.submit()" />
+    <input class="form-check-input" asp-for="AdminSearch" onclick="this.form.submit()" />
     <label for="AdminSearch">Søg kun blandt adminstratorer</label><br>
     @if(!Model.AdvancedSearch) {
     <div class="input-group w-25">
@@ -31,7 +33,7 @@
         <br />
     }
     <table class="table">
-    <thead>
+    <thead class="lighttablehead">
         <tr>
             <th>
                 Bruger ID + navn
@@ -53,7 +55,7 @@
             </th>
         </tr>
     </thead>
-    <tbody>
+    <tbody class="lighttable">
         @if (Model.Users.Count() != 0)
         {
             @foreach (var item in Model.Users)
@@ -92,7 +94,7 @@
                             <button class="btn btn-outline-secondary disabled btn-sm w-100" style="margin-top: 5px">
                                 Fjern</button>
                         } else {
-                        <a asp-page="UpdateUser" asp-page-handler="Admin" asp-route-userid="@item.UserId" class="btn btn-outline-success btn-sm w-100">Opdater</a><br /><a asp-page="DeleteUser" asp-route-userid="@item.UserId" class="btn btn-outline-warning btn-sm w-100" style="margin-top: 5px">Fjern</a>
+                        <a asp-page="UpdateUser" asp-page-handler="Admin" asp-route-userid="@item.UserId" class="btn btn-outline-success btn-sm w-100">Opdater</a><br /><a asp-page="DeleteUser" asp-route-userid="@item.UserId" class="btn btn-outline-danger btn-sm w-100" style="margin-top: 5px">Fjern</a>
                         }
                     </td>
                 </tr>
@@ -102,3 +104,5 @@
 
 </table>
 </form>
+    </div>
+</div>

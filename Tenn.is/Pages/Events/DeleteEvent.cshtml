@@ -4,34 +4,37 @@
 @{
     ViewData["Title"] = "Slet event";
 }
-
+<div class="card cardouter p-3">
 <p style="color:red">@ViewData["ErrorMessage"]</p>
 
 @if (Model.Event != null)
 {
-    <h1 style="font-weight:bold">Slet Event</h1>
-    <h2 style="font-weight:bold">
+    <div class="card cardfocus p-3">
+    <h1 class="textmain" style="font-weight:bold">Slet Event</h1>
+    <h2 class="textdark" style="font-weight:bold">
         Er du sikker på at du vil slette @Model.Event.Title for evigt? <br />
         Du kan aflyse eventen istedet ved at klikke <a asp-page="/Events/EditEvent" asp-route-eventID="@Model.Event.EventID">her</a>
     </h2>
 
-    <p style="font-weight:bold">ID:</p>
-    <p>@Model.Event.EventID</p>
-    <p style="font-weight:bold">Titel:</p>
-    <p>@Model.Event.Title</p>
-    <p style="font-weight:bold">Beskrivelse:</p>
-    <p style="max-width:fit-content; white-space:pre-wrap">@Model.Event.Description</p>
-    <p style="font-weight:bold">Aflyst:</p>
-    <p>@BoolHelpers.ToJaNejValue(Model.Event.Cancelled)</p>
-    <p style="font-weight:bold">Starttid:</p>
-    <p>@Model.Event.EventTime.StartTime.Value.ToString("dd/MM/yyyy HH:mm")</p>
-    <p style="font-weight:bold">Sluttid:</p>
-    <p>@Model.Event.EventTime.EndTime.Value.ToString("dd/MM/yyyy HH:mm")</p>
-    <p style="font-weight:bold">Afmældningsgrænse:</p>
-    <p>@Model.Event.CancellationThresholdMinutes</p>
+    <p class="textdark" style="font-weight:bold">ID:</p>
+            <p class="textmain">@Model.Event.EventID</p>
+            <p class="textdark" style="font-weight:bold">Titel:</p>
+            <p class="textmain">@Model.Event.Title</p>
+            <p class="textdark" style="font-weight:bold">Beskrivelse:</p>
+            <p class="textmain" style="max-width:fit-content; white-space:pre-wrap">@Model.Event.Description</p>
+            <p class="textdark" style="font-weight:bold">Aflyst:</p>
+            <p class="textmain">@BoolHelpers.ToJaNejValue(Model.Event.Cancelled)</p>
+            <p class="textdark" style="font-weight:bold">Starttid:</p>
+            <p class="textmain">@Model.Event.EventTime.StartTime.Value.ToString("dd/MM/yyyy HH:mm")</p>
+            <p class="textdark" style="font-weight:bold">Sluttid:</p>
+            <p class="textmain">@Model.Event.EventTime.EndTime.Value.ToString("dd/MM/yyyy HH:mm")</p>
+            <p class="textdark" style="font-weight:bold">Afmældningsgrænse:</p>
+            <p class="textmain">@Model.Event.CancellationThresholdMinutes</p>
 
     <form method="post">
         <input type="submit" class="btn btn-danger" value="Slet Event" />
         <input type="submit" asp-page-handler="Cancel" class="btn btn-outline-secondary" value="Fortryd" />
     </form>
+    </div>
 }
+</div>

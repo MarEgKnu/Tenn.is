@@ -3,17 +3,16 @@
 @{
     ViewData["Title"] = "Fjern bruger";
 }
-
+<div class="card cardouter p-3">
 <h1 class="display-4">Fjern bruger</h1>
-
-<p class="text-danger">@Model.DbMessage</p>
-
-<p><b>Du er ved at slette følgende bruger:</b></p>
+<div class="card cardfocus p-3">
+<h3 class="textmain"><b>Du er ved at slette følgende bruger:</b></h3>
+        <p class="text-danger">@Model.DbMessage</p>
 <form method="post">
-    <div class="form-group">
-        <label>Brugernavn:</label> @Model.UserToDelete.Username <br />
-        <label>Navn:</label> @Model.UserToDelete.FirstName @Model.UserToDelete.LastName <br />
-        <label>Brugertype:</label> @if (Model.UserToDelete.UserId == 0)
+    <div class="form-group textmain">
+                <label class="textdark"><b>Brugernavn:</b></label> @Model.UserToDelete.Username <br />
+                <label class="textdark"><b>Navn:</b></label> @Model.UserToDelete.FirstName @Model.UserToDelete.LastName <br />
+                <label class="textdark"><b>Brugertype:</b></label> @if (Model.UserToDelete.UserId == 0)
         {
             <span class="text-danger">System admin. Kan ikke slettes</span>
         } else if (Model.UserToDelete.UserId < 0)
@@ -24,12 +23,16 @@
             <span class="text-secondary">Administrator. Kan kun slettes af system admin</span>
         } else
         {
-            <span>Standard bruger</span>
+                    <span class="textdark">Standard bruger</span>
         }
+        
         <br />
 
-        <input type="submit" asp-page-handler="Delete" asp-route-userid="@Model.UserToDelete.UserId" class="btn btn-danger" value="Fjern bruger" />
+
+        <input type="submit" asp-page-handler="Delete" asp-route-userid="@Model.UserToDelete.UserId" class="btn btn-outline-danger" value="Fjern bruger" />
 
         <input type="submit" asp-page-handler="Cancel" class="btn btn-outline-secondary" value="Fortryd" />
     </div>
-</form>
+    </form>
+    </div>
+</div>

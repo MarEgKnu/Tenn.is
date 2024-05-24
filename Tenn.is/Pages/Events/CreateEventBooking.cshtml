@@ -3,11 +3,12 @@
 @{
     ViewData["Title"] = "Opret tilmelding";
 }
-
+<div class="card cardouter p-3">
 <p style="color:red">@ViewData["ErrorMessage"]</p>
 @if (Model.Event != null)
 {
-    <h1>Opret Tilmelding til @Model.Event.Title</h1>
+    <div class="card cardfocus p-3">
+    <h1 class="display-4 textmain">Opret Tilmelding til @Model.Event.Title</h1>
     <form method="post">
         <div class="form-group">
             <label asp-for="Booking.Comment" class="control-label">Kommentar</label>
@@ -19,5 +20,6 @@
             <input type="submit" value="Opret Tilmelding" class="btn btn-primary" />
         </div>
     </form>
-    
+    </div>
 }
+</div>

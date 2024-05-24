@@ -3,8 +3,10 @@
 @{
     ViewData["Title"] = "Opdater bruger";
 }
-<p class="text-danger">@Model.Message</p>
-<form method="post">
+<div class="card cardouter p-3">
+<h2 class="display-4 textdark">Opret ny bruger:</h2>
+<form method="post" class="card cardfocus p-3">
+        <p class="text-danger">@Model.Message</p>
      <input type="hidden" asp-for="@Model.UserToUpdate.UserId" />
     <input type="hidden" asp-for="@Model.OldPassword" />
     <input type="hidden" asp-for="@Model.UserToUpdate.RandomPassword" />
@@ -20,7 +22,7 @@
     <span asp-validation-for="UserToUpdate.Password" class="text-danger"></span>
         @if (Model.UserToUpdate.RandomPassword)
         {
-            <span class="text-success">Vi anbefaler at du ændrer dit password til noget, du selv kan huske. Nyt password skal være mindst 8 karakterer langt.</span>
+            <span class="textaccent">Vi anbefaler at du ændrer dit password til noget, du selv kan huske. Nyt password skal være mindst 8 karakterer langt.</span>
         }
 
     </div>
@@ -62,3 +64,4 @@
         <input type="submit" asp-page-handler="Cancel" value="Fortryd" class="btn btn-outline-warning" />
     </div>
 </form>
+</div>

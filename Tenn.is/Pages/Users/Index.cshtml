@@ -6,11 +6,11 @@
 @{
     ViewData["Title"] = "Brugerinfo";
 }
-<div class="card container-fluid cardgold">
-<div class="card container-fluid cardouter">
+<div class="card container-fluid cardgold p-3">
+<div class="card container-fluid cardouter p-3">
 <h1 class="display-4">Brugerinfo for @Model.CurrentUser.Username:</h1>
 </div>
-    <div class="container col-md card cardfocus">
+    <div class="container col-md card cardfocus p-3">
 <label>Brugernavn:</label> @Model.CurrentUser.Username
 <br />
 <label>Navn:</label> @Model.CurrentUser.FirstName @Model.CurrentUser.LastName
