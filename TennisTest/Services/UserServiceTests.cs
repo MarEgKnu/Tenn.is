@@ -441,7 +441,7 @@ namespace Tennis.Services.Tests
         public void GetAllEventBookingWithUserId_Invalid()
         {
             UserService users = new UserService(true);
-            EventService eventService = new EventService(true)
+            EventService eventService = new EventService(true);
             EventBookingService eventBookingService = new EventBookingService(eventService, users);
 
             using (SqlConnection conn = new SqlConnection(Secret.ConnectionStringTest))

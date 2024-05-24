@@ -36,16 +36,13 @@ namespace Tennis.Pages.Users
         [BindProperty(SupportsGet = true)]
         public bool chronologic { get; set; }
 
-        [BindProperty(SupportsGet = true)]
-        public string mate { get; set; }
-
         public User CurrentUser { get; set; }
 
         public User Mate { get; set; }
 
         public List<EventBooking> MyBookings { get; set; }
 
-        public List<UserLaneBooking> MyLaneBookings { get; set; }
+        public List<LaneBooking> MyLaneBookings { get; set; }
 
         [BindProperty(SupportsGet = true)]
         public string SortBy { get; set; }
@@ -61,7 +58,7 @@ namespace Tennis.Pages.Users
                 if (CurrentUser != null) {
                         //MyBookings = _userService.GetAllEventBookingWithUserId(CurrentUser.UserId);
                         MyBookings = _eventBookingService.GetEventBookingsByUser(CurrentUser.UserId);
-                        MyLaneBookings = _laneBookingService.GetAllLaneBookings<UserLaneBooking>();
+                        MyLaneBookings = _laneBookingService.GetAllLaneBookings<LaneBooking>();
                         FilterBookings();
                         Sorted();
                         return Page();
@@ -92,12 +89,10 @@ namespace Tennis.Pages.Users
             {
                 SortBy = "chronologik";
             }
-            else if (mate != null)
-                SortBy = "mate";
             else
                 SortBy = string.Empty;
 
-            MyLaneBookings = _laneBookingService.GetAllLaneBookings<UserLaneBooking>();
+            //MyLaneBookings = _laneBookingService.GetAllLaneBookings<UserLaneBooking>();
 
             switch (SortBy)
             {
@@ -105,8 +100,6 @@ namespace Tennis.Pages.Users
                     MyLaneBookings = MyLaneBookings.OrderBy(B => B.DateStart).ToList();
                     break;
                 case "mate":
-                    IEnumerable<UserLaneBooking> searchbymateusername = from b in MyLaneBookings where (_userService.GetUserById(b.UserID).Username == CurrentUser.Username && _userService.GetUserById(b.MateID).Username.Contains(mate)) || ( _userService.GetUserById(b.UserID).Username.Contains(mate) && _userService.GetUserById(b.MateID).Username == CurrentUser.Username) select b;
-                    MyLaneBookings = searchbymateusername.ToList();
                     break;
                 default:
                     break;

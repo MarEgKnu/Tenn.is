@@ -1,34 +1,36 @@
 ﻿@page
 @using Tennis.Helpers
 @using Tennis.Interfaces
+@using Tennis.Models
 @inject IUserService userService
 @model Tennis.Pages.Users.IndexModel
 @{
     ViewData["Title"] = "Brugerinfo";
 }
 <div class="card container-fluid cardgold p-3">
-<div class="card container-fluid cardouter p-3">
-<h1 class="display-4">Brugerinfo for @Model.CurrentUser.Username:</h1>
-</div>
+    <div class="card container-fluid cardouter p-3">
+        <h1 class="display-4">Brugerinfo for @Model.CurrentUser.Username:</h1>
+    </div>
     <div class="container col-md card cardfocus p-3">
-<label>Brugernavn:</label> @Model.CurrentUser.Username
-<br />
-<label>Navn:</label> @Model.CurrentUser.FirstName @Model.CurrentUser.LastName
-<br />
-@if (Model.CurrentUser.UserId == 0)
-{
-    <span class="text-success">System admin.</span> <a asp-area="" asp-page="/Users/Controlpanel" class="btn btn-outline-success">Kontrolpanel</a>
-}
-else if (Model.CurrentUser.Administrator)
-{
-    <span class="text-success">Administrator.</span> <a asp-area="" asp-page="/Users/Controlpanel" class="btn btn-outline-success">Kontrolpanel</a>
-}
-</div>
-<div>
+        <label>Navn: @Model.CurrentUser.FirstName @Model.CurrentUser.LastName</label>
+        <br />
+        @if (Model.CurrentUser.UserId == 0)
+        {
+            <span class="text-success">System admin.</span> <a asp-area="" asp-page="/Users/Controlpanel" class="btn btn-outline-success">Kontrolpanel</a>
+        }
+        else if (Model.CurrentUser.Administrator)
+        {
+            <span class="text-success">Administrator.</span> <a asp-area="" asp-page="/Users/Controlpanel" class="btn btn-outline-success">Kontrolpanel</a>
+        }
+    </div>
+
     <div style="display:flex;justify-content:space-between">
+        
         <form method="get">
             Vis tilmeldinger fra dato: <input asp-for="@Model.DateFilter" onchange="this.form.submit()" />
+            <br />
             Vis tilmeldinger til aflyste events: <input asp-for="CancelledFilter" onclick="this.form.submit()" />
+            <br />
             Søg events: <input asp-for="TitleFilter" onchange="this.form.submit()" />
             <!-- NEWSFEED -->
             @foreach (var booking in Model.MyBookings)
@@ -69,10 +71,6 @@ else if (Model.CurrentUser.Administrator)
                             <footer>
                                 <span>
 
-                                    <a asp-page="EditEventBooking" asp-route-bookingID="@booking.BookingID" class="btn btn-outline-warning btn-sm w-100" style="margin-top: 5px">Rediger</a>
-                                </span>
-                                <span>
-
                                     @if (booking.CanBeCancelled)
                                     {
                                         <a asp-page="/Events/CancelEventBooking" asp-route-bookingID="@booking.BookingID" class="btn btn-outline-warning btn-sm w-100" style="margin-top: 5px">Afmeld</a>
@@ -97,13 +95,21 @@ else if (Model.CurrentUser.Administrator)
     <div style="display:flex;justify-content:space-between">
         <form method="get">
             <p>
-                kronologisk rejkeføjle: <input type="checkbox" asp-for="@Model.chronologic" onclick="this.form.submit()" />
-                søg efter maker: <input asp-for="@Model.mate" onchange="this.form.submit()" />
+                Kronologisk rækkefølge: <input type="checkbox" asp-for="@Model.chronologic" onclick="this.form.submit()" />
             </p>
 
             @foreach (var booking in Model.MyLaneBookings)
             {
-                if (booking.DateStart > DateTime.Now.AddHours(-1))
+                bool training = false;
+                UserLaneBooking userBooking = booking as UserLaneBooking;
+                TrainingLaneBooking trainingBooking = booking as TrainingLaneBooking;
+                if(userBooking == null)
+                {
+                    training = true;
+                }
+                if (booking.DateStart > DateTime.Now.AddHours(-1) &&
+                (trainingBooking != null && trainingBooking.trainingTeam.IsMember(Model.CurrentUser)) ||
+                (userBooking != null && (userBooking.UserID == Model.CurrentUser.UserId || userBooking.MateID == Model.CurrentUser.UserId)))
                 {
                     <p class="align-items-md-center">
                             <div class="card container-fluid cardfocus" style="width: 45rem;">
@@ -113,30 +119,39 @@ else if (Model.CurrentUser.Administrator)
                                 </strong>
 
                                 <h6 class="card-subtitle mb-2 text-muted">
-                                    begynder den @booking.DateStart
+                                    Begynder @booking.DateStart
                                 </h6>
 
 
                                 <h6 class="card-subtitle mb-2 text-muted">
-                                    varer 1 time
+                                    Varer 1 time
                                 </h6>
                                 <h6 class="card-subtitle mb-2 text-muted">
-                                    På bannen nr @booking.LaneNumber
+                                    På Bane Nr @booking.LaneNumber
                                 </h6>
-
-                                @if (booking.UserID == @Model.CurrentUser.UserId)
+                                @if (!training)
                                 {
-                                    <h6 class="card-subtitle mb-2 text-muted">
-                                        Med @userService.GetUserById(booking.MateID).Username
-                                    </h6>
+                                    if(userBooking.UserID == @Model.CurrentUser.UserId)
+                                    {
+                                        <h6 class="card-subtitle mb-2 text-muted">
+                                            Med @userService.GetUserById(userBooking.MateID).Username
+                                        </h6>
+                                    }
+                                    else
+                                    {
+                                        <h6 class="card-subtitle mb-2 text-muted">
+                                            Med @userService.GetUserById(userBooking.UserID).Username
+                                        </h6>
+
+                                    }
                                 }
                                 else
                                 {
                                     <h6 class="card-subtitle mb-2 text-muted">
-                                        Med @userService.GetUserById(booking.UserID).Username
+                                        Med træningshold: @trainingBooking.trainingTeam.Title
                                     </h6>
-                                
                                 }
+
                                 @if (booking.Cancelled)
                                 {
                                     <h6 class="card-subtitle mb-2 text-muted">
