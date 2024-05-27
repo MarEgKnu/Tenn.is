@@ -42,45 +42,45 @@ namespace Tennis.Services.Tests
             Assert.IsTrue(articleCountResult > 0);
         }
 
-        //[TestMethod()]
-        //public void GetArticleByIdTest()
-        //{
-        //    //Arrange
-        //    ArticleService testService = new ArticleService(true);
+        [TestMethod()]
+        public void GetArticleByIdTest()
+        {
+            //Arrange
+            ArticleService testService = new ArticleService(true);
 
             //Act
-            //Article? a = testService.GetArticleById(29);
+            Article? a = testService.GetArticleById(29);
 
-        //    //Assert
-        //    Assert.IsNotNull(a);
-        //}
+            //Assert
+            Assert.IsNotNull(a);
+        }
 
-        //[TestMethod()]
-        //public void EditArticleTest()
-        //{
-        //    //Arrange
-        //    ArticleService testService = new ArticleService(true);
-        //    int articleToEdit = 29;
-        //    Article editedArticlea = new Article("aa", "aa");
-        //    Article editedArticleb = new Article("bb", "bb");
+        [TestMethod()]
+        public void EditArticleTest()
+        {
+            //Arrange
+            ArticleService testService = new ArticleService(true);
+            int articleToEdit = 29;
+            Article editedArticlea = new Article("SOMMERFEST!", "Hej allesammen, nu er sommeren på vej, så vi vil finde grillen og kongespillet frem, hvis der er stemning for det! Vi vil derfor bede jer tjekke jeres e-mail, og svare på spørgeskemaet, så vi kan finde ud af hvad stemningen er i klubben, og hvilke dage der passer folk bedst. \nVarme sommerhilsner fra bestyrelsen!");
+            Article editedArticleb = new Article("SOMMERFEST PLANLÆGNING", "Hej allesammen, nu er sommeren på vej, så vi vil finde grillen og kongespillet frem, hvis der er stemning for det!\n Vi vil derfor bede jer tjekke jeres e-mail, og svare på spørgeskemaet, så vi kan finde ud af hvad stemningen er i klubben, og hvilke dage der passer folk bedst. \nVarme sommerhilsner fra bestyrelsen!");
 
-        //    string? originalTitle = testService.GetArticleById(articleToEdit).Title;
-        //    bool returnedBool = false;
-        //    string? newTitle = null;
+            string? originalTitle = testService.GetArticleById(articleToEdit).Title;
+            bool returnedBool = false;
+            string? newTitle = null;
 
             //Act
-            //if (originalTitle == "aa") {
-            //    returnedBool = testService.EditArticle(editedArticleb, articleToEdit);
-            //    newTitle = testService.GetArticleById(articleToEdit).Title;
-            //}
-            //else {
-            //    returnedBool = testService.EditArticle(editedArticlea, articleToEdit);
-            //    newTitle = testService.GetArticleById(articleToEdit).Title;
-            //}
+            if (originalTitle == editedArticlea.Title) {
+                returnedBool = testService.EditArticle(editedArticleb, articleToEdit);
+                newTitle = testService.GetArticleById(articleToEdit).Title;
+            }
+            else {
+                returnedBool = testService.EditArticle(editedArticlea, articleToEdit);
+                newTitle = testService.GetArticleById(articleToEdit).Title;
+            }
 
-        //    //Assert
-        //    Assert.IsTrue((returnedBool) && (newTitle != originalTitle));
-        //}
+            //Assert
+            Assert.IsTrue((returnedBool) && (newTitle != originalTitle));
+        }
 
         [TestMethod()]
         public void DeleteArticleTest()

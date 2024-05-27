@@ -9,12 +9,14 @@ namespace Tennis.Pages.Articles
 {
     public class IndexModel : PageModel
     {
+        public string Message { get; set; } = "Initial Request";
 
         public bool IsLoggedIn = false;
         public bool IsAdmin = false;
         public string Username = string.Empty;
 
         public List<Article> AllArticles { get; set; }
+        [BindProperty(SupportsGet = true)] public string Sorting { get; set; } = "Initial";
 
         [BindProperty(SupportsGet = true)] public string SearchFilter { get; set; }
         [BindProperty(SupportsGet = true)] public bool IsChecked { get; set; }
@@ -76,6 +78,16 @@ namespace Tennis.Pages.Articles
             //    else { DisplayAllArticles_ByTimeStamp(); }
             //}
             #endregion
+
+            if (_articleService.SortingByTimeStamp) {
+
+            }
+            else if (_articleService.SortingByLastEdited) {
+
+            }
+            else if (_articleService.SortingByAuthor) {
+
+            }
 
             if (SearchFilter.IsNullOrEmpty())
             {
@@ -177,9 +189,61 @@ namespace Tennis.Pages.Articles
             AllArticles.OrderByDescending(a => a.TimeStamp);
         }
 
-        public IActionResult OnPostTime(int val)
+        public IActionResult OnPostSorting()
         {
-            Order_TimeStamp = val;
+
+            return RedirectToPage("Index");
+        }
+
+        public IActionResult OnPostOprettet()
+        {
+            Order_LastEdited = 0;
+            Order_Author = 0;
+            if (Order_TimeStamp >= 2) {
+                Order_TimeStamp = 0;
+            }
+            else {
+                Order_TimeStamp++;
+            }
+            AllArticles = _articleService.GetAllArticles().OrderByDescending(a => a.TimeStamp).ToList();
+
+            Message = $"Sorterer efter Oprettet{Order_TimeStamp}";
+            return RedirectToPage("Index");
+        }
+        public IActionResult OnPostRedigeret()
+        {
+            Order_TimeStamp = 0;
+            Order_Author = 0;
+            if (Order_LastEdited >= 2) {
+                Order_LastEdited = 0;
+            }
+            else {
+                Order_LastEdited++;
+            }
+            AllArticles = _articleService.GetAllArticles().OrderByDescending(a => a.TimeStamp).ToList();
+
+            Message = $"Sorterer efter Oprettet{Order_LastEdited}";
+            return RedirectToPage("Index");
+        }
+        public IActionResult OnPostForfatter()
+        {
+            Order_TimeStamp = 0;
+            Order_LastEdited = 0;
+            if (Order_Author >= 2) {
+                Order_Author = 0;
+            }
+            else {
+                Order_Author++;
+            }
+            AllArticles = _articleService.GetAllArticles().OrderByDescending(a => a.TimeStamp).ToList();
+
+            Message = $"Sorterer efter Oprettet{Order_Author}";
+            return RedirectToPage("Index");
+        }
+
+        public IActionResult OnPostTime(int vala)
+        {
+            Order_TimeStamp = vala;
             if (Order_TimeStamp == 2) 
             { 
                 Order_TimeStamp = 0;
@@ -191,9 +255,9 @@ namespace Tennis.Pages.Articles
                 return RedirectToPage("Index");
             }
         }
-        public IActionResult OnPostEdit(int val)
+        public IActionResult OnPostEdit(int valb)
         {
-            Order_LastEdited = val;
+            Order_LastEdited = valb;
             if (Order_LastEdited == 2)
             {
                 Order_LastEdited = 0;
@@ -205,9 +269,9 @@ namespace Tennis.Pages.Articles
                 return RedirectToPage("Index");
             }
         }
-        public IActionResult OnPostAuthor(int val)
+        public IActionResult OnPostAuthor(int valc)
         {
-            Order_Author = val;
+            Order_Author = valc;
             if (Order_Author == 2)
             {
                 Order_Author = 0;
@@ -219,6 +283,7 @@ namespace Tennis.Pages.Articles
                 return RedirectToPage("Index");
             }
         }
+
 
         public IActionResult OnPost(int id)
         {

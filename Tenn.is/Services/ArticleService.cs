@@ -29,6 +29,10 @@ namespace Tennis.Services
         private int colLastEdited = 5;
         private int colImgPath = 6;
 
+        bool IArticleService.SortingByTimeStamp { get; set; }
+        bool IArticleService.SortingByLastEdited { get ; set; }
+        bool IArticleService.SortingByAuthor { get; set; }
+        int IArticleService.SortingCounter { get; set; }
 
         public ArticleService()
         {
