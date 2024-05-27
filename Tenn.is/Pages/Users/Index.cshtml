@@ -14,14 +14,27 @@
     <div class="container col-md card cardfocus p-3">
         <label>Navn: @Model.CurrentUser.FirstName @Model.CurrentUser.LastName</label>
         <br />
-        @if (Model.CurrentUser.UserId == 0)
+        @if (Model.CurrentUser.UserId == 0 || Model.CurrentUser.Administrator)
         {
-            <span class="text-success">System admin.</span> <a asp-area="" asp-page="/Users/Controlpanel" class="btn btn-outline-success">Kontrolpanel</a>
+            if (Model.CurrentUser.UserId == 0)
+            {
+                <span class="text-success">System admin.</span>
+            } else
+            {
+                <span class="text-success">Administrator.</span>
+            }
+            @* <a asp-area="" asp-page="/Users/Controlpanel" class="btn btn-outline-success">Kontrolpanel</a> *@
+            <div class="row">
+                <a asp-page="/Users/Overview" class="btn btn-outline-primary col-md m-2">Brugeroversigt</a>
+                <a asp-page="/Events/IndexAdmin" class="btn btn-outline-secondary col-md m-2">Events</a>
+                <a asp-page="/Lanes/LaneIndex" class="btn btn-outline-success col-md m-2">Baner</a>
+                <a asp-page="/TrainingTeams/TrainingTeamIndex" class="btn btn-outline-primary col-md m-2">Træningshold</a>
+            </div>
         }
-        else if (Model.CurrentUser.Administrator)
+        @* else if (Model.CurrentUser.Administrator)
         {
             <span class="text-success">Administrator.</span> <a asp-area="" asp-page="/Users/Controlpanel" class="btn btn-outline-success">Kontrolpanel</a>
-        }
+        } *@
     </div>
 
     <div style="display:flex;justify-content:space-between">
