@@ -5,6 +5,9 @@
 @{
     ViewData["Title"] = "Træningshold";
 }
+<div class="card cardouter p-3">
+    <h4 style="color:aquamarine"> Liste af træningshold</h4>
+    <div class="card cardfocus p-3">
 <p style="color:red">@ViewData["ErrorMessage"]</p>
 <form method="get">
 
@@ -42,7 +45,7 @@
         }
     </p>
 
-    <h4 style="color:aquamarine"> Liste af træningshold</h4>
+
 
     <table class="table">
         <thead>
@@ -179,4 +182,5 @@
         </tbody>
     </table>
 </form>
-
+    </div>
+</div>
