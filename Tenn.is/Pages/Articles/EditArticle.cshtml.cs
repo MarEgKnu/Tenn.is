@@ -16,7 +16,7 @@ namespace Tennis.Pages.Articles
         private IArticleService _articleService {  get; set; }
         public EditArticleModel(IArticleService articleService)
         {
-            _articleService = new ArticleService(true);
+            _articleService = new ArticleService(false);
         }
 
         public void OnGet(int id)

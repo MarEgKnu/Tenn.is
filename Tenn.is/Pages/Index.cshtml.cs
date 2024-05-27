@@ -23,5 +23,9 @@ public class IndexModel : PageModel
     {
         Events = _eventService.GetAllEvents().Where(x => x.EventState == Helpers.RelativeTime.Future).OrderBy(x => x.EventTime.StartTime).Take(5).ToList();
         NewestArticle = _articleService.GetAllArticles().OrderBy(a => a.TimeStamp).FirstOrDefault();
+        if (NewestArticle == null)
+        {
+            NewestArticle = new Article();
+        }
     }
 }

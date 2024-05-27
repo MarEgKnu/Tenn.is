@@ -31,7 +31,7 @@ namespace Tennis.Pages.Articles
         private IArticleService _articleService;
         public IndexModel(IArticleService articleService)
         {
-            _articleService = new ArticleService(true);
+            _articleService = new ArticleService(false);
         }
 
         public void OnGet()
