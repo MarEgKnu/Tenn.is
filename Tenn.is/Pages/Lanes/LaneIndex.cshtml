@@ -5,17 +5,17 @@
 }
 
 <div class="card container-fluid cardgold">
-    <div class="card container-fluid lighttablehead">
+    <div class="card container-fluid cardouter">
 <h3>Liste af banner </h3>
 <p>
-    <a asp-page="LaneCreate">Lav en ny banne</a>
+    <a asp-page="LaneCreate" class="btn btn-outline-secondary">Lav en ny banne</a>
 </p>
 </div>
 
     <div class="container col-md card cardfocus">
 
 <table class="table">
-    <thead>
+    <thead class="lighttablehead">
         <tr>
             <th>
                 Banenummer
@@ -26,9 +26,12 @@
             <th>
                 Banetype
             </th>
+            <th>
+
+            </th>
         </tr>
     </thead>
-    <tbody>
+    <tbody class="lighttable">
         @if (Model.LaneList.Count != 0)
         {
             @foreach (var item in Model.LaneList)
