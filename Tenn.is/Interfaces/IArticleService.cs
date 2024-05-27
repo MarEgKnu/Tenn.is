@@ -15,5 +15,12 @@ namespace Tennis.Interfaces
         Article? GetArticleById(int id);
 
         List<Article> SearchArticlesDefault(string searchFilter);
+        List<Article> SearchArticlesContent(string searchFilter);
+
+        //Sorting
+        public bool SortingByTimeStamp {  get; set; }
+        public bool SortingByLastEdited { get; set; }
+        public bool SortingByAuthor {  get; set; }
+        public int SortingCounter { get; set; }
     }
 }
