@@ -9,18 +9,18 @@ namespace Tennis.Services
     public class UserService : Connection, IUserService
     {
 
-        private string getAllSQL = "SELECT * FROM Users";
-        private string getByIdSQL = "SELECT * FROM Users WHERE UserID = @UID";
-        private string insertSQL = "INSERT INTO Users VALUES (@UID, @UNAME, @FNAME, @LNAME, @PWORD, @EMAIL, @PHONE, @ADMIN, @RWORD)";
-        private string deleteSQL = "DELETE FROM Users WHERE UserID = @UID";
-        private string editSQL = "UPDATE Users SET UserName = @UNAME, FirstName = @FNAME, LastName = @LNAME, Password = @PWORD, Phone = @PHONE, Email = @EMAIL, Administrator = @ADMIN, RandomPassword = @RWORD WHERE UserID = @UID";
-        private string getAllLaneBookingsWithUserIdSQL = "Select * FROM lANEBOOKINGS WHERE UserID = @UID OR MateID = @UID";
-        private string getByUserNameSQL = "SELECT * FROM Users WHERE UserName = @UserName";
-        private string getUtilUsers = "SELECT * FROM Users\n" +
+        private string _getAllSQL = "SELECT * FROM Users";
+        private string _getByIdSQL = "SELECT * FROM Users WHERE UserID = @UID";
+        private string _insertSQL = "INSERT INTO Users VALUES (@UID, @UNAME, @FNAME, @LNAME, @PWORD, @EMAIL, @PHONE, @ADMIN, @RWORD)";
+        private string _deleteSQL = "DELETE FROM Users WHERE UserID = @UID";
+        private string _editSQL = "UPDATE Users SET UserName = @UNAME, FirstName = @FNAME, LastName = @LNAME, Password = @PWORD, Phone = @PHONE, Email = @EMAIL, Administrator = @ADMIN, RandomPassword = @RWORD WHERE UserID = @UID";
+        private string _getAllLaneBookingsWithUserIdSQL = "Select * FROM lANEBOOKINGS WHERE UserID = @UID OR MateID = @UID";
+        private string _getByUserNameSQL = "SELECT * FROM Users WHERE UserName = @UserName";
+        private string _getUtilUsers = "SELECT * FROM Users\n" +
                                       "WHERE UserID < 1";
-        private string getNonUtilUsers = "SELECT * FROM Users\n" +
+        private string _getNonUtilUsers = "SELECT * FROM Users\n" +
                                          "WHERE UserID > 0";
-        private string getAllEventsWithUserIdSQL = "SELECT EVENTS.EventID, EVENTS.Title, EVENTS.Description, EVENTS.Cancelled, EVENTS.DateStart, EVENTS.DateEnd, EVENTS.CancellationThreshold FROM EVENTS INNER JOIN EVENTBOOKINGS ON EVENTS.EventID = EVENTBOOKINGS.EventID WHERE EVENTBOOKINGS.UserID = @UserID";
+        private string _getAllEventsWithUserIdSQL = "SELECT EVENTS.EventID, EVENTS.Title, EVENTS.Description, EVENTS.Cancelled, EVENTS.DateStart, EVENTS.DateEnd, EVENTS.CancellationThreshold FROM EVENTS INNER JOIN EVENTBOOKINGS ON EVENTS.EventID = EVENTBOOKINGS.EventID WHERE EVENTBOOKINGS.UserID = @UserID";
 
         public UserService()
         {
@@ -44,7 +44,7 @@ namespace Tennis.Services
             {
                 try
                 {
-                    SqlCommand command = new SqlCommand(getAllLaneBookingsWithUserIdSQL, conn);
+                    SqlCommand command = new SqlCommand(_getAllLaneBookingsWithUserIdSQL, conn);
                     command.Parameters.AddWithValue("@UID", userId);
                     command.Connection.Open();
                     SqlDataReader reader = command.ExecuteReader();
@@ -90,7 +90,7 @@ namespace Tennis.Services
                 {
                     try
                     {
-                        SqlCommand command = new SqlCommand(insertSQL, conn);
+                        SqlCommand command = new SqlCommand(_insertSQL, conn);
                         command.Parameters.AddWithValue("@UID", user.UserId);
                         command.Parameters.AddWithValue("@UNAME", user.Username);
                         command.Parameters.AddWithValue("@FNAME", user.FirstName);
@@ -126,7 +126,7 @@ namespace Tennis.Services
             {
                 try
                 {
-                    SqlCommand command = new SqlCommand(deleteSQL, conn);
+                    SqlCommand command = new SqlCommand(_deleteSQL, conn);
                     command.Parameters.AddWithValue("@UID", id);
                     user = GetUserById(id);
                     if (user != null)
@@ -168,7 +168,7 @@ namespace Tennis.Services
                 {
                     try
                     {
-                        SqlCommand command = new SqlCommand(editSQL, conn);
+                        SqlCommand command = new SqlCommand(_editSQL, conn);
                         command.Parameters.AddWithValue("@UID", id);
                         command.Parameters.AddWithValue("@UNAME", user.Username);
                         command.Parameters.AddWithValue("@FNAME", user.FirstName);
@@ -204,7 +204,7 @@ namespace Tennis.Services
             {
                 try
                 {
-                    SqlCommand command = new SqlCommand(getAllSQL, conn);
+                    SqlCommand command = new SqlCommand(_getAllSQL, conn);
                     command.Connection.Open();
                     SqlDataReader reader = command.ExecuteReader();
                     while (reader.Read())
@@ -246,11 +246,11 @@ namespace Tennis.Services
                     SqlCommand command;
                     if (isUtilityUser)
                     {
-                        command = new SqlCommand(getUtilUsers, conn);
+                        command = new SqlCommand(_getUtilUsers, conn);
                     }
                     else
                     {
-                        command = new SqlCommand(getNonUtilUsers, conn);
+                        command = new SqlCommand(_getNonUtilUsers, conn);
                     }
                     command.Connection.Open();
                     SqlDataReader reader = command.ExecuteReader();
@@ -291,7 +291,7 @@ namespace Tennis.Services
             {
                 try
                 {
-                    SqlCommand command = new SqlCommand(getByIdSQL, conn);
+                    SqlCommand command = new SqlCommand(_getByIdSQL, conn);
                     command.Parameters.AddWithValue("@UID", id);
                     command.Connection.Open();
                     SqlDataReader reader = command.ExecuteReader();
@@ -407,7 +407,7 @@ namespace Tennis.Services
             {
                 try
                 {
-                    SqlCommand command = new SqlCommand(getAllEventsWithUserIdSQL, connection);
+                    SqlCommand command = new SqlCommand(_getAllEventsWithUserIdSQL, connection);
                     command.Connection.Open();
                     command.Parameters.AddWithValue("@UserID", userId);
                     SqlDataReader reader = command.ExecuteReader();
