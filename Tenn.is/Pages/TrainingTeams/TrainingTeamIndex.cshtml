@@ -48,7 +48,7 @@
 
 
     <table class="table">
-        <thead>
+        <thead class="lighttablehead">
             <tr>
                 <th>
                     <button type="submit" class="btn btn-link" name="SortBy" value="TrainingTeamID" asp-route-sorting="true">ID</button>
@@ -75,7 +75,7 @@
                 </th>
             </tr>
         </thead>
-        <tbody>
+        <tbody class="lighttable">
             @if (Model.Teams.Count() != 0)
             {
                 @foreach (var item in Model.Teams)
