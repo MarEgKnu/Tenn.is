@@ -4,11 +4,13 @@
 @{
     ViewData["Title"] = "Tilmelding til træningshold";
 }
+<div class="card cardouter p-3">
 <p style="color:red">@ViewData["ErrorMessage"]</p>
 
 
 @if (Model.Team != null)
 {
+    <div class="card cardfocus p-3">
     <h1 class="display-4">Tilmelding til @Model.Team.Title</h1>
     <form method="post">
         <div class="form-group">
@@ -45,4 +47,6 @@
            
         </div>
     </form>
+    </div>
 }
+</div>

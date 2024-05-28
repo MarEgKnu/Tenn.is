@@ -4,11 +4,13 @@
 @{
     ViewData["Title"] = "Rediger træningshold";
 }
+<div class="card cardouter p-3">
 <h1>Rediger Træningshold</h1>
 <p style="color:red">@ViewData["ErrorMessage"]</p>
 
 @if (Model.Team != null)
 {
+    <div class="card cardfocus p-3">
     <h3>Generel information</h3>
     <form method="post">
         <div class="form-group">
@@ -95,6 +97,7 @@
             <input type="submit" value="Rediger træningshold" asp-page-handler="" class="btn btn-primary" />
         </div>
     </form>
+    </div>
 }
 
-
+</div>
