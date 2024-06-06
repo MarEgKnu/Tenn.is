@@ -2,7 +2,7 @@
 @model Tennis.Pages.Articles.EditArticleModel
 @{
 }
-
+<div class="card cardouter p-3">
 <!-- EDIT ARTICLE -->
 <form method="post" style="box-sizing:content-box">
     <label> 
@@ -14,16 +14,16 @@
 
 
     <label>
-        <strong>Content</strong>
+        <strong>Brødtekst</strong>
     </label>
     <br />
     <textarea asp-for="NewArticle.Content" rows="10" cols="40"></textarea>
     <br />
 
-    <button type="submit" class="btn btn-success mb-2">Submit</button>
+    <button type="submit" class="btn btn-success mb-2">Rediger</button>
 
 </form> 
-
+</div>
 
 
 
